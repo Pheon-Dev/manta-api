@@ -1,6 +1,6 @@
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Clone)]
+#[derive(Debug)]
 pub enum Error {
     // -- Config
     ConfigMissingEnv(&'static str),

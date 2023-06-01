@@ -1,6 +1,6 @@
 use crate::{Error, Result};
 use once_cell::sync::OnceCell;
-use std::env;
+use std::{env, str::FromStr};
 
 pub fn config() -> &'static Config {
     static INSTANCE: OnceCell<Config> = OnceCell::new();
@@ -48,4 +48,13 @@ impl Config {
 
 fn get_env(name: &'static str) -> Result<String> {
     env::var(name).map_err(|_| Error::ConfigMissingEnv(name))
+}
+
+fn get_env_parse<T: FromStr>(name: &'static str) -> Result<T> {
+    let val = get_env(name)?;
+    val.parse::<T>().map_err(|_| Error::ConfigWrongFormat(name))
+}
+
+fn get_env_b64u_as_u8s(name: &'static str) -> Result<Vec<u8>> {
+    base64_url::decode(&get_env(name)?).map_err(|_| Error::ConfigWrongFormat(name))
 }
