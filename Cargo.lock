@@ -1759,9 +1759,9 @@ checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
 
 [[package]]
 name = "sqlb"
-version = "0.2.0"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3ddd164336fdba64745e470cfab0e54e54a896acca183ac1eeeafe8d712bd69"
+checksum = "d73b2e018654bb190fdade8ae85455fa2ddae43d76e6e190b36f72f4a7956bf6"
 dependencies = [
  "async-trait",
  "sqlb-macros",
@@ -1772,13 +1772,13 @@ dependencies = [
 
 [[package]]
 name = "sqlb-macros"
-version = "0.0.5"
+version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "28f1216b134a38223861b04ab020b2a4cdef04dd7f8306dadd133e59d5674034"
+checksum = "628938c5fd81f6c05916a7bdf609eec390db39e08b34360e98c807dd0a196739"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 1.0.109",
+ "syn 2.0.17",
 ]
 
 [[package]]
@@ -1882,10 +1882,8 @@ version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "804d3f245f894e61b1e6263c84b23ca675d96753b5abfd5cc8597d86806e8024"
 dependencies = [
- "native-tls",
  "once_cell",
  "tokio",
- "tokio-native-tls",
  "tokio-rustls",
 ]
 
