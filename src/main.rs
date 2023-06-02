@@ -4,6 +4,7 @@ mod web;
 mod error;
 mod model;
 mod ctx;
+mod utils;
 
 // pub mod _dev_utils;
 
