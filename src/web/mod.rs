@@ -2,6 +2,9 @@ mod error;
 
 pub use self::error::ClientError;
 pub use self::error::{Error, Result};
+
+use crate::crypt::token::generate_token;
+
 use tower_cookies::{Cookie, Cookies};
 use uuid::Uuid;
 use time::OffsetDateTime;
