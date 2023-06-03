@@ -12,6 +12,7 @@ pub enum Error {
     UserAlreadyExists { username: String },
 
     // Modules
+    // TODO: crypt
     Store(store::Error),
 
     // Externals
@@ -29,7 +30,8 @@ impl From<store::Error> for Error {
         Self::Store(val)
     }
 }
-// crypt
+// TODO: crypt
+
 // sqlx
 impl From<sqlx::Error> for Error {
     fn from(val: sqlx::Error) -> Self {

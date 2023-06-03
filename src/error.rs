@@ -9,8 +9,11 @@ pub enum Error {
     ConfigWrongFormat(&'static str),
 
     // -- Modules
+    // TODO: Crypt
     Model(model::Error),
 }
+
+// TODO: Crypt constructor implementation
 
 impl From<model::Error> for Error {
     fn from(val: model::Error) -> Self {

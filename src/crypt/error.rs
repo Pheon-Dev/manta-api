@@ -11,7 +11,7 @@ pub enum Error {
     PwdNotMatching,
     SchemeUnknown(String),
     SchemeNotFoundInContent,
-    // -- Token
+    // -- TODO: Token
 }
 
 // region: --- Error Boilerplate

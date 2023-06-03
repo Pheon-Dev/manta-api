@@ -80,4 +80,7 @@ mod tests {
         )?;
         Ok(())
     }
+
+// TODO: test extract scheme OK
+// TODO: test extract scheme Error
 }
