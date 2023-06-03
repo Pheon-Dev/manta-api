@@ -55,3 +55,29 @@ fn extract_scheme(enc_content: &str) -> Result<String> {
         .map(|(_whole, scheme)| scheme.to_string())
         .ok_or(Error::SchemeNotFoundInContent)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use anyhow::Result;
+
+    #[test]
+    fn test_validate() -> Result<()> {
+        let fx_salt = "some-salt";
+        let fx_pwd_clear = "welcome";
+
+        let pwd_enc_1 = encrypt_pwd(&EncryptContent {
+            salt: fx_salt.to_string(),
+            content: fx_pwd_clear.to_string(),
+        })?;
+
+        validate_pwd(
+            &EncryptContent {
+                salt: fx_salt.to_string(),
+                content: fx_pwd_clear.to_string(),
+            },
+            &pwd_enc_1,
+        )?;
+        Ok(())
+    }
+}
