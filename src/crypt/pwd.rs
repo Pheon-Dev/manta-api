@@ -1,0 +1,57 @@
+use super::{Error, Result};
+use crate::config;
+use crate::crypt::{encrypt_into_b64u, EncryptContent};
+use lazy_regex::regex_captures;
+
+pub const DEFAULT_SCHEME: &str = "02";
+
+pub fn encrypt_pwd(enc_content: &EncryptContent) -> Result<String> {
+    encrypt_for_scheme(DEFAULT_SCHEME, enc_content)
+}
+
+#[derive(Debug)]
+pub enum SchemeStatus {
+    Ok,       // the pwd use the latest scheme
+    Outdated, // the pwd use the old scheme. would not be re-encrypted
+}
+
+/// validate if an EncryptContent matches
+pub fn validate_pwd(enc_content: &EncryptContent, pwd_ref: &str) -> Result<SchemeStatus> {
+    let scheme_ref = extract_scheme(pwd_ref)?;
+    let pwd_new = encrypt_for_scheme(&scheme_ref, enc_content)?;
+
+    if pwd_ref == pwd_new {
+        if scheme_ref == DEFAULT_SCHEME {
+            Ok(SchemeStatus::Ok)
+        } else {
+            Ok(SchemeStatus::Outdated)
+        }
+    } else {
+        Err(Error::PwdNotMatching)
+    }
+}
+
+fn encrypt_scheme_01(enc_content: &EncryptContent) -> Result<String> {
+    let key = &config().PWD_KEY;
+    encrypt_into_b64u(key, enc_content)
+}
+
+fn encrypt_scheme_02(enc_content: &EncryptContent) -> Result<String> {
+    let key = &config().PWD_KEY;
+    encrypt_into_b64u(key, enc_content)
+}
+
+fn encrypt_for_scheme(scheme: &str, args: &EncryptContent) -> Result<String> {
+    let pwd = match scheme {
+        "01" => encrypt_scheme_01(args),
+        "02" => encrypt_scheme_02(args),
+        _ => Err(Error::SchemeUnknown(scheme.to_string())),
+    };
+    Ok(format!("#{scheme}#{}", pwd?))
+}
+
+fn extract_scheme(enc_content: &str) -> Result<String> {
+    regex_captures!(r#"^#(\w+)#.*"#, enc_content)
+        .map(|(_whole, scheme)| scheme.to_string())
+        .ok_or(Error::SchemeNotFoundInContent)
+}
