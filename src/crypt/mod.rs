@@ -1,6 +1,6 @@
 mod error;
 pub mod pwd;
-// TODO: token module
+pub mod token;
 
 pub use self::error::{Error, Result};
 
