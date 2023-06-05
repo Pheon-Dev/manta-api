@@ -11,14 +11,21 @@ pub enum Error {
     PwdNotMatching,
     SchemeUnknown(String),
     SchemeNotFoundInContent,
+
     // -- TODO: Token
+    TokenInvalidFormat,
+    TokenSignatureNotMatching,
+    TokenExpNotIso,
+    TokenExpired,
+    TokenCannotDecodeUser,
+    TokenCannotDecodeExp,
 }
 
 // region: --- Error Boilerplate
 impl std::fmt::Display for Error {
     fn fmt(
         &self,
-        fmt: &mut std::fmt::Formatter,
+        fmt: &mut std::fmt::Formatter
     ) -> core::result::Result<(), std::fmt::Error> {
         write!(fmt, "self:?")
     }
