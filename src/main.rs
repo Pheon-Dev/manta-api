@@ -11,6 +11,7 @@ mod web;
 
 pub use self::error::{Error, Result};
 pub use config::config;
+use tower_cookies::CookieManagerLayer;
 
 use crate::model::ModelManager;
 use crate::web::mw_auth::{mw_ctx_require, mw_ctx_resolve};
@@ -44,6 +45,7 @@ async fn main() -> Result<()> {
         .merge(web::login_routes::routes(mm.clone()))
         .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
         .layer(middleware::from_fn(mw_req_stamp))
+        .layer(CookieManagerLayer::new())
         .fallback_service(web::static_routes::serve_dir());
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
