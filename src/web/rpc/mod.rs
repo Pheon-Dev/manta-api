@@ -31,7 +31,22 @@ pub struct RpcInfo {
     pub method: String,
 }
 
-// TODO: region: --- Params Types
+// region: --- Params Types
+#[derive(Deserialize)]
+pub struct ParamsForCreate<D> {
+    data: D,
+}
+
+#[derive(Deserialize)]
+pub struct ParamsForUpdate<D> {
+    id: i64,
+    data: D,
+}
+
+#[derive(Deserialize)]
+pub struct ParamsIded {
+    id: i64,
+}
 
 // endregion: --- Params Types
 
