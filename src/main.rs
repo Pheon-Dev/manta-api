@@ -13,6 +13,9 @@ pub use self::error::{Error, Result};
 pub use config::config;
 
 use crate::model::ModelManager;
+use crate::web::mw_auth::{mw_ctx_require, mw_ctx_resolve};
+use crate::web::mw_req_stamp::mw_req_stamp;
+use crate::web::{login_routes, static_routes};
 
 use axum::{middleware, Router};
 use tracing_subscriber::EnvFilter;
@@ -34,8 +37,13 @@ async fn main() -> Result<()> {
 
     let mm = ModelManager::new().await?;
 
+    // TODO: routes rpc
+    // let routes_rpc = 
+
     let all_routes = Router::new()
         .merge(web::login_routes::routes(mm.clone()))
+        .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
+        .layer(middleware::from_fn(mw_req_stamp))
         .fallback_service(web::static_routes::serve_dir());
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
