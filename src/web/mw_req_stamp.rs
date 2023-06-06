@@ -1,6 +1,9 @@
 use crate::utils::now_utc;
 use crate::web::{Error, ReqStamp, Result};
 
+use async_trait::async_trait;
+use axum::extract::FromRequestParts;
+use axum::http::request::Parts;
 use axum::middleware::Next;
 use axum::http::Request;
 use axum::response::Response;
@@ -21,4 +24,18 @@ pub async fn mw_req_stamp<B>(
     Ok(next.run(req).await)
 }
 
-// TODO: region: --- ReqStamp Extractor
+// region: --- ReqStamp Extractor
+#[async_trait]
+impl<S: Send + Sync> FromRequestParts<S> for ReqStamp {
+    type Rejection = Error;
+
+    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self> {
+        debug!("{:<12} - ReqStamp", "ETRACTOR");
+
+        parts.extensions
+        .get::<ReqStamp>()
+            .cloned()
+            .ok_or(Error::ReqStampNotInResponseExt)
+    }
+}
+// endregion: --- ReqStamp Extractor
