@@ -4,7 +4,6 @@ mod crypt;
 mod ctx;
 mod error;
 mod model;
-mod token;
 mod utils;
 mod web;
 

@@ -1,11 +1,12 @@
 mod error;
 
+pub mod mw_auth;
+pub mod login_routes;
+
 pub use self::error::ClientError;
 pub use self::error::{Error, Result};
 
-// TODO: token generation
 use crate::crypt::token::generate_token;
-
 use tower_cookies::{Cookie, Cookies};
 use uuid::Uuid;
 use time::OffsetDateTime;
@@ -13,7 +14,7 @@ use time::OffsetDateTime;
 pub const AUTH_TOKEN: &str = "auth-token";
 
 fn set_token_cookie(cookies: &Cookies, user: &str, salt: &str) -> Result<()> {
-    let token generate_token(user, salt)?;
+    let token = generate_token(user, salt)?;
 
     let mut cookie = Cookie::new(AUTH_TOKEN, token.to_string());
     cookie.set_http_only(true);
