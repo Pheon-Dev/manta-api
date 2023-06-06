@@ -110,7 +110,7 @@ where
     }
 }
 
-pub async fn delete<MC, E>(_ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<()> where MC: DbBmc {
+pub async fn delete<MC>(_ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<()> where MC: DbBmc {
     let db = mm.db();
 
     let count = sqlb::delete()
