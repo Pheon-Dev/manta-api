@@ -8,7 +8,7 @@ mod model;
 mod utils;
 mod web;
 
-// pub mod _dev_utils;
+pub mod _dev_utils;
 
 pub use self::error::{Error, Result};
 pub use config::config;
@@ -36,7 +36,7 @@ async fn main() -> Result<()> {
         .init();
 
     // -- FOR DEV ONLY
-    // _dev_utils::init_dev().await;
+    _dev_utils::init_dev().await;
 
     let mm = ModelManager::new().await?;
 
