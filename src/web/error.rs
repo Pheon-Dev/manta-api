@@ -15,23 +15,57 @@ pub enum Error {
     LoginFailUserHasNoPwd { user_id: i64 },
     LoginFailPwdNotMatching { user_id: i64 },
 
-    // TODO: middleware/extractor
-    // TODO: ctxAuthError
+    // middleware/extractor
+    ReqStampNotInResponseExt,
+
+    // ctxAuthError
     CtxAuth(web::mw_auth::CtxAuthError),
 
-    // TODO: modules
+    // modules
     Model(model::Error),
     Crypt(crypt::Error),
 
-    // TODO: external modules
+    // external modules
+    SerdeJson(String),
 }
 
+// region: --- Error Froms
 impl From<model::Error> for Error {
     fn from(val: model::Error) -> Self {
         Error::Model(val)
     }
 }
 
+impl From<crypt::Error> for Error {
+    fn from(val: crypt::Error) -> Self {
+        Self::Crypt(val)
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(val: serde_json::Error) -> Self {
+        Error::SerdeJson(val.to_string())
+    }
+}
+// endregion: --- Error Froms
+
+// region: --- Axum IntoResponse
+impl IntoResponse for Error {
+    fn into_response(self) -> Response {
+        debug!("{:<12} - model::Error {self:?}", "INTO_RES");
+
+        // create a placeholder Axum response.
+        let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+
+        // insert the error into the response
+        response.extensions_mut().insert(self);
+
+        response
+    }
+}
+// endregion: --- Axum IntoResponse
+
+// region: --- Error boilerplate
 impl core::fmt::Display for Error {
     fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::result::Result<(), core::fmt::Error> {
         write!(fmt, "{self:?}")
@@ -39,8 +73,10 @@ impl core::fmt::Display for Error {
 }
 
 impl std::error::Error for Error {}
+// endregion: --- Error boilerplate
 
 impl Error {
+    /// Erro to ClientError and HTTP Status code
     pub fn client_status_and_error(&self) -> (StatusCode, ClientError) {
         use web::Error::*;
 
