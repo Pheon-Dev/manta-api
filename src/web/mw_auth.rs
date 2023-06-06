@@ -38,13 +38,16 @@ pub async fn mw_ctx_resolve<B>(
 
     let token = cookies.get(AUTH_TOKEN).map(|c| c.value().to_string());
 
+    // -- Parse Token
     let token = token
         .ok_or(CtxAuthError::TokenNotInCookie)
         .and_then(|t| Token::parse(&t).map_err(|_| CtxAuthError::TokenWrongFormat));
 
+    // -- Validate Token
+    // Get the use from the db.
     let result_user = match &token {
         Ok(token) => UserBmc::first_by_username::<UserForAuth>(&Ctx::root_ctx(), &mm, &token.user)
-            .await?
+            .await? // If cannot access the database, critical enough to return error. TODO: to reassess
             .ok_or(CtxAuthError::FailUserNotFound(token.user.to_string())),
         Err(ex) => CtxAuthResult::Err(ex.clone()),
     };
@@ -55,16 +58,22 @@ pub async fn mw_ctx_resolve<B>(
             .map_err(|ex| CtxAuthError::FailValidate(ex.to_string()))
     });
 
+    // -- Update Token
+    // If auth success, create a new Token with the updated expiration date
     if let Ok(user) = result_user.as_ref() {
         web::set_token_cookie(&cookies, &user.username, &user.token_salt.to_string())?;
-    } else if !matches!(result_user, Err(CtxAuthError::TokenNotInCookie)) {
+    }
+    // Otherwise, remove the cookie if something went wrong other than TokenNotInCookie.
+    else if !matches!(result_user, Err(CtxAuthError::TokenNotInCookie)) {
         cookies.remove(Cookie::named(AUTH_TOKEN))
     }
 
+    // -- Create the context if we have the user
     let result_ctx = result_user.and_then(|user| {
         Ctx::new(user.id).map_err(|ex| CtxAuthError::CtxCreateFail(ex.to_string()))
     });
 
+    // -- Store the context result in the request extension
     req.extensions_mut().insert(result_ctx);
 
     Ok(next.run(req).await)
