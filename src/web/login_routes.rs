@@ -1,7 +1,7 @@
 use crate::crypt::pwd::{self, SchemeStatus};
 use crate::crypt::EncryptContent;
 use crate::ctx::Ctx;
-// use crate::model::user::{UserBmc, UserForLogin};
+use crate::model::user::{UserBmc, UserForLogin};
 use crate::model::ModelManager;
 use crate::web;
 use crate::web::{Result, Error};
