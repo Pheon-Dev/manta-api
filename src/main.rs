@@ -13,9 +13,11 @@ pub use self::error::{Error, Result};
 pub use config::config;
 
 use crate::model::ModelManager;
+
 use axum::{middleware, Router};
 use tracing_subscriber::EnvFilter;
 use std::net::SocketAddr;
+use tracing::info;
 
 // endregion: --- Modules
 
