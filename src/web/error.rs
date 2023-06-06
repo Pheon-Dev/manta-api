@@ -10,6 +10,9 @@ pub type Result<T> = core::result::Result<T, Error>;
 #[serde(tag = "type", content = "data")]
 pub enum Error {
     // TODO: RPC
+    RpcMethodUnknown(String),
+    RpcMissingParams { rpc_method: String },
+
     // login
     LoginFailUsernameNotFound,
     LoginFailUserHasNoPwd { user_id: i64 },
