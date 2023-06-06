@@ -17,6 +17,7 @@ use tower_cookies::CookieManagerLayer;
 use crate::model::ModelManager;
 use crate::web::mw_auth::{mw_ctx_require, mw_ctx_resolve};
 use crate::web::mw_req_stamp::mw_req_stamp;
+use crate::web::mw_res_map::mw_response_map;
 use crate::web::{login_routes, static_routes};
 
 use axum::{middleware, Router};
@@ -40,10 +41,11 @@ async fn main() -> Result<()> {
     let mm = ModelManager::new().await?;
 
     // TODO: routes rpc
-    // let routes_rpc = 
+    // let routes_rpc = rpc::routes(mm.clone()).route_layer(middleware::from_fn(mw_ctx_require));
 
     let all_routes = Router::new()
         .merge(web::login_routes::routes(mm.clone()))
+        .layer(middleware::map_response(mw_response_map))
         .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
         .layer(middleware::from_fn(mw_req_stamp))
         .layer(CookieManagerLayer::new())
