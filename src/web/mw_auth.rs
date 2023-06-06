@@ -1,6 +1,6 @@
 use crate::crypt::token::{validate_token_sign_and_exp, Token};
-// TODO: use crate::model::user::{UserBmc, UserForAuth};
 use crate::ctx::Ctx;
+use crate::model::user::{UserBmc, UserForAuth};
 use crate::model::ModelManager;
 use crate::web;
 use crate::web::AUTH_TOKEN;
@@ -8,12 +8,12 @@ use crate::web::{Error, Result};
 
 use async_trait::async_trait;
 use axum::extract::{FromRequestParts, State};
-use axum::middleware::Next;
 use axum::http::request::Parts;
 use axum::http::Request;
+use axum::middleware::Next;
 use axum::response::Response;
 use serde::Serialize;
-use tower_cookies::{Cookies, Cookie};
+use tower_cookies::{Cookie, Cookies};
 use tracing::debug;
 
 pub async fn mw_ctx_require<B>(
@@ -28,28 +28,46 @@ pub async fn mw_ctx_require<B>(
     Ok(next.run(req).await)
 }
 
-// TODO: middleware context resolve
 pub async fn mw_ctx_resolve<B>(
     mm: State<ModelManager>,
     cookies: Cookies,
     mut req: Request<B>,
-    next: Next<B>
-) -> Result<Response>{
+    next: Next<B>,
+) -> Result<Response> {
     debug!("{:<12} - mw_ctx_resolve", "MIDDLEWARE");
 
     let token = cookies.get(AUTH_TOKEN).map(|c| c.value().to_string());
 
     let token = token
-    .ok_or(CtxAuthError::TokenNotInCookie)
+        .ok_or(CtxAuthError::TokenNotInCookie)
         .and_then(|t| Token::parse(&t).map_err(|_| CtxAuthError::TokenWrongFormat));
 
-    // let result_user = match &token{
-    //     Ok(token) => {
-    //         
-    //     }
-    // }
+    let result_user = match &token {
+        Ok(token) => UserBmc::first_by_username::<UserForAuth>(&Ctx::root_ctx(), &mm, &token.user)
+            .await?
+            .ok_or(CtxAuthError::FailUserNotFound(token.user.to_string())),
+        Err(ex) => CtxAuthResult::Err(ex.clone()),
+    };
 
-    Ok()
+    let result_user = result_user.and_then(|user| {
+        validate_token_sign_and_exp(&token.unwrap(), &user.token_salt.to_string())
+            .map(|_| user)
+            .map_err(|ex| CtxAuthError::FailValidate(ex.to_string()))
+    });
+
+    if let Ok(user) = result_user.as_ref() {
+        web::set_token_cookie(&cookies, &user.username, &user.token_salt.to_string())?;
+    } else if !matches!(result_user, Err(CtxAuthError::TokenNotInCookie)) {
+        cookies.remove(Cookie::named(AUTH_TOKEN))
+    }
+
+    let result_ctx = result_user.and_then(|user| {
+        Ctx::new(user.id).map_err(|ex| CtxAuthError::CtxCreateFail(ex.to_string()))
+    });
+
+    req.extensions_mut().insert(result_ctx);
+
+    Ok(next.run(req).await)
 }
 
 // endregion: --- Ctx Extractor
