@@ -2,6 +2,7 @@ mod error;
 
 pub mod mw_auth;
 pub mod login_routes;
+pub mod static_routes;
 
 pub use self::error::ClientError;
 pub use self::error::{Error, Result};
@@ -24,6 +25,11 @@ fn set_token_cookie(cookies: &Cookies, user: &str, salt: &str) -> Result<()> {
     Ok(())
 }
 
+/// Request "Stamp" created at the beginning of the http request
+/// flow by the `mw_req_stamp_resolver` with the following properties:
+///
+/// - uuid    - Unique identifier of the request.
+/// - time_in - Equivalent (close enough) of the beginning of the request.
 #[derive(Debug, Clone)]
 pub struct ReqStamp {
     pub uuid: Uuid,
