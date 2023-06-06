@@ -62,10 +62,14 @@ macro_rules! exec_rpc_fn {
         let params = $rpc_params.ok_or(Error::RpcMissingParams {
             rpc_method: rpc_fn_name.to_string(),
         })?;
+        let params = from_value(params).map_err(|_| Error::RpcFailJsonParams {
+            rpc_method: rpc_fn_name.to_string(),
+        })?;
 
         $rpc_fn($ctx, $mm, params).await.map(to_value)??
     }};
 
+    // without params
     ($rpc_fn:expr, $ctx:expr, $mm:expr) => {{
         $rpc_fn($ctx, $mm).await.map(to_value)??
     }};
@@ -76,10 +80,13 @@ async fn rpc_handler(
 ctx: Ctx,
     Json(rpc_req): Json<RpcRequest>,
 ) -> Response {
+    // -- Create the RPC Context to be set to the response.extensions
     let rpc_info = RpcInfo {
     id: rpc_req.id.clone(),
     method: rpc_req.method.clone(),
 };
+
+    // -- Exec & Store RPC Info in response.
     let mut res = rpc_inner_handler(ctx, mm, rpc_req).await.into_response();
     res.extensions_mut().insert(rpc_info);
     res

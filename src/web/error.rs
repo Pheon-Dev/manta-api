@@ -12,6 +12,7 @@ pub enum Error {
     // TODO: RPC
     RpcMethodUnknown(String),
     RpcMissingParams { rpc_method: String },
+    RpcFailJsonParams { rpc_method: String },
 
     // login
     LoginFailUsernameNotFound,
