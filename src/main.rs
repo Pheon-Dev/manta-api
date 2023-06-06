@@ -18,12 +18,12 @@ use crate::model::ModelManager;
 use crate::web::mw_auth::{mw_ctx_require, mw_ctx_resolve};
 use crate::web::mw_req_stamp::mw_req_stamp;
 use crate::web::mw_res_map::mw_response_map;
-use crate::web::{login_routes, static_routes};
+use crate::web::{login_routes, rpc, static_routes};
 
 use axum::{middleware, Router};
-use tracing_subscriber::EnvFilter;
 use std::net::SocketAddr;
 use tracing::info;
+use tracing_subscriber::EnvFilter;
 
 // endregion: --- Modules
 
@@ -35,21 +35,22 @@ async fn main() -> Result<()> {
         .with_env_filter(EnvFilter::from_default_env())
         .init();
 
-    // -- FOR DEV ONLY 
+    // -- FOR DEV ONLY
     // _dev_utils::init_dev().await;
 
     let mm = ModelManager::new().await?;
 
-    // TODO: routes rpc
-    // let routes_rpc = rpc::routes(mm.clone()).route_layer(middleware::from_fn(mw_ctx_require));
+    // routes rpc
+    let rpc_routes = rpc::routes(mm.clone()).route_layer(middleware::from_fn(mw_ctx_require));
 
     let all_routes = Router::new()
-        .merge(web::login_routes::routes(mm.clone()))
+        .merge(login_routes::routes(mm.clone()))
+        .nest("/api", rpc_routes)
         .layer(middleware::map_response(mw_response_map))
         .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
         .layer(middleware::from_fn(mw_req_stamp))
         .layer(CookieManagerLayer::new())
-        .fallback_service(web::static_routes::serve_dir());
+        .fallback_service(static_routes::serve_dir());
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     info!("{:<12} - on {addr}\n", "LISTENING");

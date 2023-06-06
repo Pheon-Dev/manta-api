@@ -34,7 +34,7 @@ impl Config {
             // -- Crypt
             PWD_KEY: get_env_b64u_as_u8s("SERVICE_PWD_KEY")?,
 
-            TOKEN_KEY: get_env_b64u_as_u8s("service_token_key")?,
+            TOKEN_KEY: get_env_b64u_as_u8s("SERVICE_TOKEN_KEY")?,
             TOKEN_DURATION_SEC: get_env_parse("SERVICE_TOKEN_DURATION_SEC")?,
 
             // -- DB
