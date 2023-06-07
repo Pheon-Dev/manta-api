@@ -11,9 +11,11 @@ use uuid::Uuid;
 
 type Db = Pool<Postgres>;
 
+// NOTE: Hardcore to prevent deployed system db update.
 const PG_DEV_POSTGRES_URL: &str = "postgres://postgres:welcome@localhost:5432/postgres";
 const PG_DEV_APP_URL: &str = "postgres://app_user:dev_only_pwd@localhost/app_db";
 
+// sql files
 const SQL_RECREATE_DB: &str = "sql/dev_initial/00-recreate-db.sql";
 const SQL_DIR: &str = "sql/dev_initial";
 
@@ -32,19 +34,22 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
         .collect();
     paths.sort();
 
-    // -- SQL
+    // -- SQL Execute eaxh file
     let app_db = new_db_pool(PG_DEV_APP_URL).await?;
     for path in paths {
         if let Some(path) = path.to_str() {
             let path = path.replace('\\', "/");
 
+            // Only take .sql and skip the SQL_RECREATE_DB
             if path.ends_with(".sql") && path != SQL_RECREATE_DB {
                 pexec(&app_db, &path).await?;
             }
         }
     }
+
+    // -- Set the "welcome" password to demo1
     let (id, salt): (i64, Uuid) = sqlx::query_as(
-    r#"
+        r#"
     SELECT id, pwd_salt FROM "user"
     WHERE username = $1
     "#,
@@ -53,15 +58,15 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
     .fetch_one(&app_db)
     .await?;
 
-let pwd = pwd::encrypt_pwd(&EncryptContent {
-salt: salt.to_string(),
-content: "welcome".to_string(),
-})?;
-sqlx::query(r#"UPDATE "user" SET pwd = $1 WHERE id = $2"#)
-.bind(pwd)
-.bind(id)
-.execute(&app_db)
-.await?;
+    let pwd = pwd::encrypt_pwd(&EncryptContent {
+        salt: salt.to_string(),
+        content: "welcome".to_string(),
+    })?;
+    sqlx::query(r#"UPDATE "user" SET pwd = $1 WHERE id = $2"#)
+        .bind(pwd)
+        .bind(id)
+        .execute(&app_db)
+        .await?;
 
     Ok(())
 }
@@ -69,12 +74,21 @@ sqlx::query(r#"UPDATE "user" SET pwd = $1 WHERE id = $2"#)
 async fn pexec(db: &Db, file: &str) -> Result<(), sqlx::Error> {
     info!("{:<12} - pexec: {file}", "FOR-DEV-ONLY");
 
+    // Read the file
     let content = fs::read_to_string(file)?;
 
+    // TODO: Make the split more sql proof
     let sqls: Vec<&str> = content.split(';').collect();
 
     let mut fn_sql_parts: Vec<&str> = Vec::new();
     for sql in sqls {
+        // -- Trick to not split function body
+        // TODO: (Needs to be robust)
+        // FIXME: This works for simple sql files with trigger $$ notation.
+        // However, it will probably break for other specific cases.
+        // It needs to be made more robust.
+        // sqlx does not seem to have a non static file executor
+        // If it is at the beginning of a function, we need to start keeping track
         if sql.contains("BEGINS") {
             fn_sql_parts.push(sql);
         } else if !fn_sql_parts.is_empty() {

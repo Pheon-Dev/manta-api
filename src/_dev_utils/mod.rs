@@ -7,16 +7,20 @@ use crate::model::{self, ModelManager};
 use tokio::sync::OnceCell;
 use tracing::info;
 
+// Initialize environment for local development
+// (for early development, called from `main()`)
 pub async fn init_dev() {
     static INIT: OnceCell<()> = OnceCell::const_new();
 
     INIT.get_or_init(|| async {
         info!("{:<12} - init_dev()", "FOR-DEV-ONLY");
+
         dev_db::init_dev_db().await.unwrap();
     })
     .await;
 }
 
+/// Initialize test environment
 pub async fn init_test() -> ModelManager {
     static INIT: OnceCell<ModelManager> = OnceCell::const_new();
 
