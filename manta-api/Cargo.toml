@@ -25,8 +25,9 @@ strum_macros = "0.25.0"
 thiserror = "1.0.40"
 time = "0.3.22"
 tokio = { version = "1.28.2", features = ["full"] }
+tower = { version = "0.4", features = ["util", "timeout"] }
 tower-cookies = "0.9.0"
-tower-http = { version = "0.4.0", features = ["fs"] }
+tower-http = { version = "0.4.0", features = ["fs", "trace"] }
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
 uuid = { version = "1.3.4", features = ["v4", "fast-rng"] }
