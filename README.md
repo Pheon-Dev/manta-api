@@ -31,7 +31,7 @@ Unit test REPL
 cargo watch -q -c -x "test -- --nocapture"
 
 # Specific test filter.
-cargo watch -q -c -x "test model::task::tests::test_create -- --nocapture"
+cargo watch -q -c -x "test model::send::tests::test_create -- --nocapture"
 ```
 
 

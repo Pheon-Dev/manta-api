@@ -1,40 +1,41 @@
 [package]
-name = "manta-api"
+name = "rust-web-app-preview"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Jeremy Chone <jeremy.chone@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = "AwesomeApp Rust Web App Preview."
 
 [dependencies]
-tokio = { version = "1.28.1", features = ["full"] }
-#web 
-axum = "0.6.18"
-tower-cookies = "0.9.0"
-tower-http = { version = "0.4.0", features = ["fs"] }
-# crypt and encoding
-rand = "0.8.5"
-hmac = "0.12.1"
-sha2 = "0.10.6"
-base64-url = "2.0.0"
-#json 
-serde = { version = "1.0.163", features = ["derive"] }
-serde_json = "1.0.96"
-serde_with = { version = "3.0.0", features = ["time_0_3"] }
-# data
-sqlb = "0.3.2"
-sqlx = { version = "0.6.3", features = ["runtime-tokio-rustls", "uuid", "time", "postgres"] }
-# tracing
-tracing = "0.1.37"
-tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
-# others
-async-trait = "0.1.68"
-strum_macros = "0.24.3"
-time = "0.3.21"
-uuid = { version = "1.3.3", features = ["v4", "fast-rng"] }
-once_cell = "1.17.1"
-lazy-regex = "2.5.0"
+tokio = { version = "1", features = ["full"] }
+# -- Tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+# -- Json
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_with = {version = "3", features = ["time_0_3"]}
+# -- Web
+axum = "0.6"
+tower-http = { version = "0.4", features = ["fs"] }
+tower-cookies = "0.9"
+# -- Data
+sqlx = { version = "0.6", features = [ "runtime-tokio-rustls", "postgres", "uuid", "time" ] }
+sqlb = "0.3" # Optional
+# -- Crypt & Encoding
+rand = "0.8"
+hmac = "0.12"
+sha2 = "0.10"
+base64-url = "2"
+# -- Others
+lazy-regex = "2"
+uuid = {version = "1", features = ["v4", "fast-rng"]}
+time = "0.3"
+async-trait = "0.1"
+strum_macros = "0.24"
+
 
 [dev-dependencies]
-anyhow = "1.0.71"
-httpc-test = "0.1.2"
-serial_test = "2.0.0"
+anyhow = "1"
+httpc-test = "0.1"
+serial_test = "2"
