@@ -1,1 +1,6 @@
 /target
+manta-api/target
+manta-api-logic/target
+manta-api-logic/Cargo.lock
+manta-api/Cargo.lock
+Cargo.lock
