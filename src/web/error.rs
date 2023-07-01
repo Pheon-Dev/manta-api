@@ -9,118 +9,123 @@ pub type Result<T> = core::result::Result<T, Error>;
 #[derive(Debug, Serialize, strum_macros::AsRefStr)]
 #[serde(tag = "type", content = "data")]
 pub enum Error {
-    // TODO: RPC
-    RpcMethodUnknown(String),
-    RpcMissingParams { rpc_method: String },
-    RpcFailJsonParams { rpc_method: String },
+	// -- RPC
+	RpcMethodUnknown(String),
+	RpcMissingParams { rpc_method: String },
+	RpcFailJsonParams { rpc_method: String },
 
-    // login
-    LoginFailUsernameNotFound,
-    LoginFailUserHasNoPwd { user_id: i64 },
-    LoginFailPwdNotMatching { user_id: i64 },
+	// -- Login
+	LoginFailUsernameNotFound,
+	LoginFailUserHasNoPwd { user_id: i64 },
+	LoginFailPwdNotMatching { user_id: i64 },
 
-    // middleware/extractor
-    ReqStampNotInResponseExt,
+	// -- Middelware/Extractor
+	ReqStampNotInResponseExt,
 
-    // ctxAuthError
-    CtxAuth(web::mw_auth::CtxAuthError),
+	// -- CtxExtError
+	CtxExt(web::mw_auth::CtxExtError),
 
-    // modules
-    Model(model::Error),
-    Crypt(crypt::Error),
+	// -- Modules
+	Model(model::Error),
+	Crypt(crypt::Error),
 
-    // external modules
-    SerdeJson(String),
+	// -- External Modules
+	SerdeJson(String),
 }
 
-// region: --- Error Froms
+// region:    --- Error Froms
 impl From<model::Error> for Error {
-    fn from(val: model::Error) -> Self {
-        Error::Model(val)
-    }
+	fn from(val: model::Error) -> Self {
+		Error::Model(val)
+	}
 }
 
 impl From<crypt::Error> for Error {
-    fn from(val: crypt::Error) -> Self {
-        Self::Crypt(val)
-    }
+	fn from(val: crypt::Error) -> Self {
+		Self::Crypt(val)
+	}
 }
 
 impl From<serde_json::Error> for Error {
-    fn from(val: serde_json::Error) -> Self {
-        Error::SerdeJson(val.to_string())
-    }
+	fn from(val: serde_json::Error) -> Self {
+		Error::SerdeJson(val.to_string())
+	}
 }
 // endregion: --- Error Froms
 
-// region: --- Axum IntoResponse
+// region:    --- Axum IntoResponse
 impl IntoResponse for Error {
-    fn into_response(self) -> Response {
-        debug!("{:<12} - model::Error {self:?}", "INTO_RES");
+	fn into_response(self) -> Response {
+		debug!("{:<12} - model::Error {self:?}", "INTO_RES");
 
-        // create a placeholder Axum response.
-        let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+		// Create a placeholder Axum reponse.
+		let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
 
-        // insert the error into the response
-        response.extensions_mut().insert(self);
+		// Insert the Error into the reponse.
+		response.extensions_mut().insert(self);
 
-        response
-    }
+		response
+	}
 }
 // endregion: --- Axum IntoResponse
 
-// region: --- Error boilerplate
+// region:    --- Error Boilerplate
 impl core::fmt::Display for Error {
-    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::result::Result<(), core::fmt::Error> {
-        write!(fmt, "{self:?}")
-    }
+	fn fmt(
+		&self,
+		fmt: &mut core::fmt::Formatter,
+	) -> core::result::Result<(), core::fmt::Error> {
+		write!(fmt, "{self:?}")
+	}
 }
 
 impl std::error::Error for Error {}
-// endregion: --- Error boilerplate
+// endregion: --- Error Boilerplate
 
 impl Error {
-    /// Erro to ClientError and HTTP Status code
-    pub fn client_status_and_error(&self) -> (StatusCode, ClientError) {
-        use web::Error::*;
+	/// Error to ClientError and HTTP Status code
+	pub fn client_status_and_error(&self) -> (StatusCode, ClientError) {
+		use web::Error::*;
 
-        match self {
-            // -- Login
-            LoginFailUsernameNotFound
-            | LoginFailUserHasNoPwd { .. }
-            | LoginFailPwdNotMatching { .. } => (StatusCode::FORBIDDEN, ClientError::LOGIN_FAIL),
+		match self {
+			// -- Login
+			LoginFailUsernameNotFound
+			| LoginFailUserHasNoPwd { .. }
+			| LoginFailPwdNotMatching { .. } => {
+				(StatusCode::FORBIDDEN, ClientError::LOGIN_FAIL)
+			}
 
-            // --  Auth
-            CtxAuth(_) => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
+			// -- Auth
+			CtxExt(_) => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
 
-            // -- Model
-            Model(model::Error::EntityNotFound { entity, id }) => (
-                StatusCode::BAD_REQUEST,
-                ClientError::EntityNotFound { entity, id: *id },
-            ),
-            Model(model::Error::UserAlreadyExists { .. }) => {
-                (StatusCode::BAD_REQUEST, ClientError::USER_ALREADY_EXISTS)
-            }
+			// -- Model
+			Model(model::Error::EntityNotFound { entity, id }) => (
+				StatusCode::BAD_REQUEST,
+				ClientError::ENTITY_NOT_FOUND { entity, id: *id },
+			),
+			Model(model::Error::UserAlreadyExists { .. }) => {
+				(StatusCode::BAD_REQUEST, ClientError::USER_ALREADY_EXISTS)
+			}
 
-            // -- Fallback
-            _ => (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                ClientError::SERVICE_ERROR,
-            ),
-        }
-    }
+			// -- Fallback
+			_ => (
+				StatusCode::INTERNAL_SERVER_ERROR,
+				ClientError::SERVICE_ERROR,
+			),
+		}
+	}
 }
 
-/// This is the ClientError use to be serialised in the
+/// This is the ClientError used to be serialized in the
 /// json-rpc error body.
 /// Only used in the mw_res_mapper
 #[derive(Debug, Serialize, strum_macros::AsRefStr)]
 #[serde(tag = "message", content = "detail")]
 #[allow(non_camel_case_types)]
 pub enum ClientError {
-    USER_ALREADY_EXISTS,
-    LOGIN_FAIL,
-    NO_AUTH,
-    EntityNotFound { entity: &'static str, id: i64 },
-    SERVICE_ERROR,
+	LOGIN_FAIL,
+	NO_AUTH,
+	ENTITY_NOT_FOUND { entity: &'static str, id: i64 },
+	USER_ALREADY_EXISTS,
+	SERVICE_ERROR,
 }
