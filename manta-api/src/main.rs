@@ -9,7 +9,7 @@ use serde_json::json;
 use std::{net::SocketAddr, sync::Arc};
 use tokio::sync::RwLock;
 
-use manta_api_logic::{
+use manta_api_logic::services::send::{
     Pagination, SendRequest, SendRequestStore, SendRequestStoreError, UpdateSendRequest,
 };
 
