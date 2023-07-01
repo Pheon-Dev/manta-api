@@ -1,2 +1,6 @@
 /target
 .cargo/cargo.toml
+manta-api/target
+manta-api/Cargo.lock
+manta-api-logic/target
+manta-api-logic/Cargo.lock
