@@ -45,7 +45,7 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	req_update_send.await?.print().await?;
+	// req_update_send.await?.print().await?;
 
 	let req_delete_send = hc.do_post(
 		"/api/rpc",
@@ -57,7 +57,7 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	req_delete_send.await?.print().await?;
+	// req_delete_send.await?.print().await?;
 
 	let req_list_sends = hc.do_post(
 		"/api/rpc",
@@ -68,12 +68,12 @@ async fn main() -> Result<()> {
 	);
 	req_list_sends.await?.print().await?;
 
-	// let req_logoff = hc.do_post(
-	// 	"/api/logoff",
-	// 	json!({
-	// 		"logoff": true
-	// 	}),
-	// );
+	let req_logoff = hc.do_post(
+		"/api/logoff",
+		json!({
+			"logoff": true
+		}),
+	);
 	// req_logoff.await?.print().await?;
 
 	Ok(())

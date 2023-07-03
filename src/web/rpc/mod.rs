@@ -1,6 +1,6 @@
 // region:    --- Modules
 
-mod send_rpc;
+pub mod send_rpc;
 
 use crate::ctx::Ctx;
 use crate::model::ModelManager;

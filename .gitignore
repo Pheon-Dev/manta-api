@@ -5,3 +5,4 @@ manta-api/Cargo.lock
 manta-api-logic/target
 manta-api-logic/Cargo.lock
 Cargo.lock
+manta-wallet/yarn.lock

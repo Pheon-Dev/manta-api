@@ -4,6 +4,15 @@ use crate::model::ModelManager;
 use crate::web::rpc::{DataResult, ParamsForCreate, ParamsForUpdate, ParamsIded};
 use crate::web::Result;
 
+#[utoipa::path(
+    post,
+    path = "/api/rpc",
+    request_body = ParamsForCreate,
+    responses(
+        (status = 200, description = "Sent Successfully", body = [Send]),
+        (status = 404, description = "Failed to Send"),
+    )
+)]
 pub async fn create_send(
 	ctx: Ctx,
 	mm: ModelManager,
@@ -17,6 +26,14 @@ pub async fn create_send(
 	Ok(DataResult::new(send))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/rpc",
+    responses(
+        (status = 200, description = "Sent Successfully", body = [Send]),
+        (status = 404, description = "Failed to Send"),
+    )
+)]
 pub async fn list_sends(
 	ctx: Ctx,
 	mm: ModelManager,
@@ -26,6 +43,15 @@ pub async fn list_sends(
 	Ok(DataResult::new(sends))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/rpc",
+    request_body = ParamsForUpdate,
+    responses(
+        (status = 200, description = "Updated Successfully", body = Send),
+        (status = 404, description = "Failed to Update"),
+    )
+)]
 pub async fn update_send(
 	ctx: Ctx,
 	mm: ModelManager,
@@ -40,6 +66,15 @@ pub async fn update_send(
 	Ok(DataResult::new(send))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/rpc",
+    request_body = ParamsIded,
+    responses(
+        (status = 200, description = "Deleted Successfully", body = Send),
+        (status = 404, description = "Failed to Delete"),
+    )
+)]
 pub async fn delete_send(
 	ctx: Ctx,
 	mm: ModelManager,
