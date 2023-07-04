@@ -67,10 +67,12 @@ async fn list_payments(
         description = "Payment Details",
     ), ( status = 404, description = "Payment Details Not Found"))
 )]
-async fn details_payment(State(mc): State<ModelController>, ctx: Ctx) -> Result<Json<Vec<Payment>>> {
+async fn details_payment(State(mc): State<ModelController>, ctx: Ctx, Path(id): Path<u64>) -> Result<Json<Payment>> {
     println!("->> {:<12} - payment_details", "HANDLER");
-    let payments = mc.details_payment(ctx).await?;
-    Ok(Json(payments))
+
+    let payment = mc.details_payment(ctx, id).await?;
+
+    Ok(Json(payment))
 }
 
 #[utoipa::path(

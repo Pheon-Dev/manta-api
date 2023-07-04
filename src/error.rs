@@ -16,6 +16,7 @@ pub enum Error {
 
 	// -- Model errors.
 	PaymentDeleteFailIdNotFound { id: u64 },
+    PaymentNotFound { id: u64},
 }
 
 // region:    --- Error Boilerplate
@@ -62,6 +63,9 @@ impl Error {
 			Self::PaymentDeleteFailIdNotFound { .. } => {
 				(StatusCode::BAD_REQUEST, ClientError::INVALID_PARAMS)
 			}
+            Self::PaymentNotFound { .. } => {
+                (StatusCode::BAD_REQUEST, ClientError::INVALID_PARAMS)
+            }
 
 			// -- Fallback.
 			_ => (

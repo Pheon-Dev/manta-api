@@ -23,7 +23,11 @@ async fn main() -> Result<()> {
 	let req_create_payment = hc.do_post(
 		"/api/payments",
 		json!({
-			"amount": "1000"
+			"amount": "1000",
+			"sender": "john",
+			"receiver": "jane",
+			"description": "lunch",
+			"completed": true,
 		}),
 	);
 	req_create_payment.await?.print().await?;
