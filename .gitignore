@@ -4,3 +4,6 @@ manta-api-logic/target
 manta-api-logic/Cargo.lock
 manta-api/Cargo.lock
 Cargo.lock
+manta-wallet/node_modules
+manta-wallet/yarn-error.log
+manta-wallet/yarn.lock
