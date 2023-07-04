@@ -4,7 +4,9 @@ pub use self::error::{Error, Result};
 
 use crate::ctx::Ctx;
 use crate::log::log_request;
-use crate::model::ModelController;
+use crate::web::login_routes::{LoginPayload, LoginResponse};
+use crate::model::{Payment, PaymentForCreate, ModelController};
+
 use axum::extract::{Path, Query};
 use axum::http::{Method, Uri};
 use axum::response::{Html, IntoResponse, Response};
@@ -15,6 +17,8 @@ use serde_json::json;
 use std::net::SocketAddr;
 use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 use uuid::Uuid;
 
 mod ctx;
@@ -22,6 +26,23 @@ mod error;
 mod log;
 mod model;
 mod web;
+
+#[derive(OpenApi)]
+#[openapi(
+    paths(
+        web::login_routes::login_api,
+        web::payments_routes::create_payment,
+        web::payments_routes::list_payments,
+        web::payments_routes::details_payment,
+        web::payments_routes::delete_payment,
+    ),
+    components(
+        schemas(LoginPayload, LoginResponse, Payment, PaymentForCreate),
+    ),
+    tags((name = "Manta API", description = "Manta API")),
+)]
+
+struct ApiDoc;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -35,6 +56,7 @@ async fn main() -> Result<()> {
 		.merge(routes_hello())
 		.merge(web::login_routes::routes())
 		.nest("/api", routes_apis)
+        .merge(SwaggerUi::new("/manta-ui").url("/api-doc/openapi.json", ApiDoc::openapi()))
 		.layer(middleware::map_response(main_response_mapper))
 		.layer(middleware::from_fn_with_state(
 			mc.clone(),

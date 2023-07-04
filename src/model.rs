@@ -5,16 +5,17 @@ use crate::ctx::Ctx;
 use crate::{Error, Result};
 use serde::{Deserialize, Serialize};
 use std::sync::{Arc, Mutex};
+use utoipa::ToSchema;
 
 // region:    --- Payment Types
-#[derive(Clone, Debug, Serialize)]
+#[derive(Clone, Debug, Serialize, ToSchema)]
 pub struct Payment {
 	pub id: u64,
 	pub cid: u64, // creator user_id
 	pub amount: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct PaymentForCreate {
 	pub amount: String,
 }
@@ -62,6 +63,12 @@ impl ModelController {
 
 		Ok(payments)
 	}
+
+    pub async fn details_payment(&self, _ctx: Ctx) -> Result<Vec<Payment>> {
+        let store = self.payments_store.lock().unwrap();
+        let payments = store.iter().filter_map(|t| t.clone()).collect();
+        Ok(payments)
+    }
 
 	pub async fn delete_payment(&self, _ctx: Ctx, id: u64) -> Result<Payment> {
 		let mut store = self.payments_store.lock().unwrap();
