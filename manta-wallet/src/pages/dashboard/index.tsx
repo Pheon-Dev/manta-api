@@ -1,12 +1,8 @@
-import { invoke } from "@tauri-apps/api/tauri";
-import { useState, useEffect } from "react";
 import {
-  Text,
-  Divider,
-  Center,
-  Table,
-  Box
+  Box, Center, Divider, Table, Text
 } from '@mantine/core';
+import { invoke } from "@tauri-apps/api/tauri";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const [username, setUsername] = useState("");
@@ -15,36 +11,40 @@ const Dashboard = () => {
 
   const [amount, setAmount] = useState("");
   const [receiver, setReceiver] = useState("");
+  const [sender, setSender] = useState("");
   const [description, setDescription] = useState("");
   const [createdRequest, setCreatedRequest] = useState("");
 
   const [list, setList] = useState([]);
 
-  async function login_req() {
+  // async function login_req() {
+  //   setUsername("demo1");
+  //   setPassword("welcome");
+  //   setAmount("100");
+  //   setSender("demo1");
+  //   setReceiver("demo2");
+  //   setDescription("Gift Card");
+  //   setLogin(await invoke("login_request", { username, password, amount, receiver, description, sender }));
+  // }
+  const create_req = async () => {
     setUsername("demo1");
     setPassword("welcome");
-    setLogin(await invoke("login_request", { username, password }));
-  }
-  const create_req = async () => {
     setAmount("100");
-    setReceiver("demo1");
+    setSender("demo1");
+    setReceiver("demo2");
     setDescription("Gift Card");
-    setCreatedRequest(await invoke("create_request", { amount, receiver, description }));
+    setCreatedRequest(await invoke("create_request", { username, password, amount, receiver, description, sender }));
   }
-  const list_reqs = async () => {
-    setList(await invoke("list_requests"))
-  }
+  // const list_reqs = async () => {
+  //   setList(await invoke("list_requests"))
+  // }
 
   useEffect(() => {
     let sub = true;
     if (sub) {
-      login_req();
-      setTimeout(() => {
-        create_req();
-      }, 5000);
-      setTimeout(() => {
-        list_reqs();
-      }, 5000);
+      // login_req();
+      create_req();
+      // list_reqs();
     }
 
     return () => {
@@ -53,7 +53,7 @@ const Dashboard = () => {
   }, [username, password])
 
   const elements = [
-    { id: "ji48dm349", amount: "12,011", transaction: 'Send', description: 'Gift Card', time: "12:03 Thu Dec, 2023" },
+    { id: "ji48dm349", amount: "12,011", transaction: 'Send', description: 'Gift Card', time: "12:03 Thu Dec, 2022" },
     { id: "894j9uow4", amount: "14,007", transaction: 'Withdraw', description: 'Shopping', time: "03:45 Mon May, 2023" },
     { id: "4uidf933n", amount: "88,906", transaction: 'Deposit', description: 'Savings', time: "22:34 Tue Jun, 2023" },
     { id: "wh47x74hs", amount: "13,733", transaction: 'Receive', description: 'Sales', time: "15:23 Fri Jan, 2023" },
@@ -108,8 +108,9 @@ const Dashboard = () => {
         </Table>
       </Center>
       <Center>
-        <pre>{JSON.stringify(list, undefined, 2)}</pre>
-        <pre>{JSON.stringify(login, undefined, 2)}</pre>
+        <div>
+        {createdRequest}
+        </div>
       </Center>
     </>
   );
