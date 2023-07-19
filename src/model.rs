@@ -16,7 +16,6 @@ pub struct Payment {
     pub sender: String,
     pub receiver: String,
     pub description: String,
-    pub completed: bool,
 }
 
 #[derive(Deserialize, ToSchema)]
@@ -25,7 +24,6 @@ pub struct PaymentForCreate {
     pub sender: String,
     pub receiver: String,
     pub description: String,
-    pub completed: bool,
 }
 // endregion: --- Payment Types
 
@@ -61,7 +59,6 @@ impl ModelController {
             sender: payment_fc.sender,
             receiver: payment_fc.receiver,
             description: payment_fc.description,
-            completed: payment_fc.completed,
 		};
 		store.push(Some(payment.clone()));
 
