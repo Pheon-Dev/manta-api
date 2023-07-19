@@ -4,18 +4,18 @@ pub use self::error::{Error, Result};
 
 use crate::ctx::Ctx;
 use crate::log::log_request;
+use crate::model::{ModelController, Payment, PaymentForCreate};
 use crate::web::login_routes::{LoginPayload, LoginResponse};
-use crate::model::{Payment, PaymentForCreate, ModelController};
 
-use axum::extract::{Path, Query};
-use axum::http::{Method, Uri};
-use axum::response::{Html, IntoResponse, Response};
-use axum::routing::{get, get_service};
+use axum::handler::HandlerWithoutStateExt;
+use axum::http::{Method, StatusCode, Uri};
+use axum::response::{IntoResponse, Response};
+use axum::routing::{any_service, MethodRouter};
 use axum::{middleware, Json, Router};
-use serde::Deserialize;
 use serde_json::json;
 use std::net::SocketAddr;
 use tower_cookies::CookieManagerLayer;
+use tower_http::cors::{Any, CorsLayer};
 use tower_http::services::ServeDir;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
@@ -39,30 +39,34 @@ mod web;
     components(
         schemas(LoginPayload, LoginResponse, Payment, PaymentForCreate),
     ),
-    tags((name = "Manta API", description = "Manta API")),
+    tags((name = "Manta API", description = "A payments web application API")),
 )]
 
 struct ApiDoc;
-
 #[tokio::main]
 async fn main() -> Result<()> {
+	let cors = CorsLayer::new().allow_origin(Any);
 	// Initialize ModelController.
 	let mc = ModelController::new().await?;
 
+	// println!("{}", ApiDoc::openapi().to_pretty_json().unwrap());
 	let routes_apis = web::payments_routes::routes(mc.clone())
 		.route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
 
 	let routes_all = Router::new()
-		.merge(routes_hello())
+		.merge(
+			SwaggerUi::new("/manta-ui")
+				.url("/api-doc/openapi.json", ApiDoc::openapi()),
+		)
 		.merge(web::login_routes::routes())
 		.nest("/api", routes_apis)
-        .merge(SwaggerUi::new("/manta-ui").url("/api-doc/openapi.json", ApiDoc::openapi()))
 		.layer(middleware::map_response(main_response_mapper))
 		.layer(middleware::from_fn_with_state(
 			mc.clone(),
 			web::mw_auth::mw_ctx_resolver,
 		))
 		.layer(CookieManagerLayer::new())
+		.layer(cors)
 		.fallback_service(routes_static());
 
 	// region:    --- Start Server
@@ -118,35 +122,14 @@ async fn main_response_mapper(
 	error_response.unwrap_or(res)
 }
 
-fn routes_static() -> Router {
-	Router::new().nest_service("/", get_service(ServeDir::new("./")))
+const WEB_FOLDER: &str = "wallet";
+
+fn routes_static() -> MethodRouter {
+	async fn handle_404() -> (StatusCode, &'static str) {
+		(StatusCode::NOT_FOUND, "404 Page Not Found")
+	}
+
+	any_service(
+		ServeDir::new(WEB_FOLDER).not_found_service(handle_404.into_service()),
+	)
 }
-
-// region:    --- Routes Hello
-fn routes_hello() -> Router {
-	Router::new()
-		.route("/hello", get(handler_hello))
-		.route("/hello2/:name", get(handler_hello2))
-}
-
-#[derive(Debug, Deserialize)]
-struct HelloParams {
-	name: Option<String>,
-}
-
-// e.g., `/hello?name=Jen`
-async fn handler_hello(Query(params): Query<HelloParams>) -> impl IntoResponse {
-	println!("->> {:<12} - handler_hello - {params:?}", "HANDLER");
-
-	let name = params.name.as_deref().unwrap_or("World!");
-	Html(format!("Hello <strong>{name}</strong>"))
-}
-
-// e.g., `/hello2/Mike`
-async fn handler_hello2(Path(name): Path<String>) -> impl IntoResponse {
-	println!("->> {:<12} - handler_hello2 - {name:?}", "HANDLER");
-
-	Html(format!("Hello2 <strong>{name}</strong>"))
-}
-
-// endregion: --- Routes Hello
