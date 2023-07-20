@@ -38,7 +38,8 @@ sqlb = "0.3.3"
 rand = "0.8.5"
 hmac = "0.12.1"
 sha2 = "0.10.7"
-base64url = "0.1.0"
+base64-url = "2.0.0"
+time = "0.3.23"
 
 [dev-dependencies]
 anyhow = "1.0.71"
