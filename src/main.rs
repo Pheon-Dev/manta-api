@@ -1,6 +1,17 @@
-// #![allow(unused)] // For beginning only.
+#![allow(unused)] // For beginning only.
+mod config;
+// mod crypt;
+mod ctx;
+mod error;
+mod log;
+mod model;
+// mod utils;
+mod web;
+
+pub mod _dev_utils;
 
 pub use self::error::{Error, Result};
+pub use config::config;
 
 use crate::ctx::Ctx;
 use crate::log::log_request;
@@ -21,12 +32,6 @@ use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use uuid::Uuid;
 
-mod ctx;
-mod error;
-mod log;
-mod model;
-mod web;
-
 #[derive(OpenApi)]
 #[openapi(
     paths(
@@ -46,6 +51,10 @@ struct ApiDoc;
 #[tokio::main]
 async fn main() -> Result<()> {
 	let cors = CorsLayer::new().allow_origin(Any);
+
+	// -- DEV ONLY
+	// _dev_utils::init_dev().await;
+
 	// Initialize ModelController.
 	let mc = ModelController::new().await?;
 
