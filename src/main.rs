@@ -53,7 +53,7 @@ async fn main() -> Result<()> {
 	let cors = CorsLayer::new().allow_origin(Any);
 
 	// -- DEV ONLY
-	// _dev_utils::init_dev().await;
+	_dev_utils::init_dev().await;
 
 	// Initialize ModelController.
 	let mc = ModelController::new().await?;

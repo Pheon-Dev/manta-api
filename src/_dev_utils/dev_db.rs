@@ -1,3 +1,4 @@
+use tracing::info;
 // NOTE: Harcode to prevent deployed system db update.
 const PG_DEV_POSTGRES_URL: &str = "postgres://postgres:welcome@localhost/postgres";
 const PG_DEV_MANTA_APP_URL: &str =
@@ -10,5 +11,6 @@ const SQL_DIR: &str = "sql/dev_initial";
 const DEMO_PASSWORD: &str = "welcome";
 
 pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
+	info!("{:<12} - init_dev_db()", "FOR-DEV-ONLY");
 	Ok(())
 }

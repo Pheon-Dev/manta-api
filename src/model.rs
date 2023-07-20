@@ -13,17 +13,17 @@ pub struct Payment {
 	pub id: u64,
 	pub cid: u64, // creator user_id
 	pub amount: String,
-    pub sender: String,
-    pub receiver: String,
-    pub description: String,
+	pub sender: String,
+	pub receiver: String,
+	pub description: String,
 }
 
 #[derive(Deserialize, ToSchema)]
 pub struct PaymentForCreate {
 	pub amount: String,
-    pub sender: String,
-    pub receiver: String,
-    pub description: String,
+	pub sender: String,
+	pub receiver: String,
+	pub description: String,
 }
 // endregion: --- Payment Types
 
@@ -56,9 +56,9 @@ impl ModelController {
 			id,
 			cid: ctx.user_id(),
 			amount: payment_fc.amount,
-            sender: payment_fc.sender,
-            receiver: payment_fc.receiver,
-            description: payment_fc.description,
+			sender: payment_fc.sender,
+			receiver: payment_fc.receiver,
+			description: payment_fc.description,
 		};
 		store.push(Some(payment.clone()));
 
@@ -73,11 +73,11 @@ impl ModelController {
 		Ok(payments)
 	}
 
-    pub async fn details_payment(&self, _ctx: Ctx, id: u64) -> Result<Payment> {
-        let store = self.payments_store.lock().unwrap();
-        let payment = store.get(id as usize).and_then(|t| t.clone());
-        payment.ok_or(Error::PaymentNotFound { id })
-    }
+	pub async fn details_payment(&self, _ctx: Ctx, id: u64) -> Result<Payment> {
+		let store = self.payments_store.lock().unwrap();
+		let payment = store.get(id as usize).and_then(|t| t.clone());
+		payment.ok_or(Error::PaymentNotFound { id })
+	}
 
 	pub async fn delete_payment(&self, _ctx: Ctx, id: u64) -> Result<Payment> {
 		let mut store = self.payments_store.lock().unwrap();
