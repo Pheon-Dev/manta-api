@@ -1,0 +1,6 @@
+manta-api/target
+manta-api-logic/target
+target
+manta-api
+manta-api-logic
+.cargo/config.toml

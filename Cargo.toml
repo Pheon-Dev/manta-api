@@ -1,0 +1,47 @@
+[package]
+name = "manta-api"
+version = "0.1.0"
+edition = "2021"
+authors = ["Pheon-Dev <devpheon@gmail.com"]
+license = "MIT OR Apache-2.0"
+description = "Manta API enables developers to integrate payments with their applications i.e make payments, receive payments, delete payments and check individual payments which can later be used to make reports on how the transactions have been carried out."
+repository = "https://github.com/Pheon-Dev/manta-api"
+
+[dependencies]
+tokio = { version = "1.29.1", features = ["full"] }
+# Serde / json
+serde = { version = "1.0.169", features = ["derive"] }
+serde_json = "1.0.100"
+serde_with = { version = "3.0.0", features = ["time_0_3"] }
+# Axum
+axum = "0.6.18"
+# tower
+tower-http = { version = "0.4.1", features = ["fs", "cors"] }
+tower-cookies = "0.9.0"
+# Others
+lazy-regex = "3.0.0"
+async-trait = "0.1.71"
+strum_macros = "0.25.1"
+uuid = {version = "1.4.0", features = ["v4","fast-rng",]}
+chrono = { version = "0.4.26", features = ["serde"] }
+dotenv = "0.15.0"
+# Utoipa
+utoipa = { version = "3.3.0", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "3.1.3", features = ["axum"] }
+# Tracing
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
+# Data
+sqlx = { version = "0.7.0", features = ["uuid", "time", "runtime-tokio-rustls", "postgres"] }
+sqlb = "0.3.3"
+# Crypt & Encoding
+rand = "0.8.5"
+hmac = "0.12.1"
+sha2 = "0.10.7"
+base64-url = "2.0.0"
+time = "0.3.23"
+
+[dev-dependencies]
+anyhow = "1.0.71"
+httpc-test = "0.1.4"
+serial_test = "2.0.0"
