@@ -1,9 +1,9 @@
 use crate::ctx::Ctx;
-use crate::model::{ModelController, Payment, PaymentForCreate};
+use crate::model::payment::{ModelController, Payment, PaymentForCreate};
 use crate::Result;
 
 use axum::extract::{Path, State};
-use axum::routing::{delete, post, get};
+use axum::routing::{delete, get, post};
 use axum::{Json, Router};
 
 pub fn routes(mc: ModelController) -> Router {
@@ -67,12 +67,16 @@ async fn list_payments(
         description = "Payment Details",
     ), ( status = 404, description = "Payment Details Not Found"))
 )]
-async fn details_payment(State(mc): State<ModelController>, ctx: Ctx, Path(id): Path<u64>) -> Result<Json<Payment>> {
-    println!("->> {:<12} - payment_details", "HANDLER");
+async fn details_payment(
+	State(mc): State<ModelController>,
+	ctx: Ctx,
+	Path(id): Path<u64>,
+) -> Result<Json<Payment>> {
+	println!("->> {:<12} - payment_details", "HANDLER");
 
-    let payment = mc.details_payment(ctx, id).await?;
+	let payment = mc.details_payment(ctx, id).await?;
 
-    Ok(Json(payment))
+	Ok(Json(payment))
 }
 
 #[utoipa::path(

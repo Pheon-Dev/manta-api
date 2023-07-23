@@ -15,7 +15,7 @@ pub use config::config;
 
 use crate::ctx::Ctx;
 use crate::log::log_request;
-use crate::model::{ModelController, Payment, PaymentForCreate};
+use crate::model::payment::{ModelController, Payment, PaymentForCreate};
 use crate::web::login_routes::{LoginPayload, LoginResponse};
 
 use axum::handler::HandlerWithoutStateExt;
