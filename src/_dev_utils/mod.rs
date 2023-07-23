@@ -1,8 +1,8 @@
 mod dev_db;
 
 use crate::ctx::Ctx;
-use crate::model::{self, ModelController};
-use crate::model::{Payment, PaymentForCreate};
+use crate::model::payment::{self, ModelController};
+use crate::model::payment::{Payment, PaymentForCreate};
 use tokio::sync::OnceCell;
 use tracing::info;
 
@@ -28,15 +28,19 @@ pub async fn init_test() -> ModelController {
 		.await;
 	mc.clone()
 }
-
+//
 // pub async fn seed_payments(
 // 	ctx: &Ctx,
 // 	mc: &ModelController,
-// 	payments: Vec<PaymentForCreate>,
-// ) {
+// 	amounts: &[&str],
+// ) -> model::Result<Vec<Payment>> {
 // 	let mut payments = Vec::new();
-// 	for payment in payments {
-// 		payments.push(mc.create_payment(ctx, payment).await?);
+//
+// 	for amount in amounts {
+// 		let id = 0;
+// 		let payment = [];
+// 		payments.push(payments);
 // 	}
+//
 // 	Ok(payments)
 // }
