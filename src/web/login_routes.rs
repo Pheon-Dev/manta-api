@@ -36,7 +36,7 @@ async fn login_api(
 	// Create the success body.
 	let body = Json(json!({
 		"action": "login",
-        "success": true,
+		"success": true,
 	}));
 
 	Ok(body)

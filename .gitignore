@@ -4,3 +4,4 @@ target
 manta-api
 manta-api-logic
 .cargo/config.toml
+web-folder/kplc-app/src-tauri/Cargo.lock

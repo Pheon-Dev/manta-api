@@ -2,6 +2,40 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import "./App.css";
+import { getClient, Body, ResponseType } from "@tauri-apps/api/http";
+
+const client = await getClient();
+const login = await client.request({
+  url: "http://localhost:8080/api/login",
+  method: "POST",
+  body: Body.json({
+    username: "demo1",
+    password: "welcome",
+  }),
+  responseType: ResponseType.JSON,
+})
+
+const payment = await client.request({
+  url: "http://localhost:8080/api/payments",
+  headers: {
+    Cookie: "auth-token=user-1.exp.sign"
+  },
+  method: "POST",
+  body: Body.json({
+    amount: "100",
+    sender: "demo1",
+    receiver: "demo1",
+    description: "allowance"
+  })
+})
+
+const response = await client.request({
+  url: "http://localhost:8080/api/payments",
+  method: "GET",
+  headers: {
+    Cookie: "auth-token=user-1.exp.sign"
+  },
+});
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -29,6 +63,9 @@ function App() {
       </div>
 
       <p>Click on the Tauri, Vite, and React logos to learn more.</p>
+      <pre>{JSON.stringify(login, undefined, 2)}</pre>
+      <pre>{JSON.stringify(payment, undefined, 2)}</pre>
+      <pre>{JSON.stringify(response, undefined, 2)}</pre>
 
       <form
         className="row"
