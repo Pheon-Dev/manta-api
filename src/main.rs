@@ -50,7 +50,9 @@ use uuid::Uuid;
 struct ApiDoc;
 #[tokio::main]
 async fn main() -> Result<()> {
-	let cors = CorsLayer::new().allow_origin(Any);
+	let cors = CorsLayer::new()
+		.allow_origin(Any)
+		.allow_methods(vec![Method::GET, Method::POST]);
 
 	// -- DEV ONLY
 	_dev_utils::init_dev().await;
@@ -131,7 +133,7 @@ async fn main_response_mapper(
 	error_response.unwrap_or(res)
 }
 
-const WEB_FOLDER: &str = "wallet";
+const WEB_FOLDER: &str = "web-folder/wallet";
 
 fn routes_static() -> MethodRouter {
 	async fn handle_404() -> (StatusCode, &'static str) {
