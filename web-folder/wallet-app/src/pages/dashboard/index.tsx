@@ -50,12 +50,12 @@ const Dashboard = () => {
     { id: "wh47x74hs", amount: "13,733", transaction: 'Receive', description: 'Sales', time: "15:23 Fri Jan, 2023" },
     { id: "1vb56nb7e", amount: "14,012", transaction: 'Receive', description: 'Repayment', time: "09:21 Sat Aug, 2023" },
   ];
-  const rows = elements.map((element) => (
-    <tr key={element.description}>
+  const rows = response?.data?.map((element) => (
+    <tr key={element.cid}>
       <td>{element.id}</td>
       <td>{element.amount}</td>
-      <td>{element.transaction}</td>
-      <td>{element.time}</td>
+      <td>{element.receiver}</td>
+      <td>{element.sender}</td>
       <td>{element.description}</td>
     </tr>
   ));
@@ -90,8 +90,8 @@ const Dashboard = () => {
             <tr>
               <th>id</th>
               <th>amount</th>
-              <th>transaction</th>
-              <th>time</th>
+              <th>sender</th>
+              <th>receiver</th>
               <th>description</th>
             </tr>
           </thead>
@@ -99,9 +99,13 @@ const Dashboard = () => {
         </Table>
       </Center>
       <Center>
-        <pre>{JSON.stringify(login, undefined, 2)}</pre>
-        <pre>{JSON.stringify(response, undefined, 2)}</pre>
-        <pre>{JSON.stringify(payment, undefined, 2)}</pre>
+        <pre>{JSON.stringify(login.data, undefined, 2)}</pre>
+      </Center>
+      <Center>
+        <pre>{JSON.stringify(response.data, undefined, 2)}</pre>
+      </Center>
+      <Center>
+        <pre>{JSON.stringify(payment.data, undefined, 2)}</pre>
       </Center>
     </>
   );
