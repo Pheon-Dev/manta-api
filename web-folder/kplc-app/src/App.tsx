@@ -1,89 +1,89 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
-import { getClient, Body, ResponseType } from "@tauri-apps/api/http";
-
-const client = await getClient();
-const login = await client.request({
-  url: "http://localhost:8080/api/login",
-  method: "POST",
-  body: Body.json({
-    username: "demo1",
-    password: "welcome",
-  }),
-  responseType: ResponseType.JSON,
-})
-
-const payment = await client.request({
-  url: "http://localhost:8080/api/payments",
-  headers: {
-    Cookie: "auth-token=user-1.exp.sign"
-  },
-  method: "POST",
-  body: Body.json({
-    amount: "100",
-    sender: "demo1",
-    receiver: "demo1",
-    description: "allowance"
-  })
-})
-
-const response = await client.request({
-  url: "http://localhost:8080/api/payments",
-  method: "GET",
-  headers: {
-    Cookie: "auth-token=user-1.exp.sign"
-  },
-});
+import { useRoutes } from "react-router-dom";
+import routes from "./routes";
+import { IconBrandCodecov } from '@tabler/icons-react';
+import {
+  AppShell,
+  Navbar,
+  Header,
+  Footer,
+  // Aside,
+  Text,
+  MediaQuery,
+  Burger,
+  useMantineTheme,
+  ActionIcon,
+  // Title,
+} from '@mantine/core';
+import { NavBar, Utilities } from "./components";
+// import { getClient, ResponseType } from '@tauri-apps/api/http';
+// const client = await getClient();
+// const response = await client.get('http://127.0.0.1:8080/send', {
+//   timeout: 30,
+//   // the expected response type
+//   responseType: ResponseType.JSON
+// });
+// console.log(response);
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const element = useRoutes(routes);
+  const theme = useMantineTheme();
+  const [opened, setOpened] = useState(false);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }));
-  }
 
   return (
-    <div className="container">
-      <h1>Welcome to Tauri!</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-      <pre>{JSON.stringify(login, undefined, 2)}</pre>
-      <pre>{JSON.stringify(payment, undefined, 2)}</pre>
-      <pre>{JSON.stringify(response, undefined, 2)}</pre>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-
-      <p>{greetMsg}</p>
-    </div>
+    <AppShell
+      styles={{
+        main: {
+          background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+        },
+      }}
+      navbarOffsetBreakpoint="sm"
+      asideOffsetBreakpoint="sm"
+      navbar={
+        <Navbar p="md" hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 250, lg: 300 }}>
+          <NavBar />
+        </Navbar>
+      }
+      // aside={
+      //   <MediaQuery smallerThan="sm" styles={{ display: 'none' }}>
+      //     <Aside p="md" hiddenBreakpoint="sm" width={{ sm: 200, lg: 300 }}>
+      //       <Text>Application sidebar</Text>
+      //     </Aside>
+      //   </MediaQuery>
+      // }
+      footer={
+        <Footer height={60}>
+          <Utilities />
+        </Footer>
+      }
+      header={
+        <Header height={{ base: 50, md: 70 }} p="md">
+          <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+            <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+              <Burger
+                opened={opened}
+                onClick={() => setOpened((o) => !o)}
+                size="sm"
+                color={theme.colors.gray[6]}
+                mr="xl"
+              />
+            </MediaQuery>
+            <ActionIcon variant="gradient" gradient={{ from: 'indigo', to: 'cyan', deg: 45 }} size="md"><IconBrandCodecov size={24} /></ActionIcon>
+            <Text
+              variant="gradient"
+              gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
+              sx={{ fontFamily: 'Greycliff CF, sans-serif' }}
+              ta="center" p="xs"
+              fz="xl"
+              fw={700}
+            >{"  "}Manta Wallet</Text>
+          </div>
+        </Header>
+      }
+    >
+      {element}
+    </AppShell>
   );
 }
 
