@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconGauge, IconFingerprint, IconActivity, IconChevronRight, IconHome } from '@tabler/icons-react';
+import { IconGauge, IconFingerprint, IconActivity, IconChevronRight, IconHome, IconCreditCard } from '@tabler/icons-react';
 import { Box, NavLink } from '@mantine/core';
 import { NavLink as Link } from 'react-router-dom';
 
@@ -30,6 +30,13 @@ const data = [
     label: 'Activity',
     // description: 'Recent Transactions',
     rightSection: <IconChevronRight size={16} stroke={1.5} />,
+  },
+  {
+    icon: IconCreditCard,
+    label: 'Cards',
+    // description: 'Recent Transactions',
+    rightSection: <IconChevronRight size={16} stroke={1.5} />,
+    view: '/cards'
   },
 ];
 
