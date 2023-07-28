@@ -7,3 +7,4 @@ manta-api-logic
 web-folder/kplc-app/src-tauri/Cargo.lock
 web-folder/wallet-app/yarn.lock
 web-folder/kplc-app/yarn.lock
+web-folder/wallet-app/.env
