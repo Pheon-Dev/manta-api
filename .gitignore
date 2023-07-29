@@ -8,3 +8,7 @@ web-folder/kplc-app/src-tauri/Cargo.lock
 web-folder/wallet-app/yarn.lock
 web-folder/kplc-app/yarn.lock
 web-folder/wallet-app/.env
+web-folder/wallet-web-app/.next
+web-folder/wallet-web-app/node_modules
+web-folder/wallet-web-app/.env
+web-folder/wallet-web-app/yarn.lock
