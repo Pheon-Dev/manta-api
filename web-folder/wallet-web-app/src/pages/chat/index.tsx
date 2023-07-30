@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Button } from '@mantine/core'
+import { Button, Text, Grid, Textarea, Affix, rem } from '@mantine/core'
 import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './ChatLine'
 import { useCookies } from 'react-cookie'
+import { IconSend } from '@tabler/icons-react'
 const COOKIE_NAME = 'manta-ai-chat-gpt3'
 
 // default first message to display in UI (not necessary to define the prompt)
@@ -14,32 +15,37 @@ export const initialMessages: ChatGPTMessage[] = [
 
 
 const InputMessage = ({ input, setInput, sendMessage }: any) => (
-  <div>
-    <input
-      type="text"
-      aria-label="chat input"
-      required
-      value={input}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
+<Affix position={{bottom: rem(20), right: 0, left: rem(400)}}>
+  <Grid align="center" justify="center">
+    <Grid.Col span={10}>
+      <Textarea
+        aria-label="chat input"
+        autosize
+        withAsterisk
+        minRows={1}
+        value={input}
+        // onKeyDown={(e) => {
+        //   if (e.key === 'Enter') {
+        //     sendMessage(input)
+        //     setInput('')
+        //   }
+        // }}
+        onChange={(e) => {
+          setInput(e.target.value)
+        }}
+      />
+    </Grid.Col>
+    <Grid.Col span={2}>
+      <Button
+        onClick={() => {
           sendMessage(input)
           setInput('')
-        }
-      }}
-      onChange={(e) => {
-        setInput(e.target.value)
-      }}
-    />
-    <Button
-      type="submit"
-      onClick={() => {
-        sendMessage(input)
-        setInput('')
-      }}
-    >
-      Say
-    </Button>
-  </div>
+        }}
+      >
+        <IconSend />
+      </Button>
+    </Grid.Col>
+  </Grid></Affix>
 )
 const Chats = () => {
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
@@ -119,9 +125,9 @@ const Chats = () => {
       {loading && <LoadingChatLine />}
 
       {messages.length < 2 && (
-        <span>
-          Type a message to start the conversation
-        </span>
+        <Text c="dimmed" fs="italic" fz="sm" ta="center">
+          Type a message to start the conversation:
+        </Text>
       )}
       <InputMessage
         input={input}

@@ -1,5 +1,6 @@
-import { Group, Text } from '@mantine/core'
+import { Group, Paper, Loader, Text, Divider, Badge, Card } from '@mantine/core'
 import Balancer from 'react-wrap-balancer'
+import { useMantaStore } from '../_app';
 
 // wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
 const BalancerWrapper = (props: any) => <Balancer {...props} />
@@ -13,7 +14,7 @@ export interface ChatGPTMessage {
 
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
-  <h1>AI:</h1>
+  <Loader variant="bars" my="xs" size="sm" />
 )
 
 // util helper to convert new lines to <br /> tags
@@ -29,6 +30,7 @@ export function ChatLine({ role = 'assistant', content }: ChatGPTMessage) {
   if (!content) {
     return null
   }
+  const id = useMantaStore((state) => state.id)
   const formatteMessage = convertNewLines(content)
 
   return (
@@ -36,16 +38,20 @@ export function ChatLine({ role = 'assistant', content }: ChatGPTMessage) {
       position={
         role != 'assistant' ? 'right' : 'left'
       }
+      my="lg"
     >
       <BalancerWrapper>
-              <p>
-                <a href="#" className="hover:underline">
-                  {role == 'assistant' ? 'AI' : 'You'}
-                </a>
-              </p>
-              <Text color={role == 'assistant' ? 'green' : 'blue' }>
-                {formatteMessage}
-              </Text>
+        <Paper shadow="lg" p="xl" radius="lg" withBorder color={role == 'assistant' ? 'green' : 'blue'}>
+          <Group>
+            <Text>
+              {formatteMessage}
+            </Text>
+          </Group>
+        </Paper>
+        <Badge variant="gradient" gradient={{ from: 'indigo', to: 'cyan', deg: 45 }} my="xs">
+          {role == 'assistant' ? 'AI Assistant' : `You: ${id}`}
+        </Badge>
+      <Divider my="xs" variant="dashed" />
       </BalancerWrapper>
     </Group>
   )
