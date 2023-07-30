@@ -31,11 +31,6 @@ const Wallet = () => {
     name: name,
     email: email
   }
-  const payments = trpc.payments.useQuery();
-
-  if (!payments) {
-    return <div>Loading...</div>;
-  }
   const [opened_send, { open: open_send, close: close_send }] = useDisclosure(false);
   return (
     <>
@@ -128,8 +123,11 @@ const Wallet = () => {
 
           <Group position="apart" w={400} mt="md" mb="md">
             <Text weight={500}>Account Balance</Text>
-            <Badge color="blue" variant="light">
-              KES {balance}
+            <Badge color="blue" variant="light" size="lg">
+              {`KES ${balance}`.replace(
+                /\B(?=(\d{3})+(?!\d))/g,
+                ","
+              )}
             </Badge>
           </Group>
           <Divider />
@@ -139,16 +137,8 @@ const Wallet = () => {
               {id}
             </Badge>
           </Group>
-          <Divider />
-          <Group position="apart" w={400} mt="md" mb="md">
-            <Text weight={500}>In Local Currency</Text>
-            <Badge color="green" variant="light">
-              KSHs. 23,634.00
-            </Badge>
-          </Group>
         </Card>
       </Center>
-      <pre>{JSON.stringify(payments.data, undefined, 2)}</pre>
     </>
   );
 }
