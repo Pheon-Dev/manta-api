@@ -61,7 +61,7 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
   };
 
   const AppContent = () => {
-    const { status, data: session } = useSession();
+    const { status } = useSession();
 
     if (status === "unauthenticated") {
       return <Login />;
