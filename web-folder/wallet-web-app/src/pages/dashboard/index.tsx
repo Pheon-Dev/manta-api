@@ -1,4 +1,5 @@
-// import { invoke } from "@tauri-apps/api/tauri";
+import { useMantaStore } from '../_app';
+
 import {
   Text,
   Divider,
@@ -10,26 +11,26 @@ import { trpc } from '../../utils/trpc';
 import { useState } from 'react';
 
 interface Payment {
-    id: number,
-    cid: number,
-    amount: string,
-    receiver: string,
-    sender: string,
-    description: string
-  }
+  id: number,
+  cid: number,
+  amount: string,
+  receiver: string,
+  sender: string,
+  description: string
+}
 
 const Dashboard = () => {
+  const id = useMantaStore((state) => state.id)
   const payments = trpc.payments.useQuery();
 
   if (!payments) {
     return <div>Loading...</div>;
   }
   const rows = payments?.data?.payments.map((element: Payment) => (
-    <tr key={element.cid}>
-      <td>{element.id}</td>
+    <tr key={element.id}>
+      <td>{id}</td>
       <td>{element.amount}</td>
       <td>{element.receiver}</td>
-      <td>{element.sender}</td>
       <td>{element.description}</td>
     </tr>
   ));
@@ -62,9 +63,8 @@ const Dashboard = () => {
         <Table horizontalSpacing="xs">
           <thead>
             <tr>
-              <th>id</th>
+              <th>sender id</th>
               <th>amount</th>
-              <th>sender</th>
               <th>receiver</th>
               <th>description</th>
             </tr>
