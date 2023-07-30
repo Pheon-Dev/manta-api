@@ -12,3 +12,4 @@ web-folder/wallet-web-app/.next
 web-folder/wallet-web-app/node_modules
 web-folder/wallet-web-app/.env
 web-folder/wallet-web-app/yarn.lock
+web-folder/wallet-web-app/yarn-error.log
