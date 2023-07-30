@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconGauge, IconFingerprint, IconActivity, IconChevronRight, IconHome, IconCreditCard } from '@tabler/icons-react';
+import { IconGauge, IconFingerprint, IconActivity, IconChevronRight, IconHome, IconCreditCard, IconMessageChatbot, IconApps } from '@tabler/icons-react';
 import { Box, NavLink } from '@mantine/core';
 import Link from "next/link";
 
@@ -14,27 +14,27 @@ const data = [
   {
     icon: IconGauge,
     label: 'Dashboard',
-    // description: 'Recent Transactions',
+    description: 'Recent Transactions',
     rightSection: <IconChevronRight size={16} stroke={1.5} />,
     view: '/dashboard'
   },
   {
-    icon: IconFingerprint,
-    label: 'Security',
-    // description: 'Safety Measures',
-
+    icon: IconMessageChatbot,
+    label: 'Chat',
+    description: 'Chat With Our AI Assistant',
     rightSection: <IconChevronRight size={16} stroke={1.5} />,
+    view: '/chat'
   },
   {
-    icon: IconActivity,
-    label: 'Activity',
-    // description: 'Recent Transactions',
+    icon: IconApps,
+    label: 'Mini Apps',
+    description: 'Available Mini Apps',
     rightSection: <IconChevronRight size={16} stroke={1.5} />,
   },
   {
     icon: IconCreditCard,
     label: 'Cards',
-    // description: 'Recent Transactions',
+    description: 'Connected Cards',
     rightSection: <IconChevronRight size={16} stroke={1.5} />,
     view: '/cards'
   },
