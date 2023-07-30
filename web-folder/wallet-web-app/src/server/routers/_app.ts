@@ -12,9 +12,13 @@ export const appRouter = router({
     )
     .query(async (opts) => {
       const url = "http://localhost:8080/api/login"
-      let login = await axios.post(url, {
-        username: `${opts.input.username}`,
-        password: `${opts.input.password}`,
+      let login = await axios.request({
+        url,
+        method: "POST",
+        data: {
+          username: `${opts.input.username}`,
+          password: `${opts.input.password}`,
+        },
       });
 
       return {
