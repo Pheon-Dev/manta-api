@@ -1,3 +1,4 @@
+import { trpc } from '../../utils/trpc';
 import {
   Text,
   Avatar,
@@ -8,17 +9,34 @@ import {
   Card,
   Badge,
   Button,
+  Modal,
   Group,
   SegmentedControl,
   Box
 } from '@mantine/core';
 import { IconCash, IconBuildingBank, IconSend } from '@tabler/icons-react';
-const Home = () => {
+import { useDisclosure } from '@mantine/hooks';
+import { useMantaStore } from '../_app';
+import Send from './Send';
+
+const Wallet = () => {
+  const balance = useMantaStore((state) => state.balance)
+  const id = useMantaStore((state) => state.id)
+  const email = useMantaStore((state) => state.email)
+  const username = useMantaStore((state) => state.username)
+  const name = useMantaStore((state) => state.name)
+
   const user = {
     image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
-    name: "Harriette Spoonlicker",
-    email: "hspoonlicker@outlook.com"
+    name: name,
+    email: email
   }
+  const payments = trpc.payments.useQuery();
+
+  if (!payments) {
+    return <div>Loading...</div>;
+  }
+  const [opened_send, { open: open_send, close: close_send }] = useDisclosure(false);
   return (
     <>
       <Text
@@ -73,10 +91,15 @@ const Home = () => {
             {
               value: 'preview',
               label: (
-                <Center>
-                  <IconBuildingBank size={16} />
-                  <Box ml={10}>Deposit</Box>
-                </Center>
+                <Group>
+                  <Modal opened={opened_send} onClose={close_send} title="Send Money" centered>
+                    <Send />
+                  </Modal>
+                  <Center onClick={open_send}>
+                    <IconSend size={16} />
+                    <Box ml={10}>Send</Box>
+                  </Center>
+                </Group>
               ),
             },
             {
@@ -92,8 +115,8 @@ const Home = () => {
               value: 'export',
               label: (
                 <Center>
-                  <IconSend size={16} />
-                  <Box ml={10}>Send</Box>
+                  <IconBuildingBank size={16} />
+                  <Box ml={10}>Deposit</Box>
                 </Center>
               ),
             },
@@ -104,9 +127,16 @@ const Home = () => {
         <Card shadow="sm" padding="lg" radius="md" withBorder>
 
           <Group position="apart" w={400} mt="md" mb="md">
-            <Text weight={500}>Token Balance</Text>
+            <Text weight={500}>Account Balance</Text>
             <Badge color="blue" variant="light">
-              Tks. 364.00
+              KES {balance}
+            </Badge>
+          </Group>
+          <Divider />
+          <Group position="apart" w={400} mt="md" mb="md">
+            <Text weight={500}>Account ID</Text>
+            <Badge color="blue" variant="light">
+              {id}
             </Badge>
           </Group>
           <Divider />
@@ -118,7 +148,9 @@ const Home = () => {
           </Group>
         </Card>
       </Center>
+      <pre>{JSON.stringify(payments.data, undefined, 2)}</pre>
     </>
   );
 }
-export default Home;
+
+export default Wallet;
