@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { IconGauge, IconFingerprint, IconActivity, IconChevronRight, IconHome, IconCreditCard, IconMessageChatbot, IconApps } from '@tabler/icons-react';
 import { Box, NavLink } from '@mantine/core';
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const data = [
   {
@@ -42,14 +43,14 @@ const data = [
 
 const NavBar = () => {
   const [active, setActive] = useState(0);
+  const router = useRouter();
 
   const items = data.map((item, index) => (
     <Link key={index} href={`${item.view}`} style={{ textDecoration: 'none' }}>
       <NavLink
-
         style={{ borderRadius: '10px', marginTop: '10px' }}
         key={item.label}
-        active={index === active}
+        active={router.pathname === item.view}
         label={item.label}
         description={item.description}
         rightSection={item.rightSection}
