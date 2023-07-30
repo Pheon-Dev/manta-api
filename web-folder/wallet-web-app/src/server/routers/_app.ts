@@ -41,6 +41,36 @@ export const appRouter = router({
         payments: payments.data,
       };
     }),
+  payment: procedure
+    .input(
+      z.object({
+        amount: z.string(),
+        sender: z.string(),
+        receiver: z.string(),
+        description: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const url = "http://localhost:8080/api/payments"
+      const headers = {
+        Cookie: "auth-token=user-1.exp.sign"
+      }
+      let payments = await axios.request({
+        method: "POST",
+        url,
+        data: {
+          amount: `${opts.input.amount}`,
+          sender: `${opts.input.sender}`,
+          receiver: `${opts.input.receiver}`,
+          description: `${opts.input.description}`,
+        },
+        headers
+      });
+
+      return {
+        payments: payments.data,
+      };
+    }),
 });
 
 // export type definition of API
