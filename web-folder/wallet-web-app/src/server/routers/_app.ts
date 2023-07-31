@@ -29,7 +29,7 @@ export const appRouter = router({
     }),
   payments: procedure
     .query(async () => {
-      const url = "http://localhost:8080/api/payments"
+      const url = "http://localhost:8081/api/payments"
       const headers = {
         Cookie: "auth-token=user-1.exp.sign"
       }
@@ -53,7 +53,7 @@ export const appRouter = router({
       }),
     )
     .mutation(async (opts) => {
-      const url = "http://localhost:8080/api/payments"
+      const url = "http://localhost:8081/api/payments"
       const headers = {
         Cookie: "auth-token=user-1.exp.sign"
       }
@@ -67,6 +67,31 @@ export const appRouter = router({
           description: `${opts.input.description}`,
         },
         headers
+      });
+
+      return {
+        payments: payments.data,
+      };
+    }),
+  rpc: procedure
+    .input(
+      z.object({
+        cookie: z.string(),
+      }),
+    )
+    .query(async (opts) => {
+      const url = "http://localhost:8080/api/rpc"
+      const headers = {
+        Cookie: `${opts.input.cookie}`
+      }
+      let payments = await axios.request({
+        method: "POST",
+        url,
+        headers,
+        data: {
+          id: 1,
+          method: "list_payments"
+        }
       });
 
       return {
