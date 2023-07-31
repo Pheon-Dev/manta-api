@@ -27,6 +27,21 @@ export const appRouter = router({
         login: login.data,
       };
     }),
+  logoff: procedure
+    .query(async (opts) => {
+      const url = "http://localhost:8080/api/logoff"
+      let logoff = await axios.request({
+        url,
+        method: "POST",
+        data: {
+          logoff: true
+        },
+      });
+
+      return {
+        logoff: logoff.data,
+      };
+    }),
   payments: procedure
     .query(async () => {
       const url = "http://localhost:8081/api/payments"
@@ -73,24 +88,71 @@ export const appRouter = router({
         payments: payments.data,
       };
     }),
-  rpc: procedure
+  send: procedure
     .input(
       z.object({
         cookie: z.string(),
+        method: z.string(),
+        id: z.number(),
+        amount: z.string(),
+        sender: z.string(),
+        receiver: z.string(),
+        description: z.string(),
       }),
     )
-    .query(async (opts) => {
+    .mutation(async (opts) => {
+      const method = `${opts.input.method}`
+      const cookie = `${opts.input.cookie}`
+      const id = opts.input.id
       const url = "http://localhost:8080/api/rpc"
       const headers = {
-        Cookie: `${opts.input.cookie}`
+        Cookie: cookie
       }
       let payments = await axios.request({
         method: "POST",
         url,
         headers,
         data: {
-          id: 1,
-          method: "list_payments"
+          id,
+          method,
+          params: {
+            data: {
+              amount: `${opts.input.amount}`,
+              sender: `${opts.input.sender}`,
+              receiver: `${opts.input.receiver}`,
+              description: `${opts.input.description}`,
+            }
+          }
+        }
+      });
+
+      return {
+        payments: payments.data,
+      };
+    }),
+  list: procedure
+    .input(
+      z.object({
+        cookie: z.string(),
+        method: z.string(),
+        id: z.number(),
+      }),
+    )
+    .query(async (opts) => {
+      const method = `${opts.input.method}`
+      const cookie = `${opts.input.cookie}`
+      const id = opts.input.id
+      const url = "http://localhost:8080/api/rpc"
+      const headers = {
+        Cookie: cookie
+      }
+      let payments = await axios.request({
+        method: "POST",
+        url,
+        headers,
+        data: {
+          id,
+          method,
         }
       });
 
