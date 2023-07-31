@@ -29,4 +29,20 @@ SERVICE_TOKEN_DURATION_SEC="1800" # 30 minutes
 
 # This will be relative to Cargo.toml.
 # In prod dockers, probably use absolute path.
+
+# dock -s           # sudo systemctl start docker
+# dock -t           # sudo systemctl status docker
+# dock -r           # sudo docker run --rn -p 5432:5432 -e POSTGRES_PASSWORD=welcome postgres:15
+# psql
+# https://hasura.io/blog/top-psql-commands-and-flags-you-need-to-know-postgresql/
+# dock -q           # sudo docker exec -it -u postgres pg psql
+# \l                # List all databases
+# \c db-name        # Connect to a databse
+# \dt               # List tables
+# \d table-name     # Describe a table
+# \d+ table-name    # Describe a table
+# \dn               # List all schemas
+# \du               # List users and their roles
+# \du username      # Retrive user
+# \df               # List all functions
 SERVICE_WEB_FOLDER="web-folder/" 
