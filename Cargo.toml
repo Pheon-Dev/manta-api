@@ -20,7 +20,7 @@ axum = "0.6"
 tower-http = { version = "0.4", features = ["fs", "cors"] }
 tower-cookies = "0.9"
 # -- Data
-sqlx = { version = "0.6", features = [ "runtime-tokio-rustls", "postgres", "uuid", "time" ] }
+sqlx = { version = "0.7", features = [ "runtime-tokio-rustls", "postgres", "uuid", "time" ] }
 sqlb = "0.3" # Optional
 # -- Crypt & Encoding
 rand = "0.8"
@@ -28,14 +28,14 @@ hmac = "0.12"
 sha2 = "0.10"
 base64-url = "2"
 # -- Others
-lazy-regex = "2"
+lazy-regex = "3"
 uuid = {version = "1", features = ["v4", "fast-rng"]}
 time = "0.3"
 async-trait = "0.1.68"
 strum_macros = "0.25"
 # -- ui
-utoipa = { version = "3.3.0", features = ["axum_extras"] }
-utoipa-swagger-ui = { version = "3.1.3", features = ["axum"] }
+utoipa = { version = "3.4.3", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "3.1.4", features = ["axum"] }
 
 [dev-dependencies]
 anyhow = "1"
