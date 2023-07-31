@@ -7,15 +7,17 @@ use sqlb::Fields;
 use sqlx::FromRow;
 use time::format_description::well_known::Rfc3339;
 use time::OffsetDateTime;
-use utoipa::ToSchema;
 
 // region:    --- Payment Types B061-7360
 #[serde_as]
-#[derive(Clone, Fields, FromRow, Debug, Serialize, ToSchema)]
+#[derive(Clone, Fields, FromRow, Debug, Serialize)]
 pub struct Payment {
 	pub id: i64,
 
 	pub amount: String,
+	pub sender: String,
+	pub receiver: String,
+	pub description: String,
 
 	// -- Timestamps
 	pub cid: i64,
@@ -26,14 +28,20 @@ pub struct Payment {
 	pub mtime: OffsetDateTime,
 }
 
-#[derive(Deserialize, Fields, ToSchema)]
+#[derive(Deserialize, Fields)]
 pub struct PaymentForCreate {
 	pub amount: String,
+	pub sender: String,
+	pub receiver: String,
+	pub description: String,
 }
 
-#[derive(Deserialize, Fields, ToSchema)]
+#[derive(Deserialize, Fields)]
 pub struct PaymentForUpdate {
 	pub amount: Option<String>,
+	pub sender: Option<String>,
+	pub receiver: Option<String>,
+	pub description: Option<String>,
 }
 // endregion: --- Payment Types
 
@@ -90,10 +98,18 @@ mod tests {
 		// -- Setup & Fixtures
 		let mm = _dev_utils::init_test().await;
 		let ctx = Ctx::root_ctx();
-		let fx_amount = "test_model_payment_create_basic";
+		let fx_amount = "100";
+		let fx_sender = "Jane";
+		let fx_receiver = "Jenny";
+		let fx_description = "School Fees";
 
 		// -- Exec
-		let payment_c = PaymentForCreate { amount: fx_amount.to_string() };
+		let payment_c = PaymentForCreate {
+			amount: fx_amount.to_string(),
+			sender: fx_sender.to_string(),
+			receiver: fx_receiver.to_string(),
+			description: fx_description.to_string(),
+		};
 		let id = PaymentBmc::create(&ctx, &mm, payment_c).await?;
 
 		// -- Check
@@ -135,8 +151,19 @@ mod tests {
 		// -- Setup & Fixtures
 		let mm = _dev_utils::init_test().await;
 		let ctx = Ctx::root_ctx();
-		let fx_amounts = &["test_list_ok 01", "test_list_ok 02"];
-		_dev_utils::seed_payments(&ctx, &mm, fx_amounts).await?;
+		let fx_amounts = &["200", "2500"];
+		let fx_senders = &["Jake Smith", "Mary Beth"];
+		let fx_receivers = &["Paul Drake", "Peter Pan"];
+		let fx_descriptions = &["Lunch", "Shopping"];
+		_dev_utils::seed_payments(
+			&ctx,
+			&mm,
+			fx_amounts,
+			fx_senders,
+			fx_receivers,
+			fx_descriptions,
+		)
+		.await?;
 
 		// -- Exec
 		let payments = PaymentBmc::list(&ctx, &mm).await?;
@@ -162,18 +189,38 @@ mod tests {
 		// -- Setup & Fixtures
 		let mm = _dev_utils::init_test().await;
 		let ctx = Ctx::root_ctx();
-		let fx_amount = "test_update_ok - payment 01";
-		let fx_amount_new = "test_update_ok - payment 01 - new";
-		let fx_payment = _dev_utils::seed_payments(&ctx, &mm, &[fx_amount])
-			.await?
-			.remove(0);
+		let fx_amount = "3003";
+		let fx_sender = "3003";
+		let fx_receiver = "3000";
+		let fx_description = "3003";
+
+		let fx_amount_new = "3000";
+		let fx_sender_new = "3000";
+		let fx_receiver_new = "3000";
+		let fx_description_new = "3000";
+
+		let fx_payment = _dev_utils::seed_payments(
+			&ctx,
+			&mm,
+			&[fx_amount],
+			&[fx_sender],
+			&[fx_receiver],
+			&[fx_description],
+		)
+		.await?
+		.remove(0);
 
 		// -- Exec
 		PaymentBmc::update(
 			&ctx,
 			&mm,
 			fx_payment.id,
-			PaymentForUpdate { amount: Some(fx_amount_new.to_string()) },
+			PaymentForUpdate {
+				amount: Some(fx_amount_new.to_string()),
+				sender: Some(fx_sender_new.to_string()),
+				receiver: Some(fx_receiver_new.to_string()),
+				description: Some(fx_description_new.to_string()),
+			},
 		)
 		.await?;
 
