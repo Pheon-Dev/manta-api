@@ -12,31 +12,34 @@ async fn main() -> Result<()> {
 	let req_login = hc.do_post(
 		"/api/login",
 		json!({
-			"username": "demo1",
+			"username": "janedoe",
 			"password": "welcome"
 		}),
 	);
 	req_login.await?.print().await?;
 
-	let req_create_send = hc.do_post(
+	let req_create_payment = hc.do_post(
 		"/api/rpc",
 		json!({
 			"id": 1,
-			"method": "create_send",
+			"method": "create_payment",
 			"params": {
 				"data": {
-					"amount": "100"
+					"amount": "10200",
+					"sender": "Jane Doe",
+					"receiver": "John Paul",
+					"description": "School Fees and Lunch",
 				}
 			}
 		}),
 	);
-	req_create_send.await?.print().await?;
+	req_create_payment.await?.print().await?;
 
-	let req_update_send = hc.do_post(
+	let req_update_payment = hc.do_post(
 		"/api/rpc",
 		json!({
 			"id": 1,
-			"method": "update_send",
+			"method": "update_payment",
 			"params": {
 				"id": 1000, // Hardcode the send id.
 				"data": {
@@ -45,28 +48,28 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	// req_update_send.await?.print().await?;
+	// req_update_payment.await?.print().await?;
 
-	let req_delete_send = hc.do_post(
+	let req_delete_payment = hc.do_post(
 		"/api/rpc",
 		json!({
 			"id": 1,
-			"method": "delete_send",
+			"method": "delete_payment",
 			"params": {
 				"id": 1001 // Harcode the send id
 			}
 		}),
 	);
-	// req_delete_send.await?.print().await?;
+	// req_delete_payment.await?.print().await?;
 
-	let req_list_sends = hc.do_post(
+	let req_list_payments = hc.do_post(
 		"/api/rpc",
 		json!({
 			"id": 1,
-			"method": "list_sends"
+			"method": "list_payments"
 		}),
 	);
-	req_list_sends.await?.print().await?;
+	req_list_payments.await?.print().await?;
 
 	let req_logoff = hc.do_post(
 		"/api/logoff",
