@@ -41,19 +41,33 @@ pub async fn seed_payments(
 	ctx: &Ctx,
 	mm: &ModelManager,
 	amounts: &[&str],
+	receivers: &[&str],
+	senders: &[&str],
+	descriptions: &[&str],
 ) -> model::Result<Vec<Payment>> {
 	let mut payments = Vec::new();
 
 	for amount in amounts {
-		let id = PaymentBmc::create(
-			ctx,
-			mm,
-			PaymentForCreate { amount: amount.to_string() },
-		)
-		.await?;
-		let payment = PaymentBmc::get(ctx, mm, id).await?;
+		for sender in senders {
+			for receiver in receivers {
+				for description in descriptions {
+					let id = PaymentBmc::create(
+						ctx,
+						mm,
+						PaymentForCreate {
+							amount: amount.to_string(),
+							sender: sender.to_string(),
+							receiver: receiver.to_string(),
+							description: description.to_string(),
+						},
+					)
+					.await?;
+					let payment = PaymentBmc::get(ctx, mm, id).await?;
 
-		payments.push(payment);
+					payments.push(payment);
+				}
+			}
+		}
 	}
 
 	Ok(payments)
