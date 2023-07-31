@@ -4,11 +4,13 @@ import {
 import { useForm, zodResolver } from "@mantine/form";
 import { IconCheck, IconX } from "@tabler/icons";
 import { signIn, useSession } from "next-auth/react";
+import { notifications } from '@mantine/notifications';
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useMantaStore } from '../pages/_app';
 import { v4 as uuidv4 } from 'uuid';
+import { Notifications } from '@mantine/notifications';
 
 const schema = z.object({
   username: z.string().min(2, { message: "User Name Missing" }),
@@ -68,6 +70,12 @@ const Login = (props: {}) => {
   const setName = useMantaStore((state) => state.setName);
   const setUsername = useMantaStore((state) => state.setUsername);
   const handleSubmit = async () => {
+    notifications.show({
+      id: "login",
+      title: "Loading",
+      message: "Please wait...",
+      loading: true,
+    })
     try {
       if (form.values.username && form.values.password) {
         const res = await signIn("credentials", {
@@ -81,14 +89,28 @@ const Login = (props: {}) => {
           setName(form.values.name)
           setUsername(form.values.username)
         }
+        notifications.update({
+          id: "login",
+          color: "green",
+          icon: <IconCheck />,
+          title: "Authentication",
+          message: `Logged in Successfully ... Welcome, ${form.values.name}`,
+        })
       }
     } catch (error) {
-      console.log(error)
+      notifications.update({
+        id: "login",
+        color: "red",
+        icon: <IconX />,
+        title: "Authentication",
+        message: `Error: ${error}`,
+      })
     }
   };
 
   return (
     <>
+      <Notifications />
       <Card
         sx={{ maxWidth: 500 }}
         mx="auto"

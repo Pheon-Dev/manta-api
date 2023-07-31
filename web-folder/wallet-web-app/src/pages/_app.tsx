@@ -2,6 +2,7 @@ import { getCookie, setCookie } from "cookies-next";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useState } from "react";
+import { notifications } from '@mantine/notifications';
 
 import { ActionIcon, AppShell, Burger, ColorScheme, ColorSchemeProvider, Group, Header, MantineProvider, MediaQuery, Navbar, Text, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconBrandCodecov, IconLogout } from '@tabler/icons-react';
@@ -10,6 +11,7 @@ import NextApp, { AppContext } from 'next/app';
 import { ColorSchemeToggle, NavBar, Login } from "../components";
 import { trpc } from '../utils/trpc';
 import { create } from 'zustand'
+import { Notifications } from '@mantine/notifications';
 
 interface MantaState {
   email: string,
@@ -18,8 +20,8 @@ interface MantaState {
   id: string,
   balance: number,
   cookie: string,
-  setID: (id: string) => void,
   setCookie: (cookie: string) => void,
+  setID: (id: string) => void,
   setEmail: (email: string) => void,
   setName: (name: string) => void,
   setUsername: (username: string) => void,
@@ -75,6 +77,7 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
       <>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
           <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+            <Notifications />
             <AppShell
               padding="md"
               navbar={
@@ -112,6 +115,11 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                         size={24}
                         style={{ cursor: "pointer" }}
                         onClick={() => {
+                          notifications.show({
+                            color: "red",
+                            title: 'Authentication',
+                            message: 'Logging out ... Thanks for using Manta Wallet',
+                          })
                           signOut();
                         }} />
                     </Group>

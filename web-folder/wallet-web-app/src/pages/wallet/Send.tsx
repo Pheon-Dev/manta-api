@@ -1,9 +1,11 @@
 import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
 import { Button, Group, TextInput, NumberInput, Box, Textarea } from '@mantine/core';
 import { useMantaStore } from '../_app';
+import { notifications } from '@mantine/notifications';
 import { trpc } from '../../utils/trpc';
 import { useCallback, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
 const Send = () => {
   const cookie = useMantaStore((state) => state.cookie)
@@ -43,9 +45,26 @@ const Send = () => {
   const send = useMantaStore((state) => state.send)
 
   const username = useMantaStore((state) => state.username)
-  const send_money = trpc.send.useMutation({ onSuccess: async () => { return console.log("success") } });
+  const send_money = trpc.send.useMutation({
+    onSuccess: async () => {
+      return notifications.update({
+        id: "send",
+        color: "green",
+        icon: <IconCheck />,
+        title: "Sendin Money",
+        autoClose: 5000,
+        message: `KES ${form.values.amount} sent Successfully to: ${form.values.receiver}.\n Continue to send money or Press the X button to exit.`,
+      });
+    }
+  });
 
   const handleSend = useCallback(() => {
+    notifications.show({
+      id: "send",
+      title: "Loading",
+      message: "Please wait...",
+      loading: true,
+    })
     try {
       if (form.values.amount !== 0 && form.values.sender === username && form.values.receiver !== "" && form.values.description !== "") {
         send_money.mutate({
@@ -59,8 +78,14 @@ const Send = () => {
         })
         send(form.values.amount)
       }
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      notifications.update({
+        id: "send",
+        color: "red",
+        icon: <IconX />,
+        title: "Authentication",
+        message: `Error: ${error}`,
+      })
     }
   }, [send_money, form.values.amount, form.values.sender, form.values.receiver, form.values.description]);
 
