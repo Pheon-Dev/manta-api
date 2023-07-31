@@ -33,9 +33,6 @@ uuid = {version = "1", features = ["v4", "fast-rng"]}
 time = "0.3"
 async-trait = "0.1.68"
 strum_macros = "0.25"
-# -- ui
-utoipa = { version = "3.4.3", features = ["axum_extras"] }
-utoipa-swagger-ui = { version = "3.1.4", features = ["axum"] }
 
 [dev-dependencies]
 anyhow = "1"

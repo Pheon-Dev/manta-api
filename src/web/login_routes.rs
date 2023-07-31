@@ -12,7 +12,6 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use tower_cookies::Cookies;
 use tracing::debug;
-use utoipa::ToSchema;
 
 pub fn routes(mm: ModelManager) -> Router {
 	Router::new()
@@ -22,15 +21,6 @@ pub fn routes(mm: ModelManager) -> Router {
 }
 
 // region:    --- Login
-#[utoipa::path(
-   post, 
-    path = "/api/login",
-    request_body = LoginPayload,
-    responses(
-        (status = 200, description = "Login Success"),
-        (status = 404, description = "Login Fail"),
-    )
-)]
 async fn login_api_handler(
 	State(mm): State<ModelManager>,
 	cookies: Cookies,
@@ -80,7 +70,7 @@ async fn login_api_handler(
 	Ok(body)
 }
 
-#[derive(Debug, Deserialize, ToSchema)]
+#[derive(Debug, Deserialize)]
 pub struct LoginPayload {
 	username: String,
 	password: String,
@@ -88,15 +78,6 @@ pub struct LoginPayload {
 // endregion: --- Login
 
 // region:    --- Logoff
-#[utoipa::path(
-   post, 
-    path = "/api/logoff",
-    request_body = LogoffPayload,
-    responses(
-        (status = 200, description = "Logoff Success"),
-        (status = 404, description = "Logoff Fail"),
-    )
-)]
 async fn logoff_api_handler(
 	cookies: Cookies,
 	Json(payload): Json<LogoffPayload>,
@@ -118,7 +99,7 @@ async fn logoff_api_handler(
 	Ok(body)
 }
 
-#[derive(Debug, Deserialize, ToSchema)]
+#[derive(Debug, Deserialize)]
 pub struct LogoffPayload {
 	logoff: bool,
 }
