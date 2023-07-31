@@ -3,11 +3,30 @@ import { Button, Group, TextInput, NumberInput, Box, Textarea } from '@mantine/c
 import { useMantaStore } from '../_app';
 import { trpc } from '../../utils/trpc';
 import { useCallback, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 
 const Send = () => {
+  const cookie = useMantaStore((state) => state.cookie)
+  const { status, data } = useSession();
+
+  let name = ""
+  const setCookie = useMantaStore((state) => state.setCookie);
+  if (data?.user?.image) {
+    const cookie_str = data?.user?.image.toString();
+    useEffect(() => {
+      setCookie(cookie_str);
+    }, [cookie_str])
+  }
+  if (data?.user?.name) {
+    name = data?.user?.name.toString();
+  }
+
+  const method = "create_payment";
+  const uid = 1
+
   const form = useForm({
     initialValues: {
-      sender: 'demo1',
+      sender: `${name}`,
       receiver: '',
       description: '',
       amount: 1,
@@ -24,12 +43,15 @@ const Send = () => {
   const send = useMantaStore((state) => state.send)
 
   const username = useMantaStore((state) => state.username)
-  const send_money = trpc.payment.useMutation({ onSuccess: async () => { return console.log("success") } });
+  const send_money = trpc.send.useMutation({ onSuccess: async () => { return console.log("success") } });
 
   const handleSend = useCallback(() => {
     try {
       if (form.values.amount !== 0 && form.values.sender === username && form.values.receiver !== "" && form.values.description !== "") {
         send_money.mutate({
+          cookie: cookie,
+          method: method,
+          id: uid,
           amount: `${form.values.amount}`,
           sender: form.values.sender,
           receiver: form.values.receiver,
