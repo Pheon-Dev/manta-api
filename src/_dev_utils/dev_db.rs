@@ -20,6 +20,7 @@ const SQL_RECREATE_DB: &str = "sql/dev_initial/00-recreate-db.sql";
 const SQL_DIR: &str = "sql/dev_initial";
 
 const DEMO_PASSWORD: &str = "welcome";
+const DEMO_USERNAME: &str = "janedoe";
 
 pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
 	info!("{:<12} - init_dev_db()", "FOR-DEV-ONLY");
@@ -54,7 +55,7 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
 	let ctx = Ctx::root_ctx();
 
 	// -- Set demo1 password
-	let demo1_user: User = UserBmc::first_by_username(&ctx, &mm, "demo1")
+	let demo1_user: User = UserBmc::first_by_username(&ctx, &mm, DEMO_USERNAME)
 		.await?
 		.unwrap();
 	UserBmc::update_password(&ctx, &mm, demo1_user.id, DEMO_PASSWORD).await?;
