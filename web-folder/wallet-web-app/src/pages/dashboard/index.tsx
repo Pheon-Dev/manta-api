@@ -29,19 +29,23 @@ const Dashboard = () => {
   const setCookie = useMantaStore((state) => state.setCookie);
   if (data?.user?.image) {
     const cookie_str = data?.user?.image.toString();
-      () => setCookie(cookie_str);
+    useEffect(() => {
+      setCookie(cookie_str);
+    }, [cookie_str])
   }
-    const cookie_str = data?.user?.image.toString();
-  useEffect(() => {
-    setCookie(cookie_str);
-  }, [cookie_str])
 
-  const rpc = trpc.rpc.useQuery({ cookie: cookie });
+  const method = "list_payments";
+  const uid = 1
+  const rpc = trpc.list.useQuery({
+    cookie: cookie,
+    method: method,
+    id: uid,
+  });
 
   if (!payments) {
     return <div>Loading...</div>;
   }
-  const rows = payments?.data?.payments.map((element: Payment) => (
+  const rows = rpc?.data?.payments?.result?.data?.map((element: Payment) => (
     <tr key={element.id}>
       <td>{id}</td>
       <td>{element.amount}</td>
