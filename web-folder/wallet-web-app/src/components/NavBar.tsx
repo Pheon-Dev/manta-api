@@ -3,6 +3,7 @@ import { IconGauge, IconFingerprint, IconActivity, IconChevronRight, IconHome, I
 import { Box, NavLink } from '@mantine/core';
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { notifications } from '@mantine/notifications';
 
 const data = [
   {
@@ -31,6 +32,7 @@ const data = [
     label: 'Mini Apps',
     description: 'Available Mini Apps',
     rightSection: <IconChevronRight size={16} stroke={1.5} />,
+    view: '/apps'
   },
   {
     icon: IconCreditCard,
@@ -55,7 +57,13 @@ const NavBar = () => {
         description={item.description}
         rightSection={item.rightSection}
         icon={<item.icon size={16} stroke={1.5} />}
-        onClick={() => { setActive(index); }}
+        onClick={() => {
+          setActive(index);
+          notifications.show({
+            title: 'Navigation',
+            message: item.description
+          })
+        }}
       /></Link >
   ));
 
