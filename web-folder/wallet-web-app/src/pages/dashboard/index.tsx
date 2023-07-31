@@ -14,16 +14,19 @@ import { useSession } from "next-auth/react";
 interface Payment {
   id: number,
   cid: number,
+  mid: number,
   amount: string,
   receiver: string,
   sender: string,
   description: string
+  ctime: string
+  mtime: string
 }
 
 const Dashboard = () => {
   const id = useMantaStore((state) => state.id)
   const cookie = useMantaStore((state) => state.cookie)
-  const payments = trpc.payments.useQuery();
+  // const payments = trpc.payments.useQuery();
   const { status, data } = useSession();
 
   const setCookie = useMantaStore((state) => state.setCookie);
@@ -42,15 +45,16 @@ const Dashboard = () => {
     id: uid,
   });
 
-  if (!payments) {
-    return <div>Loading...</div>;
-  }
+  const send = useMantaStore((state) => state.send)
+
   const rows = rpc?.data?.payments?.result?.data?.map((element: Payment) => (
     <tr key={element.id}>
-      <td>{id}</td>
-      <td>{element.amount}</td>
+      <td>{`KES ${element.amount}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
       <td>{element.receiver}</td>
       <td>{element.description}</td>
+      <td>{element.ctime.toString().split('T')[1].slice(0, 5)}</td>
+      <td>{element.ctime.toString().split('T')[0]}</td>
+      <td>{id}</td>
     </tr>
   ));
 
@@ -82,18 +86,16 @@ const Dashboard = () => {
         <Table horizontalSpacing="xs">
           <thead>
             <tr>
-              <th>sender id</th>
-              <th>amount</th>
-              <th>receiver</th>
-              <th>description</th>
+              <th>AMOUNT</th>
+              <th>RECEIVER</th>
+              <th>DESCRIPTION</th>
+              <th>TIME</th>
+              <th>DATE</th>
+              <th>SENDER ID</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>
         </Table>
-      </Center>
-      <Center>
-        <pre>{JSON.stringify(payments.data, undefined, 2)}</pre>
-        <pre>{JSON.stringify(rpc.data, undefined, 2)}</pre>
       </Center>
     </>
   );
