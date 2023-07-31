@@ -6,15 +6,6 @@ use crate::model::ModelManager;
 use crate::web::rpc::{DataResult, ParamsForCreate, ParamsForUpdate, ParamsIded};
 use crate::web::Result;
 
-#[utoipa::path(
-    post,
-    path = "/api/rpc",
-    request_body = ParamsForCreate,
-    responses(
-        (status = 200, description = "Sent Successfully", body = [Payment]),
-        (status = 404, description = "Failed to payment"),
-    )
-)]
 pub async fn create_payment(
 	ctx: Ctx,
 	mm: ModelManager,
@@ -28,14 +19,6 @@ pub async fn create_payment(
 	Ok(DataResult::new(payment))
 }
 
-#[utoipa::path(
-    post,
-    path = "/api/rpc",
-    responses(
-        (status = 200, description = "Sent Successfully", body = [Payment]),
-        (status = 404, description = "Failed to payment"),
-    )
-)]
 pub async fn list_payments(
 	ctx: Ctx,
 	mm: ModelManager,
@@ -45,15 +28,6 @@ pub async fn list_payments(
 	Ok(DataResult::new(payments))
 }
 
-#[utoipa::path(
-    post,
-    path = "/api/rpc",
-    request_body = ParamsForUpdate,
-    responses(
-        (status = 200, description = "Updated Successfully", body = Payment),
-        (status = 404, description = "Failed to Update"),
-    )
-)]
 pub async fn update_payment(
 	ctx: Ctx,
 	mm: ModelManager,
@@ -68,15 +42,6 @@ pub async fn update_payment(
 	Ok(DataResult::new(payment))
 }
 
-#[utoipa::path(
-    post,
-    path = "/api/rpc",
-    // request_body = Payment,
-    responses(
-        (status = 200, description = "Deleted Successfully", body = Payment),
-        (status = 404, description = "Failed to Delete"),
-    )
-)]
 pub async fn delete_payment(
 	ctx: Ctx,
 	mm: ModelManager,

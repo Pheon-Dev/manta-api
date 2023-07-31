@@ -17,9 +17,7 @@ pub mod _dev_utils;
 pub use self::error::{Error, Result};
 pub use config::config;
 
-use crate::model::payment::{Payment, PaymentForCreate, PaymentForUpdate};
 use crate::model::ModelManager;
-use crate::web::login_routes::{LoginPayload, LogoffPayload};
 use crate::web::mw_auth::{mw_ctx_require, mw_ctx_resolve};
 use crate::web::mw_req_stamp::mw_req_stamp;
 use crate::web::mw_res_map::mw_response_map;
@@ -31,29 +29,6 @@ use tower_cookies::CookieManagerLayer;
 use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
 use tracing_subscriber::EnvFilter;
-
-use utoipa::OpenApi;
-use utoipa_swagger_ui::SwaggerUi;
-
-// endregion: --- Modules
-
-#[derive(OpenApi)]
-#[openapi(
-    paths(
-        web::login_routes::login_api_handler,
-        web::login_routes::logoff_api_handler,
-        web::rpc::payment_rpc::create_payment,
-        web::rpc::payment_rpc::list_payments,
-        web::rpc::payment_rpc::update_payment,
-        web::rpc::payment_rpc::delete_payment,
-    ),
-    components(
-        schemas(LoginPayload, LogoffPayload, Payment, PaymentForCreate, PaymentForUpdate)
-    ),
-    tags((name = "Manta API", description = "Money Transfer API"))
-)]
-
-struct ApiDoc;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -78,10 +53,6 @@ async fn main() -> Result<()> {
 	let all_routes = Router::new()
 		.merge(login_routes::routes(mm.clone()))
 		.nest("/api", rpc_routes)
-		.merge(
-			SwaggerUi::new("/manta-ui")
-				.url("/api-doc/apenapi.json", ApiDoc::openapi()),
-		)
 		.layer(middleware::map_response(mw_response_map))
 		.layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
 		.layer(middleware::from_fn(mw_req_stamp))
