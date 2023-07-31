@@ -30,10 +30,17 @@ const authOptions: NextAuthOptions = {
             password: `${password}`,
           },
         });
-        const user = await login.data
+
+        const cookie = login.headers["set-cookie"]?.toString()?.split(" ")[0].split(";")[0];
+        
+        const user_data = await login.data
+        const user = {
+          name: username,
+          image: cookie,
+        }
 
         if (user) {
-          return user;
+          return user
         }
 
         throw new Error(`Wrong User Name | Password!`);
@@ -46,7 +53,8 @@ const authOptions: NextAuthOptions = {
   // pages: { signIn: "/auth/Login", error: "/auth/error" },
   callbacks: {
     async session({ session, token }) {
-      session.accessToken = token.accessToken
+      if (session?.user)
+        session.user.name = token?.name
       return session;
     },
     async jwt({ token, account }) {

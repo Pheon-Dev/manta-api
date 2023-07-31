@@ -17,7 +17,9 @@ interface MantaState {
   name: string,
   id: string,
   balance: number,
+  cookie: string,
   setID: (id: string) => void,
+  setCookie: (cookie: string) => void,
   setEmail: (email: string) => void,
   setName: (name: string) => void,
   setUsername: (username: string) => void,
@@ -34,6 +36,8 @@ export const useMantaStore = create<MantaState>((set) => ({
   username: "demo1",
   name: "Jane Doe",
   id: "105ef042",
+  cookie: "",
+  setCookie: (cookie) => set({ cookie }),
   setID: (id) => set({ id }),
   setEmail: (email) => set({ email }),
   setName: (name) => set({ name }),
@@ -61,7 +65,7 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
   };
 
   const AppContent = () => {
-    const { status } = useSession();
+    const { status, data } = useSession();
 
     if (status === "unauthenticated") {
       return <Login />;
