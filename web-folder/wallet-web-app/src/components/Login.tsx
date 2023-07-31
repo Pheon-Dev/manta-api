@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useMantaStore } from '../pages/_app';
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 
 const schema = z.object({
   username: z.string().min(2, { message: "User Name Missing" }),
@@ -62,7 +62,7 @@ const Login = (props: {}) => {
 
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
-  const id_value = uuid().slice(0, 8);
+  const id_value = uuidv4().slice(0, 8);
   const setID = useMantaStore((state) => state.setID);
   const setEmail = useMantaStore((state) => state.setEmail);
   const setName = useMantaStore((state) => state.setName);
