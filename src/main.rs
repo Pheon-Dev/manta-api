@@ -81,7 +81,7 @@ async fn main() -> Result<()> {
 		.fallback_service(routes_static());
 
 	// region:    --- Start Server
-	let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
+	let addr = SocketAddr::from(([127, 0, 0, 1], 8081));
 	println!("->> LISTENING on {addr}\n");
 	axum::Server::bind(&addr)
 		.serve(routes_all.into_make_service())
