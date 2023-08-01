@@ -35,41 +35,20 @@ async fn main() -> Result<()> {
 	);
 	req_create_payment.await?.print().await?;
 
-	let req_create_card = hc.do_post(
-		"/api/rpc",
-		json!({
-			"id": 1,
-			"method": "create_card",
-			"params": {
-				"data": {
-					"cbalance": "10200",
-					"cnumber": "4862-6345-6367-2456",
-					"cvalid": "03/24",
-					"cvv": "034",
-					"cdescription": "M-PESA Global Pay",
-					"cname": "M-PESA",
-					"ctype": "VISA",
-					"caccount": "Debit",
-				}
-			}
-		}),
-	);
-	req_create_card.await?.print().await?;
-
 	let req_update_payment = hc.do_post(
 		"/api/rpc",
 		json!({
 			"id": 1,
 			"method": "update_payment",
 			"params": {
-				"id": 1000, // Hardcode the send id.
+				"id": 1003, // Hardcode the send id.
 				"data": {
 					"amount": "200"
 				}
 			}
 		}),
 	);
-	// req_update_payment.await?.print().await?;
+	req_update_payment.await?.print().await?;
 
 	let req_delete_payment = hc.do_post(
 		"/api/rpc",
@@ -91,6 +70,63 @@ async fn main() -> Result<()> {
 		}),
 	);
 	req_list_payments.await?.print().await?;
+
+	let req_create_card = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "create_card",
+			"params": {
+				"data": {
+					"cbalance": "10200",
+					"cnumber": "4862-6345-6367-2456",
+					"cvalid": "03/24",
+					"cvv": "034",
+					"cdescription": "M-PESA Global Pay",
+					"cname": "M-PESA",
+					"ctype": "VISA",
+					"caccount": "Debit",
+				}
+			}
+		}),
+	);
+	req_create_card.await?.print().await?;
+
+	let req_update_card = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "update_card",
+			"params": {
+				"id": 1000, // Hardcode the send id.
+				"data": {
+					"cbalance": "20000"
+				}
+			}
+		}),
+	);
+	req_update_card.await?.print().await?;
+
+	let req_delete_card = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "delete_card",
+			"params": {
+				"id": 1001 // Harcode the send id
+			}
+		}),
+	);
+	// req_delete_card.await?.print().await?;
+
+	let req_list_cards = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "list_cards"
+		}),
+	);
+	req_list_cards.await?.print().await?;
 
 	let req_logoff = hc.do_post(
 		"/api/logoff",
