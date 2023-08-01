@@ -6,15 +6,14 @@ import { IconCheck, IconX } from "@tabler/icons";
 import { signIn, useSession } from "next-auth/react";
 import { notifications } from '@mantine/notifications';
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
-import { useMantaStore } from '../pages/_app';
-import { v4 as uuidv4 } from 'uuid';
 import { Notifications } from '@mantine/notifications';
 
 const schema = z.object({
   username: z.string().min(2, { message: "User Name Missing" }),
   password: z.string().min(2, { message: "Password Missing" }),
+  email: z.string().min(2, { message: "Email Missing" }),
 });
 
 
@@ -64,12 +63,7 @@ const Login = (props: {}) => {
 
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
-  const id_value = uuidv4().slice(0, 8);
-  const setID = useMantaStore((state) => state.setID);
-  const setEmail = useMantaStore((state) => state.setEmail);
-  const setName = useMantaStore((state) => state.setName);
-  const setUsername = useMantaStore((state) => state.setUsername);
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     notifications.show({
       id: "login",
       title: "Loading",
@@ -77,18 +71,14 @@ const Login = (props: {}) => {
       loading: true,
     })
     try {
-      if (form.values.username && form.values.password) {
+      if (form.values.username && form.values.password && form.values.email && form.values.name) {
         const res = await signIn("credentials", {
           username: form.values.username,
           password: form.values.password,
+          email: form.values.email,
+          name: form.values.name,
           redirect: false,
         });
-        if (res?.ok) {
-          setID(id_value)
-          setEmail(form.values.email)
-          setName(form.values.name)
-          setUsername(form.values.username)
-        }
         notifications.update({
           id: "login",
           color: "green",
@@ -97,6 +87,13 @@ const Login = (props: {}) => {
           message: `Logged in Successfully ... Welcome, ${form.values.name}`,
         })
       }
+      notifications.update({
+        id: "login",
+        color: "red",
+        icon: <IconX />,
+        title: "Authentication",
+        message: `Wrong Credentials. Please try again.`,
+      })
     } catch (error) {
       notifications.update({
         id: "login",
@@ -106,7 +103,7 @@ const Login = (props: {}) => {
         message: `Error: ${error}`,
       })
     }
-  };
+  }, [form.values.username, form.values.password, form.values.email, form.values.name]);
 
   return (
     <>
