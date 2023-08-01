@@ -54,12 +54,12 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
 	let mm = ModelManager::new().await?;
 	let ctx = Ctx::root_ctx();
 
-	// -- Set demo1 password
-	let demo1_user: User = UserBmc::first_by_username(&ctx, &mm, DEMO_USERNAME)
+	// -- Set dev password
+	let dev_user: User = UserBmc::first_by_username(&ctx, &mm, DEMO_USERNAME)
 		.await?
 		.unwrap();
-	UserBmc::update_password(&ctx, &mm, demo1_user.id, DEMO_PASSWORD).await?;
-	info!("{:<12} - init_dev_db - set demo1 password", "FOR-DEV-ONLY");
+	UserBmc::update_password(&ctx, &mm, dev_user.id, DEMO_PASSWORD).await?;
+	info!("{:<12} - init_dev_db - set dev password", "FOR-DEV-ONLY");
 
 	Ok(())
 }
