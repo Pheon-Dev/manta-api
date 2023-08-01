@@ -26,7 +26,6 @@ interface Payment {
 const Dashboard = () => {
   const id = useMantaStore((state) => state.id)
   const cookie = useMantaStore((state) => state.cookie)
-  // const payments = trpc.payments.useQuery();
   const { status, data } = useSession();
 
   const setCookie = useMantaStore((state) => state.setCookie);
@@ -39,7 +38,7 @@ const Dashboard = () => {
 
   const method = "list_payments";
   const uid = 1
-  const rpc = trpc.list.useQuery({
+  const rpc = trpc.payment.list.useQuery({
     cookie: cookie,
     method: method,
     id: uid,

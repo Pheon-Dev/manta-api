@@ -1,4 +1,4 @@
-import { trpc } from '../../utils/trpc';
+import { useSession } from 'next-auth/react';
 import {
   Text,
   Avatar,
@@ -17,6 +17,7 @@ import {
 import { IconCash, IconBuildingBank, IconSend } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useMantaStore } from '../_app';
+import { trpc} from '../../utils/trpc';
 import Send from './Send';
 
 const Wallet = () => {
@@ -25,6 +26,8 @@ const Wallet = () => {
   const email = useMantaStore((state) => state.email)
   const username = useMantaStore((state) => state.username)
   const name = useMantaStore((state) => state.name)
+  const { status, data } = useSession();
+  const account = trpc.account.accounts.useQuery({ method: "list_accounts", id: 1, cookie: `${data?.user?.image}` });
 
   const user = {
     image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
@@ -138,6 +141,9 @@ const Wallet = () => {
             </Badge>
           </Group>
         </Card>
+      </Center>
+      <Center>
+        <pre>{JSON.stringify(account.data, undefined, 2)}</pre>
       </Center>
     </>
   );
