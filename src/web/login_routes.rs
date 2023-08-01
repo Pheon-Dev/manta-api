@@ -59,6 +59,7 @@ async fn login_api_handler(
 	if let SchemeStatus::Outdated = scheme_status {
 		debug!("password encrypt scheme outdated, upgrading.");
 		UserBmc::update_password(&root_ctx, &mm, user.id, &password_clear).await?;
+		UserBmc::update_email(&root_ctx, &mm, user.id, &email).await?;
 	}
 
 	// -- Set web token.
