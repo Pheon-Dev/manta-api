@@ -19,6 +19,7 @@ use uuid::Uuid;
 pub struct User {
 	pub id: i64,
 	pub username: String,
+	pub email: String,
 
 	pub cid: i64,
 
@@ -34,24 +35,28 @@ pub struct User {
 #[derive(Deserialize)]
 pub struct UserForCreate {
 	pub username: String,
+	pub email: String,
 	pub password_clear: String,
 }
 
 #[derive(Deserialize, Fields)]
 pub struct UserForUpdate {
 	pub username: Option<String>,
+	pub email: Option<String>,
 	pub password_clear: Option<String>,
 }
 
 #[derive(Fields)]
 pub struct UserForInsert {
 	username: String,
+	email: String,
 }
 
 #[derive(Clone, FromRow, Fields, Debug)]
 pub struct UserForLogin {
 	pub id: i64,
 	pub username: String,
+	pub email: String,
 
 	// -- password and token info
 	pub password: Option<String>,
@@ -63,6 +68,7 @@ pub struct UserForLogin {
 pub struct UserForAuth {
 	pub id: i64,
 	pub username: String,
+	pub email: String,
 
 	// -- token info
 	pub token_salt: Uuid,
@@ -91,9 +97,12 @@ impl UserBmc {
 		mm: &ModelManager,
 		user_c: UserForCreate,
 	) -> Result<i64> {
-		let UserForCreate { username, password_clear } = user_c;
+		let UserForCreate { username, email, password_clear } = user_c;
 
-		let user_fi = UserForInsert { username: username.to_string() };
+		let user_fi = UserForInsert {
+			username: username.to_string(),
+			email: email.to_string(),
+		};
 
 		let user_id = base::create::<Self, _>(ctx, mm, user_fi).await.map_err(
 			|model_error| match model_error {
@@ -181,6 +190,26 @@ impl UserBmc {
 			.table(Self::TABLE)
 			.and_where("id", "=", id)
 			.data(vec![("password", password.to_string()).into()])
+			.exec(db)
+			.await?;
+
+		Ok(())
+	}
+
+	pub async fn update_email(
+		ctx: &Ctx,
+		mm: &ModelManager,
+		id: i64,
+		email: &str,
+	) -> Result<()> {
+		let db = mm.db();
+
+		let _user: UserForLogin = Self::get(ctx, mm, id).await?;
+
+		sqlb::update()
+			.table(Self::TABLE)
+			.and_where("id", "=", id)
+			.data(vec![("email", email.to_string()).into()])
 			.exec(db)
 			.await?;
 

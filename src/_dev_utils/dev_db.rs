@@ -21,6 +21,7 @@ const SQL_DIR: &str = "sql/dev_initial";
 
 const DEMO_PASSWORD: &str = "welcome";
 const DEMO_USERNAME: &str = "janedoe";
+const DEMO_EMAIL: &str = "janedoe@email.com";
 
 pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
 	info!("{:<12} - init_dev_db()", "FOR-DEV-ONLY");
@@ -58,6 +59,7 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
 	let dev_user: User = UserBmc::first_by_username(&ctx, &mm, DEMO_USERNAME)
 		.await?
 		.unwrap();
+	UserBmc::update_email(&ctx, &mm, dev_user.id, DEMO_EMAIL).await?;
 	UserBmc::update_password(&ctx, &mm, dev_user.id, DEMO_PASSWORD).await?;
 	info!("{:<12} - init_dev_db - set dev password", "FOR-DEV-ONLY");
 

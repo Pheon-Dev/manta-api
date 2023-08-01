@@ -13,7 +13,8 @@ async fn main() -> Result<()> {
 		"/api/login",
 		json!({
 			"username": "janedoe",
-			"password": "welcome"
+			"password": "welcome",
+			"email": "janedoe@email.com"
 		}),
 	);
 	req_login.await?.print().await?;
@@ -25,8 +26,9 @@ async fn main() -> Result<()> {
 			"method": "create_user",
 			"params": {
 				"data": {
-					"username": "johnpaull",
+					"username": "johnpaul",
 					"password_clear": "welcome",
+		"email": "johnpaul@email.com",
 				}
 			}
 		}),
@@ -40,7 +42,7 @@ async fn main() -> Result<()> {
 			"params": {
 				"id": 1001, // Hardcode the send id.
 				"data": {
-					"username": "johnpaul"
+		"email": "johnpaul@gmail.com",
 				}
 			}
 		}),
@@ -65,9 +67,9 @@ async fn main() -> Result<()> {
 		}),
 	);
 
-	req_create_user.await?.print().await?;
-	// req_update_user.await?.print().await?;
-	// // req_delete_user.await?.print().await?;
+	// req_create_user.await?.print().await?;
+	req_update_user.await?.print().await?;
+	// req_delete_user.await?.print().await?;
 	req_list_users.await?.print().await?;
 
 	let req_create_payment = hc.do_post(

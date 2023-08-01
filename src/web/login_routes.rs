@@ -28,7 +28,11 @@ async fn login_api_handler(
 ) -> Result<Json<Value>> {
 	debug!("{:<12} - api_login_handler", "HANDLER");
 
-	let LoginPayload { username, password: password_clear } = payload;
+	let LoginPayload {
+		username,
+		email,
+		password: password_clear,
+	} = payload;
 	let root_ctx = Ctx::root_ctx();
 
 	// -- Get the user.
@@ -39,7 +43,7 @@ async fn login_api_handler(
 
 	// -- Validate the password.
 	let Some(password) = user.password else {
-		return Err(Error::LoginFailUserHasNoPassword{ user_id }) ;
+		return Err(Error::LoginFailUserHasNoPassword { user_id });
 	};
 
 	let scheme_status = password::validate_password(
@@ -73,6 +77,7 @@ async fn login_api_handler(
 #[derive(Debug, Deserialize)]
 pub struct LoginPayload {
 	username: String,
+	email: String,
 	password: String,
 }
 // endregion: --- Login
