@@ -15,6 +15,7 @@ pub enum Error {
 	RpcFailJsonParams { rpc_method: String },
 
 	// -- Login
+	LoginFailEmailNotFound,
 	LoginFailUsernameNotFound,
 	LoginFailUserHasNoPassword { user_id: i64 },
 	LoginFailPasswordNotMatching { user_id: i64 },
@@ -91,6 +92,7 @@ impl Error {
 			// -- Login
 			LoginFailUsernameNotFound
 			| LoginFailUserHasNoPassword { .. }
+			| LoginFailEmailNotFound { .. }
 			| LoginFailPasswordNotMatching { .. } => {
 				(StatusCode::FORBIDDEN, ClientError::LOGIN_FAIL)
 			}

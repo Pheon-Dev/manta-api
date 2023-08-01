@@ -289,10 +289,10 @@ async fn main() -> Result<()> {
 		}),
 	);
 
-	req_create_account.await?.print().await?;
+	// req_create_account.await?.print().await?;
 	// req_update_account.await?.print().await?;
 	// // req_delete_account.await?.print().await?;
-	req_list_accounts.await?.print().await?;
+	// req_list_accounts.await?.print().await?;
 
 	let req_logoff = hc.do_post(
 		"/api/logoff",

@@ -171,6 +171,25 @@ impl UserBmc {
 		Ok(user)
 	}
 
+	pub async fn first_by_email<E>(
+		_ctx: &Ctx,
+		mm: &ModelManager,
+		email: &str,
+	) -> Result<Option<E>>
+	where
+		E: UserBy,
+	{
+		let db = mm.db();
+
+		let user = sqlb::select()
+			.table(Self::TABLE)
+			.and_where("email", "=", email)
+			.fetch_optional::<_, E>(db)
+			.await?;
+
+		Ok(user)
+	}
+
 	pub async fn update_password(
 		ctx: &Ctx,
 		mm: &ModelManager,

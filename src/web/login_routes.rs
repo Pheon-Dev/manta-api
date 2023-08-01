@@ -39,6 +39,9 @@ async fn login_api_handler(
 	let user: UserForLogin = UserBmc::first_by_username(&root_ctx, &mm, &username)
 		.await?
 		.ok_or(Error::LoginFailUsernameNotFound)?;
+	let _user: UserForLogin = UserBmc::first_by_email(&root_ctx, &mm, &email)
+		.await?
+		.ok_or(Error::LoginFailEmailNotFound)?;
 	let user_id = user.id;
 
 	// -- Validate the password.
