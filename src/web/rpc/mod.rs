@@ -18,7 +18,7 @@ use crate::web::rpc::contact_rpc::{
 use crate::web::rpc::payment_rpc::{
 	create_payment, delete_payment, list_payments, update_payment,
 };
-use crate::web::rpc::user_rpc::{create_user, list_users};
+use crate::web::rpc::user_rpc::{create_user, delete_user, list_users, update_user};
 use crate::web::{Error, Result};
 
 use axum::extract::State;
@@ -153,6 +153,8 @@ async fn _rpc_handler(
 		"delete_contact" => exec_rpc_fn!(delete_contact, ctx, mm, rpc_params),
 		"create_user" => exec_rpc_fn!(create_user, ctx, mm, rpc_params),
 		"list_users" => exec_rpc_fn!(list_users, ctx, mm),
+		"update_user" => exec_rpc_fn!(update_user, ctx, mm, rpc_params),
+		"delete_user" => exec_rpc_fn!(delete_user, ctx, mm, rpc_params),
 
 		// -- Fallback as Err.
 		_ => return Err(Error::RpcMethodUnknown(rpc_method)),

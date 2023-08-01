@@ -37,6 +37,12 @@ pub struct UserForCreate {
 	pub password_clear: String,
 }
 
+#[derive(Deserialize, Fields)]
+pub struct UserForUpdate {
+	pub username: Option<String>,
+	pub password_clear: Option<String>,
+}
+
 #[derive(Fields)]
 pub struct UserForInsert {
 	username: String,
@@ -113,8 +119,21 @@ impl UserBmc {
 		Ok(user_id)
 	}
 
+	pub async fn update(
+		ctx: &Ctx,
+		mm: &ModelManager,
+		id: i64,
+		user_u: UserForUpdate,
+	) -> Result<()> {
+		base::update::<Self, _>(ctx, mm, id, user_u).await
+	}
+
 	pub async fn list(ctx: &Ctx, mm: &ModelManager) -> Result<Vec<User>> {
 		base::list::<Self, _>(ctx, mm).await
+	}
+
+	pub async fn delete(ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<()> {
+		base::delete::<Self>(ctx, mm, id).await
 	}
 
 	pub async fn get<E>(ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<E>

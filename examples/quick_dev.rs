@@ -25,9 +25,34 @@ async fn main() -> Result<()> {
 			"method": "create_user",
 			"params": {
 				"data": {
-					"username": "johnpaul",
+					"username": "johnpaull",
 					"password_clear": "welcome",
 				}
+			}
+		}),
+	);
+
+	let req_update_user = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "update_user",
+			"params": {
+				"id": 1001, // Hardcode the send id.
+				"data": {
+					"username": "johnpaul"
+				}
+			}
+		}),
+	);
+
+	let req_delete_user = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "delete_user",
+			"params": {
+				"id": 1001 // Harcode the send id
 			}
 		}),
 	);
