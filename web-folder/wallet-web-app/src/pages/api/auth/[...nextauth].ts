@@ -50,7 +50,9 @@ const authOptions: NextAuthOptions = {
           const headers = {
             Cookie: cookie
           }
-          if (login.status !== 200) {
+
+          try {
+
             let account = await axios.request({
               method: "POST",
               url: aurl,
@@ -69,18 +71,17 @@ const authOptions: NextAuthOptions = {
                 }
               }
             });
-            return {
-              account_data: await account.data,
-              login_data: await login.data,
-              user: user
-            };
-          }
+            console.log(account.data)
+          } catch (error) {
+            console.log(error)
 
+          }
           if (user) {
             return user
           }
 
           return {
+            // account_data: await account.data,
             login_data: await login.data,
             user: user
           };
