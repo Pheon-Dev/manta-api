@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { procedure, router } from '../trpc';
 
 export const accountRouter = router({
-  account: procedure
+  create: procedure
     .input(
       z.object({
         id: z.number(),
@@ -45,7 +45,7 @@ export const accountRouter = router({
         payments: payments.data,
       };
     }),
-  accounts: procedure
+  list: procedure
     .input(
       z.object({
         id: z.number(),
