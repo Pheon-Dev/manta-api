@@ -5,14 +5,15 @@ import Head from "next/head";
 import { useCallback, useEffect, useState } from "react";
 import { notifications } from '@mantine/notifications';
 
-import { ActionIcon, AppShell, Burger, ColorScheme, ColorSchemeProvider, Group, Header, MantineProvider, MediaQuery, Navbar, Text, Tooltip, useMantineTheme } from "@mantine/core";
-import { IconBrandCodecov, IconLogout } from '@tabler/icons-react';
+import { ActionIcon, AppShell, Box, Burger, Center, ColorScheme, ColorSchemeProvider, Group, Header, MantineProvider, MediaQuery, Modal, Navbar, Text, Tooltip, useMantineTheme } from "@mantine/core";
+import { IconBrandCodecov, IconLogout, IconPlus } from '@tabler/icons-react';
 import { SessionProvider, signOut, useSession } from "next-auth/react";
 import NextApp, { AppContext } from 'next/app';
-import { ColorSchemeToggle, NavBar, Login } from "../components";
+import { ColorSchemeToggle, NavBar, Login, NewUser } from "../components";
 import { trpc } from '../utils/trpc';
 import { create } from 'zustand'
 import { Notifications } from '@mantine/notifications';
+import { useDisclosure } from '@mantine/hooks';
 
 interface MantaState {
   email: string,
@@ -69,19 +70,7 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
 
   const AppContent = () => {
     const { status, data } = useSession();
-    const router = useRouter()
-
-    // useEffect(() => {
-    //   let sub = true
-    //   if (sub) {
-    //     if (router.pathname !== "/auth" && status === "unauthenticated") router.push("/auth")
-    //   }
-    //   return () => { sub = false }
-    //
-    // }, [router.pathname, status])
-    // if (status === "unauthenticated") {
-    //   return <Login />;
-    // }
+    const [opened_new_user, { open: open_new_user, close: close_new_user }] = useDisclosure(false);
     return (
       <>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
@@ -122,6 +111,12 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                       >{"  "}Manta Wallet</Text>
                     </Group>
                     <Group>
+                      <Modal opened={opened_new_user} onClose={close_new_user} title="New User" centered>
+                        <NewUser />
+                      </Modal>
+                      <Center onClick={open_new_user}>
+                        <IconPlus color="indigo" size={16} />
+                      </Center>
                       <ColorSchemeToggle />
                       <>
                         {status === "authenticated" && (
