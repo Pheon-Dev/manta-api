@@ -3,6 +3,7 @@
 mod dev_db;
 
 use crate::ctx::Ctx;
+use crate::model::card::{Card, CardBmc, CardForCreate};
 use crate::model::payment::{Payment, PaymentBmc, PaymentForCreate};
 use crate::model::{self, ModelManager};
 use tokio::sync::OnceCell;
@@ -71,4 +72,56 @@ pub async fn seed_payments(
 	}
 
 	Ok(payments)
+}
+
+pub async fn seed_cards(
+	ctx: &Ctx,
+	mm: &ModelManager,
+	cbalances: &[&str],
+	cnumbers: &[&str],
+	ctypes: &[&str],
+	cdescriptions: &[&str],
+	caccounts: &[&str],
+	cvalids: &[&str],
+	cvvs: &[&str],
+	cnames: &[&str],
+) -> model::Result<Vec<Card>> {
+	let mut cards = Vec::new();
+
+	for cname in cnames {
+		for cbalance in cbalances {
+			for ctype in ctypes {
+				for cnumber in cnumbers {
+					for cvalid in cvalids {
+						for cvv in cvvs {
+							for caccount in caccounts {
+								for cdescription in cdescriptions {
+									let id = CardBmc::create(
+										ctx,
+										mm,
+										CardForCreate {
+											cname: cname.to_string(),
+											cbalance: cbalance.to_string(),
+											ctype: ctype.to_string(),
+											cnumber: cnumber.to_string(),
+											caccount: caccount.to_string(),
+											cvv: cvv.to_string(),
+											cvalid: cvalid.to_string(),
+											cdescription: cdescription.to_string(),
+										},
+									)
+									.await?;
+									let card = CardBmc::get(ctx, mm, id).await?;
+
+									cards.push(card);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	Ok(cards)
 }

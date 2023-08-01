@@ -35,6 +35,27 @@ async fn main() -> Result<()> {
 	);
 	req_create_payment.await?.print().await?;
 
+	let req_create_card = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "create_card",
+			"params": {
+				"data": {
+					"cbalance": "10200",
+					"cnumber": "4862-6345-6367-2456",
+					"cvalid": "03/24",
+					"cvv": "034",
+					"cdescription": "M-PESA Global Pay",
+					"cname": "M-PESA",
+					"ctype": "VISA",
+					"caccount": "Debit",
+				}
+			}
+		}),
+	);
+	req_create_card.await?.print().await?;
+
 	let req_update_payment = hc.do_post(
 		"/api/rpc",
 		json!({

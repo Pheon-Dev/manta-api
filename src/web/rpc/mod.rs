@@ -1,6 +1,8 @@
 // region:    --- Modules
 
+pub mod card_rpc;
 pub mod payment_rpc;
+use crate::web::rpc::card_rpc::{create_card, delete_card, list_cards, update_card};
 
 use crate::ctx::Ctx;
 use crate::model::ModelManager;
@@ -126,6 +128,10 @@ async fn _rpc_handler(
 		"list_payments" => exec_rpc_fn!(list_payments, ctx, mm),
 		"update_payment" => exec_rpc_fn!(update_payment, ctx, mm, rpc_params),
 		"delete_payment" => exec_rpc_fn!(delete_payment, ctx, mm, rpc_params),
+		"create_card" => exec_rpc_fn!(create_card, ctx, mm, rpc_params),
+		"list_cards" => exec_rpc_fn!(list_cards, ctx, mm),
+		"update_card" => exec_rpc_fn!(update_card, ctx, mm, rpc_params),
+		"delete_card" => exec_rpc_fn!(delete_card, ctx, mm, rpc_params),
 
 		// -- Fallback as Err.
 		_ => return Err(Error::RpcMethodUnknown(rpc_method)),
