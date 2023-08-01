@@ -14,21 +14,19 @@ import {
   SegmentedControl,
   Box
 } from '@mantine/core';
-import { IconCash, IconBuildingBank, IconSend } from '@tabler/icons-react';
+import { IconCash, IconBuildingBank, IconSend, IconCreditCard, IconUser } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
-import { useMantaStore } from '../_app';
 import { trpc } from '../../utils/trpc';
 import Send from './Send';
+import NewContact from './Contact';
+import NewCard from './Card';
+import Deposit from './Deposit';
+import Withdraw from './Withdraw';
 
 const Wallet = () => {
-  // const balance = useMantaStore((state) => state.balance)
-  const id = useMantaStore((state) => state.id)
-  const setID = useMantaStore((state) => state.setID);
-  // const email = useMantaStore((state) => state.email)
-  // const username = useMantaStore((state) => state.username)
   const { status, data } = useSession();
   const name = data?.user?.name;
-  const account = trpc.account.accounts.useQuery({ method: "list_accounts", id: 1, cookie: `${data?.user?.image}` });
+  const account = trpc.account.list.useQuery({ method: "list_accounts", id: 1, cookie: `${data?.user?.image}` });
   const res = account?.data?.data?.result?.data[0]
 
   const user = {
@@ -39,6 +37,10 @@ const Wallet = () => {
     email: res?.email
   }
   const [opened_send, { open: open_send, close: close_send }] = useDisclosure(false);
+  const [opened_withdraw, { open: open_withdraw, close: close_withdraw }] = useDisclosure(false);
+  const [opened_deposit, { open: open_deposit, close: close_deposit }] = useDisclosure(false);
+  const [opened_new_card, { open: open_new_card, close: close_new_card }] = useDisclosure(false);
+  const [opened_new_contact, { open: open_new_contact, close: close_new_contact }] = useDisclosure(false);
   return (
     <>
       <Text
@@ -91,7 +93,7 @@ const Wallet = () => {
         <SegmentedControl
           data={[
             {
-              value: 'preview',
+              value: 'send',
               label: (
                 <Group>
                   <Modal opened={opened_send} onClose={close_send} title="Send Money" centered>
@@ -105,21 +107,59 @@ const Wallet = () => {
               ),
             },
             {
-              value: 'code',
+              value: 'withdraw',
               label: (
-                <Center>
-                  <IconCash size={16} />
-                  <Box ml={10}>Withdraw</Box>
-                </Center>
+                <Group>
+                  <Modal opened={opened_withdraw} onClose={close_withdraw} title="Withdraw Money" centered>
+                    <Withdraw />
+                  </Modal>
+                  <Center onClick={open_withdraw}>
+                    <IconCash size={16} />
+                    <Box ml={10}>Withdraw</Box>
+                  </Center>
+                </Group>
               ),
             },
             {
-              value: 'export',
+              value: 'deposit',
               label: (
-                <Center>
-                  <IconBuildingBank size={16} />
-                  <Box ml={10}>Deposit</Box>
+                <Group>
+                  <Modal opened={opened_deposit} onClose={close_deposit} title="Deposit Money" centered>
+                    <Deposit />
+                  </Modal>
+                  <Center onClick={open_deposit}>
+                    <IconBuildingBank size={16} />
+                    <Box ml={10}>Deposit</Box>
+                  </Center>
+                </Group>
+              ),
+            },
+            {
+              value: 'card',
+              label: (
+                <Group>
+                  <Modal opened={opened_new_card} onClose={close_new_card} title="Add a new card" centered>
+                    <NewCard />
+                  </Modal>
+                  <Center onClick={open_new_card}>
+                    <IconCreditCard size={16} />
+                    <Box ml={10}>New Card</Box>
+                  </Center>
+                </Group>
+              ),
+            },
+            {
+              value: 'contact',
+              label: (
+                <Group>
+                  <Modal opened={opened_new_contact} onClose={close_new_contact} title="Add a new card" centered>
+                    <NewContact />
+                  </Modal>
+                  <Center onClick={open_new_contact}>
+                  <IconUser size={16} />
+                  <Box ml={10}>New Contact</Box>
                 </Center>
+                </Group>
               ),
             },
           ]}
