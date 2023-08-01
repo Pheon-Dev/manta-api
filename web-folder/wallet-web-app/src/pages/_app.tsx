@@ -79,9 +79,9 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
     //   return () => { sub = false }
     //
     // }, [router.pathname, status])
-    if (status === "unauthenticated") {
-      return <Login />;
-    }
+    // if (status === "unauthenticated") {
+    //   return <Login />;
+    // }
     return (
       <>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
@@ -147,7 +147,9 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                 main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
               })}
             >
-              <Component {...pageProps} />
+              {status === "authenticated" && (
+                <Component {...pageProps} />
+              ) || <Login />}
             </AppShell>
           </MantineProvider>
         </ColorSchemeProvider>
