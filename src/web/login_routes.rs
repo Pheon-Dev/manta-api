@@ -26,7 +26,10 @@ async fn login_api(
 	println!("->> {:<12} - login_api", "HANDLER");
 
 	// TODO: Implement real db/auth logic.
-	if payload.username != "janedoe" || payload.password != "welcome" {
+	if payload.username != "janedoe"
+		|| payload.password != "welcome"
+		|| payload.email != "janedoe@email.com"
+	{
 		return Err(Error::LoginFail);
 	}
 
@@ -46,6 +49,7 @@ async fn login_api(
 pub struct LoginPayload {
 	username: String,
 	password: String,
+	email: String,
 }
 
 #[derive(Debug, Deserialize, ToSchema)]
