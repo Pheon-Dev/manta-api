@@ -15,8 +15,10 @@
 
 // region:    --- Modules
 
+pub mod account;
 mod base;
 pub mod card;
+pub mod contact;
 mod error;
 pub mod payment;
 mod store;
