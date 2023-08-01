@@ -15,7 +15,12 @@ pub use config::config;
 
 use crate::ctx::Ctx;
 use crate::log::log_request;
-use crate::model::payment::{ModelController, Payment, PaymentForCreate};
+use crate::model::card::{
+	Card, CardForCreate, ModelController as CardModelController,
+};
+use crate::model::payment::{
+	ModelController as PaymentModelController, Payment, PaymentForCreate,
+};
 use crate::web::login_routes::{LoginPayload, LoginResponse};
 
 use axum::handler::HandlerWithoutStateExt;
@@ -40,9 +45,13 @@ use uuid::Uuid;
         web::payments_routes::list_payments,
         web::payments_routes::details_payment,
         web::payments_routes::delete_payment,
+        web::cards_routes::create_card,
+        web::cards_routes::list_cards,
+        web::cards_routes::details_card,
+        web::cards_routes::delete_card,
     ),
     components(
-        schemas(LoginPayload, LoginResponse, Payment, PaymentForCreate),
+        schemas(LoginPayload, LoginResponse, Payment, PaymentForCreate, Card, CardForCreate),
     ),
     tags((name = "Manta API", description = "A payments web application API")),
 )]
@@ -55,13 +64,17 @@ async fn main() -> Result<()> {
 		.allow_methods(vec![Method::GET, Method::POST]);
 
 	// -- DEV ONLY
-	_dev_utils::init_dev().await;
+	// _dev_utils::init_dev().await;
 
 	// Initialize ModelController.
-	let mc = ModelController::new().await?;
+	let mc = PaymentModelController::new().await?;
+	let cmc = CardModelController::new().await?;
 
 	// println!("{}", ApiDoc::openapi().to_pretty_json().unwrap());
-	let routes_apis = web::payments_routes::routes(mc.clone())
+	let payment_routes_apis = web::payments_routes::routes(mc.clone())
+		.route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
+
+	let card_routes_apis = web::cards_routes::routes(cmc.clone())
 		.route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
 
 	let routes_all = Router::new()
@@ -70,11 +83,16 @@ async fn main() -> Result<()> {
 				.url("/api-doc/openapi.json", ApiDoc::openapi()),
 		)
 		.merge(web::login_routes::routes())
-		.nest("/api", routes_apis)
+		.nest("/api", payment_routes_apis)
+		.nest("/api", card_routes_apis)
 		.layer(middleware::map_response(main_response_mapper))
 		.layer(middleware::from_fn_with_state(
 			mc.clone(),
-			web::mw_auth::mw_ctx_resolver,
+			web::mw_auth::mw_payment_ctx_resolver,
+		))
+		.layer(middleware::from_fn_with_state(
+			cmc.clone(),
+			web::mw_auth::mw_card_ctx_resolver,
 		))
 		.layer(CookieManagerLayer::new())
 		.layer(cors)

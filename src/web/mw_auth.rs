@@ -1,5 +1,6 @@
 use crate::ctx::Ctx;
-use crate::model::payment::ModelController;
+use crate::model::card::ModelController as CardModelController;
+use crate::model::payment::ModelController as PaymentModelController;
 use crate::web::AUTH_TOKEN;
 use crate::{Error, Result};
 use async_trait::async_trait;
@@ -23,8 +24,43 @@ pub async fn mw_require_auth<B>(
 	Ok(next.run(req).await)
 }
 
-pub async fn mw_ctx_resolver<B>(
-	_mc: State<ModelController>,
+pub async fn mw_payment_ctx_resolver<B>(
+	_mc: State<PaymentModelController>,
+	cookies: Cookies,
+	mut req: Request<B>,
+	next: Next<B>,
+) -> Result<Response> {
+	println!("->> {:<12} - mw_ctx_resolver", "MIDDLEWARE");
+
+	let auth_token = cookies.get(AUTH_TOKEN).map(|c| c.value().to_string());
+
+	// Compute Result<Ctx>.
+	let result_ctx = match auth_token
+		.ok_or(Error::AuthFailNoAuthTokenCookie)
+		.and_then(parse_token)
+	{
+		Ok((user_id, _exp, _sign)) => {
+			// TODO: Token components validations.
+			Ok(Ctx::new(user_id))
+		}
+		Err(e) => Err(e),
+	};
+
+	// Remove the cookie if something went wrong other than NoAuthTokenCookie.
+	if result_ctx.is_err()
+		&& !matches!(result_ctx, Err(Error::AuthFailNoAuthTokenCookie))
+	{
+		cookies.remove(Cookie::named(AUTH_TOKEN))
+	}
+
+	// Store the ctx_result in the request extension.
+	req.extensions_mut().insert(result_ctx);
+
+	Ok(next.run(req).await)
+}
+
+pub async fn mw_card_ctx_resolver<B>(
+	_cmc: State<CardModelController>,
 	cookies: Cookies,
 	mut req: Request<B>,
 	next: Next<B>,

@@ -31,5 +31,22 @@ async fn main() -> Result<()> {
 
 	hc.do_get("/api/payments").await?.print().await?;
 
+	let req_create_card = hc.do_post(
+		"/api/cards",
+		json!({
+			"name": "John Paul",
+			"balance": "32000",
+			"number": "4632-6343-7541-0674",
+			"card_type": "VISA",
+			"cvv": "058",
+			"valid": "04/25",
+			"description": "M-PESA Global Pay Card",
+			"account": "Debit",
+		}),
+	);
+	req_create_card.await?.print().await?;
+
+	hc.do_get("/api/cards").await?.print().await?;
+
 	Ok(())
 }
