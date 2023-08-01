@@ -5,6 +5,7 @@ mod dev_db;
 use crate::ctx::Ctx;
 use crate::model::account::{Account, AccountBmc, AccountForCreate};
 use crate::model::card::{Card, CardBmc, CardForCreate};
+use crate::model::contact::{Contact, ContactBmc, ContactForCreate};
 use crate::model::payment::{Payment, PaymentBmc, PaymentForCreate};
 use crate::model::{self, ModelManager};
 use tokio::sync::OnceCell;
@@ -73,6 +74,46 @@ pub async fn seed_payments(
 	}
 
 	Ok(payments)
+}
+
+pub async fn seed_contacts(
+	ctx: &Ctx,
+	mm: &ModelManager,
+	ref_ids: &[&str],
+	associations: &[&str],
+	names: &[&str],
+	emails: &[&str],
+	usernames: &[&str],
+) -> model::Result<Vec<Contact>> {
+	let mut contacts = Vec::new();
+
+	for username in usernames {
+		for ref_id in ref_ids {
+			for name in names {
+				for association in associations {
+					for email in emails {
+						let id = ContactBmc::create(
+							ctx,
+							mm,
+							ContactForCreate {
+								username: username.to_string(),
+								ref_id: ref_id.to_string(),
+								name: name.to_string(),
+								association: association.to_string(),
+								email: email.to_string(),
+							},
+						)
+						.await?;
+						let contact = ContactBmc::get(ctx, mm, id).await?;
+
+						contacts.push(contact);
+					}
+				}
+			}
+		}
+	}
+
+	Ok(contacts)
 }
 
 pub async fn seed_cards(
