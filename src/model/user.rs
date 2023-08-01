@@ -113,6 +113,10 @@ impl UserBmc {
 		Ok(user_id)
 	}
 
+	pub async fn list(ctx: &Ctx, mm: &ModelManager) -> Result<Vec<User>> {
+		base::list::<Self, _>(ctx, mm).await
+	}
+
 	pub async fn get<E>(ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<E>
 	where
 		E: UserBy,

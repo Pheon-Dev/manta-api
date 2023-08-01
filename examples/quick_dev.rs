@@ -18,6 +18,33 @@ async fn main() -> Result<()> {
 	);
 	req_login.await?.print().await?;
 
+	let req_create_user = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "create_user",
+			"params": {
+				"data": {
+					"username": "johnpaul",
+					"password_clear": "welcome",
+				}
+			}
+		}),
+	);
+
+	let req_list_users = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "list_users"
+		}),
+	);
+
+	req_create_user.await?.print().await?;
+	// req_update_user.await?.print().await?;
+	// // req_delete_user.await?.print().await?;
+	req_list_users.await?.print().await?;
+
 	let req_create_payment = hc.do_post(
 		"/api/rpc",
 		json!({
@@ -67,10 +94,10 @@ async fn main() -> Result<()> {
 		}),
 	);
 
-	req_create_payment.await?.print().await?;
-	req_update_payment.await?.print().await?;
-	// req_delete_payment.await?.print().await?;
-	req_list_payments.await?.print().await?;
+	// req_create_payment.await?.print().await?;
+	// req_update_payment.await?.print().await?;
+	// // req_delete_payment.await?.print().await?;
+	// req_list_payments.await?.print().await?;
 
 	let req_create_contact = hc.do_post(
 		"/api/rpc",
@@ -122,10 +149,10 @@ async fn main() -> Result<()> {
 		}),
 	);
 
-	req_create_contact.await?.print().await?;
-	req_update_contact.await?.print().await?;
-	// req_delete_contact.await?.print().await?;
-	req_list_contacts.await?.print().await?;
+	// req_create_contact.await?.print().await?;
+	// req_update_contact.await?.print().await?;
+	// // req_delete_contact.await?.print().await?;
+	// req_list_contacts.await?.print().await?;
 
 	let req_create_card = hc.do_post(
 		"/api/rpc",
@@ -179,10 +206,11 @@ async fn main() -> Result<()> {
 			"method": "list_cards"
 		}),
 	);
-	req_create_card.await?.print().await?;
-	req_update_card.await?.print().await?;
-	// req_delete_card.await?.print().await?;
-	req_list_cards.await?.print().await?;
+
+	// req_create_card.await?.print().await?;
+	// req_update_card.await?.print().await?;
+	// // req_delete_card.await?.print().await?;
+	// req_list_cards.await?.print().await?;
 
 	let req_create_account = hc.do_post(
 		"/api/rpc",
@@ -233,10 +261,11 @@ async fn main() -> Result<()> {
 			"method": "list_accounts"
 		}),
 	);
-	req_create_account.await?.print().await?;
-	req_update_account.await?.print().await?;
-	// req_delete_account.await?.print().await?;
-	req_list_accounts.await?.print().await?;
+
+	// req_create_account.await?.print().await?;
+	// req_update_account.await?.print().await?;
+	// // req_delete_account.await?.print().await?;
+	// req_list_accounts.await?.print().await?;
 
 	let req_logoff = hc.do_post(
 		"/api/logoff",
