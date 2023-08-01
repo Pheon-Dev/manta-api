@@ -14,7 +14,7 @@ const login = await client.request({
   url: "http://localhost:8080/api/login",
   method: "POST",
   body: Body.json({
-    username: "demo1",
+    username: "janedoe",
     password: "welcome",
   }),
   responseType: ResponseType.JSON,
@@ -28,8 +28,8 @@ const payment = await client.request({
   method: "POST",
   body: Body.json({
     amount: "100",
-    sender: "demo1",
-    receiver: "demo1",
+    sender: "janedoe",
+    receiver: "janedoe",
     description: "allowance"
   })
 })

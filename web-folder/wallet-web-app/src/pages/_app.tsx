@@ -35,7 +35,7 @@ interface MantaState {
 export const useMantaStore = create<MantaState>((set) => ({
   balance: 30200,
   email: "jane@doe.com",
-  username: "demo1",
+  username: "janedoe",
   name: "Jane Doe",
   id: "105ef042",
   cookie: "",

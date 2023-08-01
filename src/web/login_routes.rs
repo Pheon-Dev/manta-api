@@ -26,7 +26,7 @@ async fn login_api(
 	println!("->> {:<12} - login_api", "HANDLER");
 
 	// TODO: Implement real db/auth logic.
-	if payload.username != "demo1" || payload.password != "welcome" {
+	if payload.username != "janedoe" || payload.password != "welcome" {
 		return Err(Error::LoginFail);
 	}
 
