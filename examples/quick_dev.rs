@@ -68,9 +68,9 @@ async fn main() -> Result<()> {
 	);
 
 	// req_create_user.await?.print().await?;
-	req_update_user.await?.print().await?;
+	// req_update_user.await?.print().await?;
 	// req_delete_user.await?.print().await?;
-	req_list_users.await?.print().await?;
+	// req_list_users.await?.print().await?;
 
 	let req_create_payment = hc.do_post(
 		"/api/rpc",
@@ -289,10 +289,10 @@ async fn main() -> Result<()> {
 		}),
 	);
 
-	// req_create_account.await?.print().await?;
+	req_create_account.await?.print().await?;
 	// req_update_account.await?.print().await?;
 	// // req_delete_account.await?.print().await?;
-	// req_list_accounts.await?.print().await?;
+	req_list_accounts.await?.print().await?;
 
 	let req_logoff = hc.do_post(
 		"/api/logoff",

@@ -104,8 +104,8 @@ CREATE TABLE account (
   balance varchar(256) NOT NULL,
   aid varchar(256) NOT NULL,
   cookie varchar(256) NOT NULL,
-  email varchar(256) NOT NULL,
-  username varchar(256) NOT NULL,
+  username varchar(128) NOT NULL UNIQUE,
+  email varchar(128) NOT NULL UNIQUE,
 
   -- Timestamps
   cid bigint NOT NULL,
