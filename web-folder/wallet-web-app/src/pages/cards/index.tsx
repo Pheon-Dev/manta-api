@@ -1,6 +1,12 @@
 import { Card, Image, Text, Badge, Button, Group, Grid } from '@mantine/core';
+import { useSession } from 'next-auth/react';
+import { trpc } from '../../utils/trpc';
 
 const Cards = () => {
+  const { status, data } = useSession();
+  const name = data?.user?.name;
+  const account = trpc.card.list.useQuery({ method: "list_cards", id: 1, cookie: `${data?.user?.image}` });
+  const res = account?.data?.data?.result?.data[0]
   return (
     <Grid>
       <Grid.Col span={4}>
@@ -75,6 +81,7 @@ const Cards = () => {
           </Button>
         </Card>
       </Grid.Col>
+        <pre>{JSON.stringify(account.data, undefined, 2)}</pre>
     </Grid>
   )
 }
