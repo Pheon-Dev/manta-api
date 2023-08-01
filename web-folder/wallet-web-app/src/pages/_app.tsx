@@ -1,7 +1,8 @@
 import { getCookie, setCookie } from "cookies-next";
+import { useRouter } from "next/router";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { notifications } from '@mantine/notifications';
 
 import { ActionIcon, AppShell, Burger, ColorScheme, ColorSchemeProvider, Group, Header, MantineProvider, MediaQuery, Navbar, Text, Tooltip, useMantineTheme } from "@mantine/core";
@@ -68,11 +69,19 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
 
   const AppContent = () => {
     const { status, data } = useSession();
+    const router = useRouter()
 
+    // useEffect(() => {
+    //   let sub = true
+    //   if (sub) {
+    //     if (router.pathname !== "/auth" && status === "unauthenticated") router.push("/auth")
+    //   }
+    //   return () => { sub = false }
+    //
+    // }, [router.pathname, status])
     if (status === "unauthenticated") {
       return <Login />;
     }
-
     return (
       <>
         <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
@@ -81,9 +90,13 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
             <AppShell
               padding="md"
               navbar={
-                <Navbar p="md" hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 250, lg: 300 }}>
-                  <NavBar />
-                </Navbar>
+                <>
+                  {status === "authenticated" && (
+                    <Navbar p="md" hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 250, lg: 300 }}>
+                      <NavBar />
+                    </Navbar>
+                  )}
+                </>
               }
               header={
                 <Header height={70} p="sm">
@@ -110,18 +123,22 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                     </Group>
                     <Group>
                       <ColorSchemeToggle />
-                      <IconLogout
-                        color="red"
-                        size={24}
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          notifications.show({
-                            color: "red",
-                            title: 'Authentication',
-                            message: 'Logging out ... Thanks for using Manta Wallet',
-                          })
-                          signOut();
-                        }} />
+                      <>
+                        {status === "authenticated" && (
+                          <IconLogout
+                            color="red"
+                            size={24}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => {
+                              notifications.show({
+                                color: "red",
+                                title: 'Authentication',
+                                message: 'Logging out ... Thanks for using Manta Wallet',
+                              })
+                              signOut();
+                            }} />
+                        )}
+                      </>
                     </Group>
                   </Group>
                 </Header>
