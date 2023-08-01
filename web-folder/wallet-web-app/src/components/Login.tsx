@@ -79,7 +79,8 @@ const Login = (props: {}) => {
           name: form.values.name,
           redirect: false,
         });
-        notifications.update({
+        if (res?.ok) {
+        return notifications.update({
           id: "login",
           color: "green",
           icon: <IconCheck />,
@@ -87,13 +88,14 @@ const Login = (props: {}) => {
           message: `Logged in Successfully ... Welcome, ${form.values.name}`,
         })
       }
-      notifications.update({
+      return notifications.update({
         id: "login",
         color: "red",
         icon: <IconX />,
         title: "Authentication",
         message: `Wrong Credentials. Please try again.`,
       })
+      }
     } catch (error) {
       notifications.update({
         id: "login",
