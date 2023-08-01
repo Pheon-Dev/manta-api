@@ -17,22 +17,26 @@ import {
 import { IconCash, IconBuildingBank, IconSend } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useMantaStore } from '../_app';
-import { trpc} from '../../utils/trpc';
+import { trpc } from '../../utils/trpc';
 import Send from './Send';
 
 const Wallet = () => {
-  const balance = useMantaStore((state) => state.balance)
+  // const balance = useMantaStore((state) => state.balance)
   const id = useMantaStore((state) => state.id)
-  const email = useMantaStore((state) => state.email)
-  const username = useMantaStore((state) => state.username)
-  const name = useMantaStore((state) => state.name)
+  const setID = useMantaStore((state) => state.setID);
+  // const email = useMantaStore((state) => state.email)
+  // const username = useMantaStore((state) => state.username)
   const { status, data } = useSession();
+  const name = data?.user?.name;
   const account = trpc.account.accounts.useQuery({ method: "list_accounts", id: 1, cookie: `${data?.user?.image}` });
+  const res = account?.data?.data?.result?.data[0]
 
   const user = {
     image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
     name: name,
-    email: email
+    aid: res?.aid,
+    balance: res?.balance,
+    email: res?.email
   }
   const [opened_send, { open: open_send, close: close_send }] = useDisclosure(false);
   return (
@@ -127,7 +131,7 @@ const Wallet = () => {
           <Group position="apart" w={400} mt="md" mb="md">
             <Text weight={500}>Account Balance</Text>
             <Badge color="blue" variant="light" size="lg">
-              {`KES ${balance}`.replace(
+              {`KES ${user.balance}`.replace(
                 /\B(?=(\d{3})+(?!\d))/g,
                 ","
               )}
@@ -137,7 +141,7 @@ const Wallet = () => {
           <Group position="apart" w={400} mt="md" mb="md">
             <Text weight={500}>Account ID</Text>
             <Badge color="blue" variant="light">
-              {id}
+              {user.aid}
             </Badge>
           </Group>
         </Card>
