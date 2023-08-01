@@ -45,10 +45,14 @@ pub struct CardForCreate {
 
 #[derive(Deserialize, Fields)]
 pub struct CardForUpdate {
-	pub amount: Option<String>,
-	pub sender: Option<String>,
-	pub receiver: Option<String>,
-	pub description: Option<String>,
+	pub cname: Option<String>,
+	pub cbalance: Option<String>,
+	pub cnumber: Option<String>,
+	pub ctype: Option<String>,
+	pub caccount: Option<String>,
+	pub cvalid: Option<String>,
+	pub cvv: Option<String>,
+	pub cdescription: Option<String>,
 }
 // endregion: --- Card Types
 
