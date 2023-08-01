@@ -15,8 +15,14 @@ pub use config::config;
 
 use crate::ctx::Ctx;
 use crate::log::log_request;
+use crate::model::account::{
+	Account, AccountForCreate, ModelController as AccountModelController,
+};
 use crate::model::card::{
 	Card, CardForCreate, ModelController as CardModelController,
+};
+use crate::model::contact::{
+	Contact, ContactForCreate, ModelController as ContactModelController,
 };
 use crate::model::payment::{
 	ModelController as PaymentModelController, Payment, PaymentForCreate,
@@ -49,9 +55,17 @@ use uuid::Uuid;
         web::cards_routes::list_cards,
         web::cards_routes::details_card,
         web::cards_routes::delete_card,
+        web::accounts_routes::create_account,
+        web::accounts_routes::list_accounts,
+        web::accounts_routes::details_account,
+        web::accounts_routes::delete_account,
+        web::contacts_routes::create_contact,
+        web::contacts_routes::list_contacts,
+        web::contacts_routes::details_contact,
+        web::contacts_routes::delete_contact,
     ),
     components(
-        schemas(LoginPayload, LoginResponse, Payment, PaymentForCreate, Card, CardForCreate),
+        schemas(LoginPayload, LoginResponse, Payment, PaymentForCreate, Card, CardForCreate, Account, AccountForCreate, Contact, ContactForCreate),
     ),
     tags((name = "Manta API", description = "A payments web application API")),
 )]
@@ -69,12 +83,20 @@ async fn main() -> Result<()> {
 	// Initialize ModelController.
 	let mc = PaymentModelController::new().await?;
 	let cmc = CardModelController::new().await?;
+	let amc = AccountModelController::new().await?;
+	let omc = ContactModelController::new().await?;
 
 	// println!("{}", ApiDoc::openapi().to_pretty_json().unwrap());
 	let payment_routes_apis = web::payments_routes::routes(mc.clone())
 		.route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
 
 	let card_routes_apis = web::cards_routes::routes(cmc.clone())
+		.route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
+
+	let account_routes_apis = web::accounts_routes::routes(amc.clone())
+		.route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
+
+	let contact_routes_apis = web::contacts_routes::routes(omc.clone())
 		.route_layer(middleware::from_fn(web::mw_auth::mw_require_auth));
 
 	let routes_all = Router::new()
@@ -85,6 +107,8 @@ async fn main() -> Result<()> {
 		.merge(web::login_routes::routes())
 		.nest("/api", payment_routes_apis)
 		.nest("/api", card_routes_apis)
+		.nest("/api", account_routes_apis)
+		.nest("/api", contact_routes_apis)
 		.layer(middleware::map_response(main_response_mapper))
 		.layer(middleware::from_fn_with_state(
 			mc.clone(),
@@ -93,6 +117,14 @@ async fn main() -> Result<()> {
 		.layer(middleware::from_fn_with_state(
 			cmc.clone(),
 			web::mw_auth::mw_card_ctx_resolver,
+		))
+		.layer(middleware::from_fn_with_state(
+			amc.clone(),
+			web::mw_auth::mw_account_ctx_resolver,
+		))
+		.layer(middleware::from_fn_with_state(
+			omc.clone(),
+			web::mw_auth::mw_contact_ctx_resolver,
 		))
 		.layer(CookieManagerLayer::new())
 		.layer(cors)

@@ -48,5 +48,33 @@ async fn main() -> Result<()> {
 
 	hc.do_get("/api/cards").await?.print().await?;
 
+	let req_create_account = hc.do_post(
+		"/api/accounts",
+		json!({
+			"balance": "5000",
+			"aid": "98j3e12r",
+			"cookie": "user-1.exp.sign",
+			"email": "johnpaul",
+			"username": "johnpaul@email.com",
+		}),
+	);
+	req_create_account.await?.print().await?;
+
+	hc.do_get("/api/accounts").await?.print().await?;
+
+	let req_create_contact = hc.do_post(
+		"/api/contacts",
+		json!({
+			"username": "soko",
+			"ref_id": "j547r3l9",
+			"association": "Business",
+			"email": "sokobrand@email.com",
+			"name": "Soko Brand",
+		}),
+	);
+	req_create_contact.await?.print().await?;
+
+	hc.do_get("/api/contacts").await?.print().await?;
+
 	Ok(())
 }

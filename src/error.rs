@@ -24,6 +24,10 @@ pub enum Error {
 	PaymentNotFound { id: u64 },
 	CardDeleteFailIdNotFound { id: u64 },
 	CardNotFound { id: u64 },
+	AccountDeleteFailIdNotFound { id: u64 },
+	AccountNotFound { id: u64 },
+	ContactDeleteFailIdNotFound { id: u64 },
+	ContactNotFound { id: u64 },
 }
 
 // region:    --- Error Boilerplate
@@ -77,6 +81,18 @@ impl Error {
 				(StatusCode::BAD_REQUEST, ClientError::INVALID_PARAMS)
 			}
 			Self::CardNotFound { .. } => {
+				(StatusCode::BAD_REQUEST, ClientError::INVALID_PARAMS)
+			}
+			Self::AccountDeleteFailIdNotFound { .. } => {
+				(StatusCode::BAD_REQUEST, ClientError::INVALID_PARAMS)
+			}
+			Self::AccountNotFound { .. } => {
+				(StatusCode::BAD_REQUEST, ClientError::INVALID_PARAMS)
+			}
+			Self::ContactDeleteFailIdNotFound { .. } => {
+				(StatusCode::BAD_REQUEST, ClientError::INVALID_PARAMS)
+			}
+			Self::ContactNotFound { .. } => {
 				(StatusCode::BAD_REQUEST, ClientError::INVALID_PARAMS)
 			}
 
