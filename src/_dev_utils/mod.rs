@@ -3,6 +3,7 @@
 mod dev_db;
 
 use crate::ctx::Ctx;
+use crate::model::account::{Account, AccountBmc, AccountForCreate};
 use crate::model::card::{Card, CardBmc, CardForCreate};
 use crate::model::payment::{Payment, PaymentBmc, PaymentForCreate};
 use crate::model::{self, ModelManager};
@@ -124,4 +125,44 @@ pub async fn seed_cards(
 	}
 
 	Ok(cards)
+}
+
+pub async fn seed_accounts(
+	ctx: &Ctx,
+	mm: &ModelManager,
+	usernames: &[&str],
+	emails: &[&str],
+	aids: &[&str],
+	cookies: &[&str],
+	balances: &[&str],
+) -> model::Result<Vec<Account>> {
+	let mut accounts = Vec::new();
+
+	for balance in balances {
+		for username in usernames {
+			for aid in aids {
+				for email in emails {
+					for cookie in cookies {
+						let id = AccountBmc::create(
+							ctx,
+							mm,
+							AccountForCreate {
+								balance: balance.to_string(),
+								username: username.to_string(),
+								aid: aid.to_string(),
+								email: email.to_string(),
+								cookie: cookie.to_string(),
+							},
+						)
+						.await?;
+						let account = AccountBmc::get(ctx, mm, id).await?;
+
+						accounts.push(account);
+					}
+				}
+			}
+		}
+	}
+
+	Ok(accounts)
 }

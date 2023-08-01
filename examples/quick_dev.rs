@@ -128,6 +128,60 @@ async fn main() -> Result<()> {
 	);
 	req_list_cards.await?.print().await?;
 
+	let req_create_account = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "create_account",
+			"params": {
+				"data": {
+					"username": "janedoe",
+					"email": "janedoe@email.com",
+					"balance": "82000",
+					"aid": "8j5ka89d",
+					"cookie": "auth-token=amFuZWRvZQ.MjAyMy0wOC0wMVQxMDowMjoyNi4yODk0NDU2NzRa.5-dX3wPicTHhg_DpscgMXPBCrZA7Whd-OYrESugB6SyAA8QUzhna3DCviLt4c2BfL9Fy1PHzS4qEe2ZgVNHs0w",
+				}
+			}
+		}),
+	);
+	req_create_account.await?.print().await?;
+
+	let req_update_account = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "update_account",
+			"params": {
+				"id": 1000, // Hardcode the send id.
+				"data": {
+					"balance": "20000"
+				}
+			}
+		}),
+	);
+	req_update_account.await?.print().await?;
+
+	let req_delete_account = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "delete_account",
+			"params": {
+				"id": 1001 // Harcode the send id
+			}
+		}),
+	);
+	// req_delete_account.await?.print().await?;
+
+	let req_list_accounts = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "list_accounts"
+		}),
+	);
+	req_list_accounts.await?.print().await?;
+
 	let req_logoff = hc.do_post(
 		"/api/logoff",
 		json!({
