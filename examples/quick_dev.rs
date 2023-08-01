@@ -33,7 +33,6 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	req_create_payment.await?.print().await?;
 
 	let req_update_payment = hc.do_post(
 		"/api/rpc",
@@ -48,7 +47,6 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	req_update_payment.await?.print().await?;
 
 	let req_delete_payment = hc.do_post(
 		"/api/rpc",
@@ -60,7 +58,6 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	// req_delete_payment.await?.print().await?;
 
 	let req_list_payments = hc.do_post(
 		"/api/rpc",
@@ -69,7 +66,66 @@ async fn main() -> Result<()> {
 			"method": "list_payments"
 		}),
 	);
+
+	req_create_payment.await?.print().await?;
+	req_update_payment.await?.print().await?;
+	// req_delete_payment.await?.print().await?;
 	req_list_payments.await?.print().await?;
+
+	let req_create_contact = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "create_contact",
+			"params": {
+				"data": {
+					"ref_id": "7jk4h37g",
+					"association": "Business",
+					"username": "soko",
+					"name": "Soko Brand",
+					"email": "soko@brand.com",
+				}
+			}
+		}),
+	);
+
+	let req_update_contact = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "update_contact",
+			"params": {
+				"id": 1000, // Hardcode the send id.
+				"data": {
+					"email": "soko@brand.net",
+				}
+			}
+		}),
+	);
+
+	let req_delete_contact = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "delete_contact",
+			"params": {
+				"id": 1001 // Harcode the send id
+			}
+		}),
+	);
+
+	let req_list_contacts = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "list_contacts"
+		}),
+	);
+
+	req_create_contact.await?.print().await?;
+	req_update_contact.await?.print().await?;
+	// req_delete_contact.await?.print().await?;
+	req_list_contacts.await?.print().await?;
 
 	let req_create_card = hc.do_post(
 		"/api/rpc",
@@ -90,7 +146,6 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	req_create_card.await?.print().await?;
 
 	let req_update_card = hc.do_post(
 		"/api/rpc",
@@ -105,7 +160,6 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	req_update_card.await?.print().await?;
 
 	let req_delete_card = hc.do_post(
 		"/api/rpc",
@@ -117,7 +171,6 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	// req_delete_card.await?.print().await?;
 
 	let req_list_cards = hc.do_post(
 		"/api/rpc",
@@ -126,6 +179,9 @@ async fn main() -> Result<()> {
 			"method": "list_cards"
 		}),
 	);
+	req_create_card.await?.print().await?;
+	req_update_card.await?.print().await?;
+	// req_delete_card.await?.print().await?;
 	req_list_cards.await?.print().await?;
 
 	let req_create_account = hc.do_post(
@@ -144,7 +200,6 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	req_create_account.await?.print().await?;
 
 	let req_update_account = hc.do_post(
 		"/api/rpc",
@@ -159,7 +214,6 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	req_update_account.await?.print().await?;
 
 	let req_delete_account = hc.do_post(
 		"/api/rpc",
@@ -171,7 +225,6 @@ async fn main() -> Result<()> {
 			}
 		}),
 	);
-	// req_delete_account.await?.print().await?;
 
 	let req_list_accounts = hc.do_post(
 		"/api/rpc",
@@ -180,6 +233,9 @@ async fn main() -> Result<()> {
 			"method": "list_accounts"
 		}),
 	);
+	req_create_account.await?.print().await?;
+	req_update_account.await?.print().await?;
+	// req_delete_account.await?.print().await?;
 	req_list_accounts.await?.print().await?;
 
 	let req_logoff = hc.do_post(
