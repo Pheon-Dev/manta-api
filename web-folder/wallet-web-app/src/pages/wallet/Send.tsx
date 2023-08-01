@@ -45,7 +45,7 @@ const Send = () => {
   const send = useMantaStore((state) => state.send)
 
   const username = useMantaStore((state) => state.username)
-  const send_money = trpc.send.useMutation({
+  const send_money = trpc.payment.send.useMutation({
     onSuccess: async () => {
       return notifications.update({
         id: "send",
