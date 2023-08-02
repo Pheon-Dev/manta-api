@@ -1,30 +1,14 @@
 import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
 import { Button, Group, TextInput, NumberInput, Box, Textarea } from '@mantine/core';
-import { useMantaStore } from '../_app';
+// import { useMantaStore } from '../_app';
 import { notifications } from '@mantine/notifications';
 import { trpc } from '../../utils/trpc';
-import { useCallback, useEffect } from 'react';
+import { useCallback  } from 'react';
 import { useSession } from 'next-auth/react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 
 const Send = () => {
-  const cookie = useMantaStore((state) => state.cookie)
   const { status, data } = useSession();
-
-  let name = ""
-  const setCookie = useMantaStore((state) => state.setCookie);
-  if (data?.user?.image) {
-    const cookie_str = data?.user?.image.toString();
-    useEffect(() => {
-      setCookie(cookie_str);
-    }, [cookie_str])
-  }
-  if (data?.user?.name) {
-    name = data?.user?.name.toString();
-  }
-
-  const method = "create_payment";
-  const uid = 1
 
   const form = useForm({
     initialValues: {
@@ -35,16 +19,20 @@ const Send = () => {
     },
 
     validate: {
-      sender: hasLength({ min: 2, max: 10 }, 'sender must be 2-10 characters long'),
-      receiver: isNotEmpty('Enter your current receiver'),
-      description: isNotEmpty('Enter your current receiver'),
-      amount: isInRange({ min: 1, max: 99999 }, 'You must be 18-99 years old to register'),
+      sender: hasLength({ min: 2, max: 10 }, 'Sender must be 2-10 characters long'),
+      receiver: isNotEmpty('Enter receiver'),
+      description: isNotEmpty('Enter decription'),
+      amount: isInRange({ min: 1, max: 100000 }, 'Maximum amount is 100000, minimum amount is 1'),
     },
   });
 
-  const send = useMantaStore((state) => state.send)
+  // const send = useMantaStore((state) => state.send)
 
-  const username = useMantaStore((state) => state.username)
+  const username = `${data?.user?.name}`
+  const cookie = `${data?.user?.image}`
+  const method = "create_payment";
+  const uid = 1
+
   const send_money = trpc.payment.send.useMutation({
     onSuccess: async () => {
       return notifications.update({
@@ -58,7 +46,7 @@ const Send = () => {
     }
   });
 
-  const handleSend = useCallback(() => {
+  const handleSubmit = useCallback(() => {
     notifications.show({
       id: "send",
       title: "Loading",
@@ -76,7 +64,7 @@ const Send = () => {
           receiver: form.values.receiver,
           description: form.values.description
         })
-        send(form.values.amount)
+        // send(form.values.amount)
       }
     } catch (error) {
       notifications.update({
@@ -115,7 +103,7 @@ const Send = () => {
       />
 
       <Group position="right" mt="md">
-        <Button type="submit" onClick={() => handleSend()}>Send</Button>
+        <Button type="submit" onClick={() => handleSubmit()}>Send</Button>
       </Group>
     </Box>
   );
