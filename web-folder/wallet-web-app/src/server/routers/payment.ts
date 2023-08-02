@@ -12,6 +12,7 @@ export const paymentRouter = router({
         amount: z.string(),
         sender: z.string(),
         receiver: z.string(),
+        balance: z.string(),
         description: z.string(),
       }),
     )
@@ -42,6 +43,24 @@ export const paymentRouter = router({
           }
         });
 
+        const balance = +opts.input.balance
+        const amount = +opts.input.amount
+        const new_acc_balance = balance - +amount
+        let update_account_data_response = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id: 1,
+            method: "update_account",
+            params: {
+              id: id,
+              data: {
+                balance: `${new_acc_balance}`
+              }
+            }
+          }
+        })
         return {
           payments: payments.data,
         };
