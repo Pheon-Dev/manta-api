@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import {
   Text,
   Avatar,
@@ -22,6 +22,7 @@ import NewContact from './Contact';
 import NewCard from './Card';
 import Deposit from './Deposit';
 import Withdraw from './Withdraw';
+import { useEffect  } from 'react';
 
 const Wallet = () => {
   const { status, data } = useSession();
@@ -29,9 +30,21 @@ const Wallet = () => {
   const account = trpc.account.list.useQuery({ method: "list_accounts", id: 1, cookie: `${data?.user?.image}` });
   const res = account?.data?.data?.result?.data[0]
 
+  useEffect(() => {
+    let sub = true
+
+if (sub) {
+if (account?.data?.error?.name) signOut();
+
+}
+
+    return () => {sub = false}
+  }, [account?.data?.error?.name])
+
   const user = {
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvc_M0Jo569OkceaKbg_bobTRQGfzXwYEWYgVi8DTwiw&s",
     name: name,
+    username: res?.username,
     aid: res?.aid,
     balance: res?.balance,
     email: res?.email
@@ -139,7 +152,7 @@ const Wallet = () => {
               label: (
                 <Group>
                   <Modal opened={opened_new_card} onClose={close_new_card} title="Add a new card" centered>
-                    <NewCard />
+                    <NewCard username={user.username} />
                   </Modal>
                   <Center onClick={open_new_card}>
                     <IconCreditCard size={16} />
