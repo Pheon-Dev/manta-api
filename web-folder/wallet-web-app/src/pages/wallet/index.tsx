@@ -30,7 +30,7 @@ const Wallet = () => {
   const res = account?.data?.data?.result?.data[0]
 
   const user = {
-    image: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvc_M0Jo569OkceaKbg_bobTRQGfzXwYEWYgVi8DTwiw&s",
     name: name,
     aid: res?.aid,
     balance: res?.balance,
@@ -186,9 +186,7 @@ const Wallet = () => {
           </Group>
         </Card>
       </Center>
-      <Center>
         <pre>{JSON.stringify(account.data, undefined, 2)}</pre>
-      </Center>
     </>
   );
 }
