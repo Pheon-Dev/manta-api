@@ -6,12 +6,16 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import { trpc } from '../../utils/trpc';
 
-const NewCard = () => {
+type Props = {
+  username: string
+}
+const NewCard = ({username}: Props) => {
   const { status, data } = useSession();
 
   const form = useForm({
     initialValues: {
       cbalance: 0,
+      cowner: `${username}`,
       cnumber: '',
       cdescription: '',
       cvalid: '',
@@ -23,6 +27,7 @@ const NewCard = () => {
 
     validate: {
       cnumber: hasLength({ min: 12, max: 12 }, 'Enter 12 Digit Card Number'),
+      cowner: isNotEmpty('Card Owner should match the logged in user'),
       cvv: isNotEmpty('Enter Card CVV number'),
       cdescription: isNotEmpty('Enter Card Description'),
       cvalid: isNotEmpty('Enter Card Validity Date [DD/YY]'),
@@ -59,6 +64,7 @@ const NewCard = () => {
     try {
       if (
       form.values.cbalance !== 0 &&
+      form.values.cowner !== "" &&
       form.values.cnumber !== "" &&
       form.values.cdescription !== "" &&
       form.values.cvalid !== "" &&
@@ -73,6 +79,7 @@ const NewCard = () => {
           id: 1,
           cdescription: form.values.cdescription,
           cnumber: form.values.cnumber,
+          cowner: form.values.cowner,
           cvv: form.values.cvv,
           cvalid: form.values.cvalid,
           cname: form.values.cname,
@@ -100,7 +107,7 @@ const NewCard = () => {
         message: `Error: ${error}`,
       })
     }
-  }, [create_card, form.values.cbalance, form.values.cnumber, form.values.cdescription, form.values.cvalid, form.values.cvv, form.values.cname, form.values.ctype, form.values.caccount]);
+  }, [create_card, form.values.cbalance, form.values.cnumber, form.values.cowner, form.values.cdescription, form.values.cvalid, form.values.cvv, form.values.cname, form.values.ctype, form.values.caccount]);
 
   return (
     <Box component="form" maw={400} mx="auto" onSubmit={form.onSubmit(() => { })}>
@@ -110,6 +117,13 @@ const NewCard = () => {
         withAsterisk
         mt="md"
         {...form.getInputProps('cname')}
+      />
+      <TextInput
+        label="Enter Card Owner"
+        placeholder="username"
+        withAsterisk
+        mt="md"
+        {...form.getInputProps('cowner')}
       />
       <NumberInput
         label="Enter Initial Deposit [1-100,000]"
