@@ -45,6 +45,87 @@ export const accountRouter = router({
         payments: payments.data,
       };
     }),
+  withdraw: procedure
+    .input(
+      z.object({
+        id: z.number(),
+        method: z.string(),
+        cookie: z.string(),
+        amount: z.number(),
+        card_id: z.string(),
+        username: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const get_card_method = "get_card"
+      const cookie = `${opts.input.cookie}`
+      const card_id = `${opts.input.card_id}`
+      const username = `${opts.input.username}`
+      const amount = opts.input.amount
+      const id = opts.input.id
+      const url = "http://localhost:8080/api/rpc"
+      const headers = {
+        Cookie: cookie
+      }
+      let get_card_data_response = await axios.request({
+        method: "POST",
+        url,
+        headers,
+        data: {
+          card_id,
+          method: get_card_method,
+        }
+      });
+
+      const card = get_card_data_response.data
+      console.log(card)
+
+      return {
+        get_card_data_response: get_card_data_response.data,
+      };
+    }),
+  deposit: procedure
+    .input(
+      z.object({
+        id: z.number(),
+        method: z.string(),
+        cookie: z.string(),
+        amount: z.number(),
+        card_id: z.string(),
+        username: z.string(),
+      }),
+    )
+    .mutation(async (opts) => {
+      const get_card_method = "get_card"
+      const cookie = `${opts.input.cookie}`
+      const card_id = `${opts.input.card_id}`
+      const username = `${opts.input.username}`
+      const amount = opts.input.amount
+      const id = opts.input.id
+      const url = "http://localhost:8080/api/rpc"
+      const headers = {
+        Cookie: cookie
+      }
+      let get_card_data_response = await axios.request({
+        method: "POST",
+        url,
+        headers,
+        data: {
+          id: 1,
+          method: get_card_method,
+        params: {
+          id: +card_id
+        }
+        }
+      });
+
+      const card = get_card_data_response.data
+      console.log(card)
+
+      return {
+        get_card_data_response: get_card_data_response.data,
+      };
+    }),
   list: procedure
     .input(
       z.object({

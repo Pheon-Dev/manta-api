@@ -55,6 +55,51 @@ export const cardRouter = router({
         response: response.data,
       };
     }),
+  get: procedure
+    .input(
+      z.object({
+        id: z.number(),
+        cid: z.string(),
+        method: z.string(),
+        cookie: z.string(),
+      }),
+    )
+    .query(async (opts) => {
+      const method = `${opts.input.method}`
+      const cookie = `${opts.input.cookie}`
+      const cid = `${opts.input.cid}`
+      const id = opts.input.id
+      const url = "http://localhost:8080/api/rpc"
+      const headers = {
+        Cookie: cookie
+      }
+      try {
+
+        let data = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id,
+            method,
+            params: {
+              id: +cid
+            }
+          }
+        });
+
+        return {
+          data: data.data,
+        };
+      } catch (error) {
+        return {
+          error: error,
+          message: "Internal Server Error",
+          solution: "Login to Server or Check your internet connection"
+        }
+
+      }
+    }),
   list: procedure
     .input(
       z.object({
