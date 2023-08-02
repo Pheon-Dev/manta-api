@@ -16,30 +16,18 @@ import {
 } from '@mantine/core';
 import { IconCash, IconBuildingBank, IconSend, IconCreditCard, IconUser } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
-import { trpc } from '../../utils/trpc';
 import Send from './Send';
 import NewContact from './Contact';
 import NewCard from './Card';
 import Deposit from './Deposit';
 import Withdraw from './Withdraw';
-import { useEffect  } from 'react';
+import { trpc } from '../../utils/trpc';
 
 const Wallet = () => {
   const { status, data } = useSession();
   const name = data?.user?.name;
   const account = trpc.account.list.useQuery({ method: "list_accounts", id: 1, cookie: `${data?.user?.image}` });
   const res = account?.data?.data?.result?.data[0]
-
-  useEffect(() => {
-    let sub = true
-
-if (sub) {
-if (account?.data?.error?.name) signOut();
-
-}
-
-    return () => {sub = false}
-  }, [account?.data?.error?.name])
 
   const user = {
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvc_M0Jo569OkceaKbg_bobTRQGfzXwYEWYgVi8DTwiw&s",
@@ -124,7 +112,7 @@ if (account?.data?.error?.name) signOut();
               label: (
                 <Group>
                   <Modal opened={opened_withdraw} onClose={close_withdraw} title="Withdraw Money" centered>
-                    <Withdraw />
+                    <Withdraw username={user.username} />
                   </Modal>
                   <Center onClick={open_withdraw}>
                     <IconCash size={16} />
@@ -138,7 +126,7 @@ if (account?.data?.error?.name) signOut();
               label: (
                 <Group>
                   <Modal opened={opened_deposit} onClose={close_deposit} title="Deposit Money" centered>
-                    <Deposit />
+                    <Deposit username={user.username}/>
                   </Modal>
                   <Center onClick={open_deposit}>
                     <IconBuildingBank size={16} />
