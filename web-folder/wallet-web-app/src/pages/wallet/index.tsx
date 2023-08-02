@@ -27,6 +27,7 @@ const Wallet = () => {
   const { status, data } = useSession();
   const name = data?.user?.name;
   const account = trpc.account.list.useQuery({ method: "list_accounts", id: 1, cookie: `${data?.user?.image}` });
+  const contacts = trpc.contact.list.useQuery({ method: "list_contacts", id: 1, cookie: `${data?.user?.image}` });
   const res = account?.data?.data?.result?.data[0]
 
   const user = {
@@ -136,6 +137,35 @@ const Wallet = () => {
                 </Group>
               ),
             },
+          ]}
+        />
+      </Center>
+
+      <Divider
+        my="xs"
+        variant="dashed"
+        labelPosition="center"
+        label={
+          <>
+            <Box ml={5}>
+              <Text
+                variant="gradient"
+                gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
+                sx={{ fontFamily: 'Greycliff CF, sans-serif' }}
+                ta="center" p="xs"
+                fz="xl"
+                fw={900}
+              >
+                Actions
+              </Text>
+            </Box>
+          </>
+        }
+        labelProps={{ component: 'a', href: 'https://mantine.dev', variant: 'link', color: 'blue' }}
+      />
+      <Center maw={600} mx="auto">
+        <SegmentedControl
+          data={[
             {
               value: 'card',
               label: (
@@ -185,6 +215,7 @@ const Wallet = () => {
           </Group>
         </Card>
       </Center>
+        <pre>{JSON.stringify(contacts.data, undefined, 2)}</pre>
         <pre>{JSON.stringify(account.data, undefined, 2)}</pre>
     </>
   );
