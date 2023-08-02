@@ -1,18 +1,31 @@
 import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
-import { Button, Group, TextInput, NumberInput, Box, Textarea } from '@mantine/core';
+import { Button, Select, Group, TextInput, NumberInput, Box, Textarea } from '@mantine/core';
 // import { useMantaStore } from '../_app';
 import { notifications } from '@mantine/notifications';
 import { trpc } from '../../utils/trpc';
-import { useCallback  } from 'react';
+import { useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 
-const Send = () => {
+type Props = {
+  username: string
+  id: number
+  balance: string
+}
+const Send = ({ username, id, balance }: Props) => {
   const { status, data } = useSession();
+  const contacts_data = trpc.contact.list.useQuery({ method: "list_contacts", id: 1, cookie: `${data?.user?.image}` });
+  const contacts = contacts_data?.data?.response?.result?.data && contacts_data?.data?.response?.result?.data?.map((contact: contact) => {
+    return {
+      value: contact.ref_id,
+      label: `[ID ${contact.ref_id.toUpperCase()}] - ${contact.name}`,
+      // group: contact.ccontacts_data,
+    }
+  }) || []
 
   const form = useForm({
     initialValues: {
-      sender: `${name}`,
+      sender: `${username}`,
       receiver: '',
       description: '',
       amount: 1,
@@ -28,13 +41,14 @@ const Send = () => {
 
   // const send = useMantaStore((state) => state.send)
 
-  const username = `${data?.user?.name}`
   const cookie = `${data?.user?.image}`
   const method = "create_payment";
-  const uid = 1
 
+  const utils = trpc.useContext();
   const send_money = trpc.payment.send.useMutation({
     onSuccess: async () => {
+      await utils.payment.invalidate();
+      await utils.account.invalidate();
       return notifications.update({
         id: "send",
         color: "green",
@@ -54,14 +68,28 @@ const Send = () => {
       loading: true,
     })
     try {
-      if (form.values.amount !== 0 && form.values.sender === username && form.values.receiver !== "" && form.values.description !== "") {
+      if (form.values.amount !== 0 && form.values.sender === username && form.values.receiver !== "" && form.values.description !== "" && id !== 0) {
+        const amount = form.values.amount
+        const new_balance = Number(balance) - amount
+
+        if (amount > balance || new_balance < 1) {
+          return notifications.update({
+            id: "send",
+            color: "red",
+            icon: <IconX />,
+            title: "Send Money",
+            message: `Insufficient balance`,
+          })
+        }
+        console.log(form.values)
         send_money.mutate({
           cookie: cookie,
           method: method,
-          id: uid,
+          balance: balance,
+          id: id,
           amount: `${form.values.amount}`,
+          receiver: `${form.values.receiver}`,
           sender: form.values.sender,
-          receiver: form.values.receiver,
           description: form.values.description
         })
         // send(form.values.amount)
@@ -71,11 +99,11 @@ const Send = () => {
         id: "send",
         color: "red",
         icon: <IconX />,
-        title: "Authentication",
+        title: "Send Money",
         message: `Error: ${error}`,
       })
     }
-  }, [send_money, form.values.amount, form.values.sender, form.values.receiver, form.values.description]);
+  }, [send_money, form.values.amount, form.values.sender, form.values.receiver, form.values.description, id, balance, cookie, method, username]);
 
   return (
     <Box component="form" maw={400} mx="auto" onSubmit={form.onSubmit(() => { })}>
@@ -86,10 +114,14 @@ const Send = () => {
         mt="md"
         {...form.getInputProps('amount')}
       />
-      <TextInput label="sender" placeholder="sender" withAsterisk {...form.getInputProps('sender')} />
-      <TextInput
+      <TextInput label="sender" placeholder="sender" withAsterisk {...form.getInputProps('sender')} disabled />
+      <Select
         label="Enter receiver"
         placeholder="Enter receiver"
+        data={contacts}
+        searchable
+        maxDropdownHeight={400}
+        nothingFound="No matching results found"
         withAsterisk
         mt="md"
         {...form.getInputProps('receiver')}
