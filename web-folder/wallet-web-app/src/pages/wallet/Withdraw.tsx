@@ -32,10 +32,10 @@ const Withdraw = ({ username, id, balance }: Props) => {
   const account = trpc.card.list.useQuery({ method: "list_cards", id: 1, cookie: `${data?.user?.image}` });
   const cards = account?.data?.data?.result?.data && account?.data?.data?.result?.data?.map((card: Card) => {
     return {
-        value: card.id,
-        label: `[KES ${card.cbalance.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}]: ${card.cname} (${card.caccount})`,
-        // group: card.caccount,
-      }
+      value: card.id,
+      label: `[KES ${card.cbalance.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}]: ${card.cname} (${card.caccount})`,
+      // group: card.caccount,
+    }
   }) || []
 
   const form = useForm({
@@ -58,32 +58,32 @@ const Withdraw = ({ username, id, balance }: Props) => {
     onSuccess: async () => {
       await utils.account.invalidate();
       await utils.card.invalidate();
-        return notifications.update({
-          id: "withdraw",
-          title: "Withdraw Money",
-          color: "green",
-          icon: <IconCheck />,
-          autoClose: 5000,
-          message: `New ${form.values.amount} withdrawed successfully`,
-        });
+      return notifications.update({
+        id: "withdraw",
+        title: "Withdraw Money",
+        color: "green",
+        icon: <IconCheck />,
+        autoClose: 5000,
+        message: `New ${form.values.amount} withdrawed successfully`,
+      });
     }
   });
 
   useEffect(() => {
-      let sub = true
-      if (sub) {
-          notifications.update({
-              id: "withdraw",
-              title: "Withdraw Money",
-              color: "blue",
-              icon: <IconInfoCircle />,
-              autoClose: 5000,
-              message: `${withdraw_money?.data?.message}`,
-            })
-        }
-        return () => {sub = false}
+    let sub = true
+    if (sub) {
+      notifications.update({
+        id: "withdraw",
+        title: "Withdraw Money",
+        color: "blue",
+        icon: <IconInfoCircle />,
+        autoClose: 5000,
+        message: `${withdraw_money?.data?.message}`,
+      })
+    }
+    return () => { sub = false }
 
-    }, [withdraw_money?.data?.message])
+  }, [withdraw_money?.data?.message])
 
   const handleSubmit = useCallback(() => {
     notifications.show({

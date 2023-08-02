@@ -32,11 +32,11 @@ const Deposit = ({ username, id, balance }: Props) => {
   const account = trpc.card.list.useQuery({ method: "list_cards", id: 1, cookie: `${data?.user?.image}` });
   const cards = account?.data?.data?.result?.data && account?.data?.data?.result?.data?.map((card: Card) => {
     return {
-        value: card.id,
-        label: `[KES ${card.cbalance.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}]: ${card.cname} (${card.caccount})`,
-        // group: card.caccount,
+      value: card.id,
+      label: `[KES ${card.cbalance.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}]: ${card.cname} (${card.caccount})`,
+      // group: card.caccount,
 
-      }
+    }
   }) || []
 
   const form = useForm({
@@ -70,20 +70,20 @@ const Deposit = ({ username, id, balance }: Props) => {
     }
   });
   useEffect(() => {
-      let sub = true
-      if (sub) {
-          notifications.update({
-              id: "deposit",
-              title: "Deposit Money",
-              color: "blue",
-              icon: <IconInfoCircle />,
-              autoClose: 5000,
-              message: `${deposit_money?.data?.message}`,
-            })
-        }
-        return () => {sub = false}
+    let sub = true
+    if (sub) {
+      notifications.update({
+        id: "deposit",
+        title: "Deposit Money",
+        color: "blue",
+        icon: <IconInfoCircle />,
+        autoClose: 5000,
+        message: `${deposit_money?.data?.message}`,
+      })
+    }
+    return () => { sub = false }
 
-    }, [deposit_money?.data?.message])
+  }, [deposit_money?.data?.message])
 
 
   const handleSubmit = useCallback(() => {
@@ -152,7 +152,7 @@ const Deposit = ({ username, id, balance }: Props) => {
   }, [deposit_money, username, form.values.amount, balance, id, form.values.cname]);
 
   return (
-    <Box component="form" style={{height: "100%"}} onSubmit={form.onSubmit(() => { })}>
+    <Box component="form" style={{ height: "100%" }} onSubmit={form.onSubmit(() => { })}>
       <Select
         label="Pick a card"
         placeholder="Pick a card"
