@@ -54,3 +54,16 @@ pub async fn delete_contact(
 
 	Ok(DataResult::new(contact))
 }
+
+pub async fn get_contact(
+	ctx: Ctx,
+	mm: ModelManager,
+	params: ParamsIded,
+) -> Result<DataResult<Contact>> {
+	let ParamsIded { id } = params;
+
+	let contact = ContactBmc::get(&ctx, &mm, id).await?;
+	ContactBmc::get(&ctx, &mm, id).await?;
+
+	Ok(DataResult::new(contact))
+}

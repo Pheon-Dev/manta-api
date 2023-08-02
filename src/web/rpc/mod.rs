@@ -9,16 +9,24 @@ pub mod user_rpc;
 use crate::ctx::Ctx;
 use crate::model::ModelManager;
 use crate::web::rpc::account_rpc::{
-	create_account, delete_account, list_accounts, update_account,
+	create_account, delete_account, get_account, list_accounts, update_account,
 };
-use crate::web::rpc::card_rpc::{create_card, delete_card, list_cards, update_card};
+use crate::web::rpc::card_rpc::{
+	create_card, delete_card, get_card, list_cards, update_card,
+};
 use crate::web::rpc::contact_rpc::{
-	create_contact, delete_contact, list_contacts, update_contact,
+	create_contact, delete_contact, get_contact, list_contacts, update_contact,
 };
 use crate::web::rpc::payment_rpc::{
-	create_payment, delete_payment, list_payments, update_payment,
+	create_payment, delete_payment, get_payment, list_payments, update_payment,
 };
-use crate::web::rpc::user_rpc::{create_user, delete_user, list_users, update_user};
+use crate::web::rpc::user_rpc::{
+	create_user,
+	delete_user,
+	// get_user,
+	list_users,
+	update_user,
+};
 use crate::web::{Error, Result};
 
 use axum::extract::State;
@@ -139,22 +147,27 @@ async fn _rpc_handler(
 		"list_payments" => exec_rpc_fn!(list_payments, ctx, mm),
 		"update_payment" => exec_rpc_fn!(update_payment, ctx, mm, rpc_params),
 		"delete_payment" => exec_rpc_fn!(delete_payment, ctx, mm, rpc_params),
+		"get_payment" => exec_rpc_fn!(get_payment, ctx, mm, rpc_params),
 		"create_card" => exec_rpc_fn!(create_card, ctx, mm, rpc_params),
 		"list_cards" => exec_rpc_fn!(list_cards, ctx, mm),
 		"update_card" => exec_rpc_fn!(update_card, ctx, mm, rpc_params),
+		"get_card" => exec_rpc_fn!(get_card, ctx, mm, rpc_params),
 		"delete_card" => exec_rpc_fn!(delete_card, ctx, mm, rpc_params),
 		"create_account" => exec_rpc_fn!(create_account, ctx, mm, rpc_params),
 		"list_accounts" => exec_rpc_fn!(list_accounts, ctx, mm),
 		"update_account" => exec_rpc_fn!(update_account, ctx, mm, rpc_params),
 		"delete_account" => exec_rpc_fn!(delete_account, ctx, mm, rpc_params),
+		"get_account" => exec_rpc_fn!(get_account, ctx, mm, rpc_params),
 		"create_contact" => exec_rpc_fn!(create_contact, ctx, mm, rpc_params),
 		"list_contacts" => exec_rpc_fn!(list_contacts, ctx, mm),
 		"update_contact" => exec_rpc_fn!(update_contact, ctx, mm, rpc_params),
 		"delete_contact" => exec_rpc_fn!(delete_contact, ctx, mm, rpc_params),
+		"get_contact" => exec_rpc_fn!(get_contact, ctx, mm, rpc_params),
 		"create_user" => exec_rpc_fn!(create_user, ctx, mm, rpc_params),
 		"list_users" => exec_rpc_fn!(list_users, ctx, mm),
 		"update_user" => exec_rpc_fn!(update_user, ctx, mm, rpc_params),
 		"delete_user" => exec_rpc_fn!(delete_user, ctx, mm, rpc_params),
+		// "get_user" => exec_rpc_fn!(get_user, ctx, mm, rpc_params),
 
 		// -- Fallback as Err.
 		_ => return Err(Error::RpcMethodUnknown(rpc_method)),

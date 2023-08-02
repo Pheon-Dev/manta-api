@@ -17,6 +17,19 @@ pub async fn create_card(
 	Ok(DataResult::new(card))
 }
 
+pub async fn get_card(
+	ctx: Ctx,
+	mm: ModelManager,
+	params: ParamsIded,
+) -> Result<DataResult<Card>> {
+	let ParamsIded { id } = params;
+
+	let card = CardBmc::get(&ctx, &mm, id).await?;
+	CardBmc::get(&ctx, &mm, id).await?;
+
+	Ok(DataResult::new(card))
+}
+
 pub async fn list_cards(
 	ctx: Ctx,
 	mm: ModelManager,

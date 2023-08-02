@@ -54,3 +54,16 @@ pub async fn delete_payment(
 
 	Ok(DataResult::new(payment))
 }
+
+pub async fn get_payment(
+	ctx: Ctx,
+	mm: ModelManager,
+	params: ParamsIded,
+) -> Result<DataResult<Payment>> {
+	let ParamsIded { id } = params;
+
+	let payment = PaymentBmc::get(&ctx, &mm, id).await?;
+	PaymentBmc::get(&ctx, &mm, id).await?;
+
+	Ok(DataResult::new(payment))
+}

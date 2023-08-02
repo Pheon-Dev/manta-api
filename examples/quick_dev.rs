@@ -59,6 +59,17 @@ async fn main() -> Result<()> {
 		}),
 	);
 
+	let req_get_user = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "get_user",
+			"params": {
+				"id": 1001 // Harcode the send id
+			}
+		}),
+	);
+
 	let req_list_users = hc.do_post(
 		"/api/rpc",
 		json!({
@@ -70,6 +81,7 @@ async fn main() -> Result<()> {
 	req_create_user.await?.print().await?;
 	// req_update_user.await?.print().await?;
 	// req_delete_user.await?.print().await?;
+	// req_get_user.await?.print().await?;
 	// req_list_users.await?.print().await?;
 
 	let req_create_payment = hc.do_post(
@@ -113,6 +125,17 @@ async fn main() -> Result<()> {
 		}),
 	);
 
+	let req_get_payment = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "get_payment",
+			"params": {
+				"id": 1001 // Harcode the send id
+			}
+		}),
+	);
+
 	let req_list_payments = hc.do_post(
 		"/api/rpc",
 		json!({
@@ -124,6 +147,7 @@ async fn main() -> Result<()> {
 	// req_create_payment.await?.print().await?;
 	// req_update_payment.await?.print().await?;
 	// // req_delete_payment.await?.print().await?;
+	// // req_get_payment.await?.print().await?;
 	// req_list_payments.await?.print().await?;
 
 	let req_create_contact = hc.do_post(
@@ -168,6 +192,17 @@ async fn main() -> Result<()> {
 		}),
 	);
 
+	let req_get_contact = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "get_contact",
+			"params": {
+				"id": 1001 // Harcode the send id
+			}
+		}),
+	);
+
 	let req_list_contacts = hc.do_post(
 		"/api/rpc",
 		json!({
@@ -179,6 +214,7 @@ async fn main() -> Result<()> {
 	// req_create_contact.await?.print().await?;
 	// req_update_contact.await?.print().await?;
 	// // req_delete_contact.await?.print().await?;
+	// // req_get_contact.await?.print().await?;
 	// req_list_contacts.await?.print().await?;
 
 	let req_create_card = hc.do_post(
@@ -227,6 +263,17 @@ async fn main() -> Result<()> {
 		}),
 	);
 
+	let req_get_card = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "get_card",
+			"params": {
+				"id": 1001 // Harcode the send id
+			}
+		}),
+	);
+
 	let req_list_cards = hc.do_post(
 		"/api/rpc",
 		json!({
@@ -238,6 +285,7 @@ async fn main() -> Result<()> {
 	// req_create_card.await?.print().await?;
 	// req_update_card.await?.print().await?;
 	// // req_delete_card.await?.print().await?;
+	// // req_get_card.await?.print().await?;
 	// req_list_cards.await?.print().await?;
 
 	let req_create_account = hc.do_post(
@@ -282,6 +330,17 @@ async fn main() -> Result<()> {
 		}),
 	);
 
+	let req_get_account = hc.do_post(
+		"/api/rpc",
+		json!({
+			"id": 1,
+			"method": "get_account",
+			"params": {
+				"id": 1001 // Harcode the send id
+			}
+		}),
+	);
+
 	let req_list_accounts = hc.do_post(
 		"/api/rpc",
 		json!({
@@ -293,6 +352,7 @@ async fn main() -> Result<()> {
 	// req_create_account.await?.print().await?;
 	// req_update_account.await?.print().await?;
 	// // req_delete_account.await?.print().await?;
+	// // req_get_account.await?.print().await?;
 	// req_list_accounts.await?.print().await?;
 
 	let req_logoff = hc.do_post(

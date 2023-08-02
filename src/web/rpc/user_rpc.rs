@@ -50,3 +50,16 @@ pub async fn delete_user(
 
 	Ok(DataResult::new(user))
 }
+
+// pub async fn get_user(
+// 	ctx: Ctx,
+// 	mm: ModelManager,
+// 	params: ParamsIded,
+// ) -> Result<DataResult<User>> {
+// 	let ParamsIded { id } = params;
+//
+// 	let user = UserBmc::get(&ctx, &mm, id).await?;
+// 	UserBmc::get_user(&ctx, &mm, id).await?;
+//
+// 	Ok(DataResult::new(user))
+// }

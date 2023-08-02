@@ -42,6 +42,19 @@ pub async fn update_account(
 	Ok(DataResult::new(account))
 }
 
+pub async fn get_account(
+	ctx: Ctx,
+	mm: ModelManager,
+	params: ParamsIded,
+) -> Result<DataResult<Account>> {
+	let ParamsIded { id } = params;
+
+	let account = AccountBmc::get(&ctx, &mm, id).await?;
+	AccountBmc::get(&ctx, &mm, id).await?;
+
+	Ok(DataResult::new(account))
+}
+
 pub async fn delete_account(
 	ctx: Ctx,
 	mm: ModelManager,
