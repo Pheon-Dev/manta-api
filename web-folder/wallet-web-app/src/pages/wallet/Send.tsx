@@ -7,6 +7,14 @@ import { useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { IconCheck, IconX } from '@tabler/icons-react';
 
+interface Contact {
+  username: string,
+  ref_id: string,
+  association: string,
+  email: string,
+  name: string,
+}
+
 type Props = {
   username: string
   id: number
@@ -15,7 +23,7 @@ type Props = {
 const Send = ({ username, id, balance }: Props) => {
   const { status, data } = useSession();
   const contacts_data = trpc.contact.list.useQuery({ method: "list_contacts", id: 1, cookie: `${data?.user?.image}` });
-  const contacts = contacts_data?.data?.response?.result?.data && contacts_data?.data?.response?.result?.data?.map((contact: contact) => {
+  const contacts = contacts_data?.data?.response?.result?.data && contacts_data?.data?.response?.result?.data?.map((contact: Contact) => {
     return {
       value: contact.ref_id,
       label: `[ID ${contact.ref_id.toUpperCase()}] - ${contact.name}`,
@@ -72,7 +80,7 @@ const Send = ({ username, id, balance }: Props) => {
         const amount = form.values.amount
         const new_balance = Number(balance) - amount
 
-        if (amount > balance || new_balance < 1) {
+        if (amount > +balance || new_balance < 1) {
           return notifications.update({
             id: "send",
             color: "red",
