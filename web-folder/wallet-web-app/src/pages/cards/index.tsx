@@ -27,11 +27,13 @@ const Cards = () => {
             {card.cdescription}
           </Text>
           <Group position="apart">
-            <Text size="sm" weight={100}>CVV: {card.cvv}</Text>
-            <Text size="sm" weight={100}>VALID: {card.cvalid}</Text>
+            <Text size="sm" fs="italic" weight={100}>VALID: {card.cvalid}</Text>
+            <Text fs="regular" size="sm" weight={100}>CVV: {card.cvv}</Text>
             </Group>
           <Group position="right">
-            <Text size="sm" weight={300}>{card.caccount}</Text>
+            <Badge color="pink" variant="light">
+            <Text size="sm" fz="xs" weight={500} fs="italic">{card.caccount}</Text>
+            </Badge>
             </Group>
 
         </Card>
