@@ -5,7 +5,7 @@ import {
   Divider,
   Center,
   Title,
-  Table,
+  Drawer,
   Card,
   Badge,
   Button,
@@ -67,7 +67,7 @@ const Wallet = () => {
         {user.email}
       </Text>
       <Center mx="auto" maw={400} h={100}>
-        <Avatar src={user.image} alt="profile picture" color="indigo" radius="xl" size="xl" />
+        <Avatar src={user.image} alt="profile picture" color="indigo" radius="lg" size="xl" />
       </Center>
 
       <Divider
@@ -99,9 +99,9 @@ const Wallet = () => {
               value: 'send',
               label: (
                 <Group>
-                  <Modal opened={opened_send} onClose={close_send} title="Send Money" centered>
-                    <Send />
-                  </Modal>
+                  <Drawer opened={opened_send} onClose={close_send} title="Send Money" overlayProps={{ opacity: 0.5, blur: 1 }}>
+                    <Send username={user.username} id={user.id} balance={user.balance}/>
+                  </Drawer>
                   <Center onClick={open_send}>
                     <IconSend size={16} />
                     <Box ml={10}>Send</Box>
@@ -113,9 +113,9 @@ const Wallet = () => {
               value: 'withdraw',
               label: (
                 <Group>
-                  <Modal opened={opened_withdraw} onClose={close_withdraw} title="Withdraw Money" centered>
+                  <Drawer opened={opened_withdraw} onClose={close_withdraw} title="Withdraw Money" overlayProps={{ opacity: 0.5, blur: 1 }}>
                     <Withdraw username={user.username} id={user.id} balance={user.balance}/>
-                  </Modal>
+                  </Drawer>
                   <Center onClick={open_withdraw}>
                     <IconCash size={16} />
                     <Box ml={10}>Withdraw</Box>
@@ -127,9 +127,9 @@ const Wallet = () => {
               value: 'deposit',
               label: (
                 <Group>
-                  <Modal opened={opened_deposit} onClose={close_deposit} title="Deposit Money" centered>
+                  <Drawer opened={opened_deposit} onClose={close_deposit} title="Deposit Money" overlayProps={{ opacity: 0.5, blur: 1 }} >
                     <Deposit username={user.username} id={user.id} balance={user.balance}/>
-                  </Modal>
+                  </Drawer>
                   <Center onClick={open_deposit}>
                     <IconBuildingBank size={16} />
                     <Box ml={10}>Deposit</Box>
@@ -170,9 +170,9 @@ const Wallet = () => {
               value: 'card',
               label: (
                 <Group>
-                  <Modal opened={opened_new_card} onClose={close_new_card} title="Add a new card" centered>
+                  <Drawer opened={opened_new_card} onClose={close_new_card} title="Add a new card"  overlayProps={{ opacity: 0.5, blur: 1 }} position="right">
                     <NewCard username={user.username} />
-                  </Modal>
+                  </Drawer>
                   <Center onClick={open_new_card}>
                     <IconCreditCard size={16} />
                     <Box ml={10}>New Card</Box>
@@ -184,9 +184,9 @@ const Wallet = () => {
               value: 'contact',
               label: (
                 <Group>
-                  <Modal opened={opened_new_contact} onClose={close_new_contact} title="Add a new card" centered>
+                  <Drawer opened={opened_new_contact} onClose={close_new_contact} title="Add a new card"  overlayProps={{ opacity: 0.5, blur: 1 }} position="right">
                     <NewContact username={user.username} />
-                  </Modal>
+                  </Drawer>
                   <Center onClick={open_new_contact}>
                   <IconUser size={16} />
                   <Box ml={10}>New Contact</Box>
@@ -197,7 +197,7 @@ const Wallet = () => {
           ]}
         />
       </Center>
-      <Center maw={600} h={300} mx="auto">
+      <Center maw={600} h={200} mx="auto">
         <Card shadow="sm" padding="lg" radius="md" withBorder>
 
           <Group position="apart" w={400} mt="md" mb="md">
@@ -215,8 +215,6 @@ const Wallet = () => {
           </Group>
         </Card>
       </Center>
-        <pre>{JSON.stringify(contacts.data, undefined, 2)}</pre>
-        <pre>{JSON.stringify(account.data, undefined, 2)}</pre>
     </>
   );
 }
