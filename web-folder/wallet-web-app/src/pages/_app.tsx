@@ -111,15 +111,15 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                       >{"  "}Manta Wallet</Text>
                     </Group>
                     <Group>
-                      <Modal opened={opened_new_user} onClose={close_new_user} title="New User" centered>
-                        <NewUser />
-                      </Modal>
-                      <Center onClick={open_new_user}>
-                        <IconPlus color="indigo" size={16} />
-                      </Center>
                       <ColorSchemeToggle />
-                      <>
-                        {status === "authenticated" && (
+                      {status === "authenticated" && (
+                        <>
+                          <Modal opened={opened_new_user} onClose={close_new_user} title="New User" centered>
+                            <NewUser />
+                          </Modal>
+                          <Center onClick={open_new_user}>
+                            <IconPlus color="indigo" size={16} />
+                          </Center>
                           <IconLogout
                             color="red"
                             size={24}
@@ -132,8 +132,8 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                               })
                               signOut();
                             }} />
-                        )}
-                      </>
+                        </>
+                      )}
                     </Group>
                   </Group>
                 </Header>
