@@ -173,10 +173,7 @@ const Wallet = () => {
           <Group position="apart" w={400} mt="md" mb="md">
             <Text weight={500}>Account Balance</Text>
             <Badge color="blue" variant="light" size="lg">
-              {`KES ${user.balance}`.replace(
-                /\B(?=(\d{3})+(?!\d))/g,
-                ","
-              )}
+              {`KES ${user.balance}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
             </Badge>
           </Group>
           <Divider />

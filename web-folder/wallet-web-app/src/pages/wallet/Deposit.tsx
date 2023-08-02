@@ -33,8 +33,9 @@ const Deposit = ({ username, id, balance }: Props) => {
   const cards = account?.data?.data?.result?.data && account?.data?.data?.result?.data?.map((card: Card) => {
     return {
         value: card.id,
-        label: `[KES ${card.cbalance}]: ${card.cname} (${card.caccount})`,
+        label: `[KES ${card.cbalance.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}]: ${card.cname} (${card.caccount})`,
         // group: card.caccount,
+
       }
   }) || []
 
