@@ -2,6 +2,19 @@ import { Card, Image, Text, Badge, Button, Group, Grid } from '@mantine/core';
 import { useSession } from 'next-auth/react';
 import { trpc } from '../../utils/trpc';
 
+interface Card {
+  cowner: string,
+  cname: string,
+  cbalance: string,
+  ctype: string,
+  caccount: string,
+  cnumber: string,
+  cvv: string,
+  cvalid: string,
+  cdescription: string,
+  id: number,
+}
+
 const Cards = () => {
   const { status, data } = useSession();
   const name = data?.user?.name;
@@ -9,7 +22,7 @@ const Cards = () => {
   const res = account?.data?.data?.result?.data
   return (
     <Grid>
-    {res && res.map((card) => (
+    {res && res.map((card: Card) => (
           <>
       <Grid.Col span={4}>
         <Card shadow="sm" padding="lg" radius="md" withBorder>
