@@ -16,34 +16,39 @@ export const accountRouter = router({
       }),
     )
     .mutation(async (opts) => {
-      const method = `${opts.input.method}`
-      const cookie = `${opts.input.cookie}`
-      const id = opts.input.id
-      const url = "http://localhost:8080/api/rpc"
-      const headers = {
-        Cookie: cookie
-      }
-      let payments = await axios.request({
-        method: "POST",
-        url,
-        headers,
-        data: {
-          id,
-          method,
-          params: {
-            data: {
-              username: `${opts.input.username}`,
-              balance: `${opts.input.balance}`,
-              email: `${opts.input.email}`,
-              aid: `${opts.input.aid}`,
+      try {
+        const method = `${opts.input.method}`
+        const cookie = `${opts.input.cookie}`
+        const id = opts.input.id
+        const url = "http://localhost:8080/api/rpc"
+        const headers = {
+          Cookie: cookie
+        }
+        let payments = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id,
+            method,
+            params: {
+              data: {
+                username: `${opts.input.username}`,
+                balance: `${opts.input.balance}`,
+                email: `${opts.input.email}`,
+                aid: `${opts.input.aid}`,
+              }
             }
           }
-        }
-      });
+        });
 
-      return {
-        payments: payments.data,
-      };
+        return {
+          payments: payments.data,
+        };
+      } catch (error) {
+        return { message: error }
+
+      }
     }),
   withdraw: procedure
     .input(
@@ -59,73 +64,78 @@ export const accountRouter = router({
       }),
     )
     .mutation(async (opts) => {
-      const get_card_method = "get_card"
-      const cookie = `${opts.input.cookie}`
-      const card_id = opts.input.card_id
-      const acc_id = opts.input.acc_id
-      const username = `${opts.input.username}`
-      const balance = `${opts.input.balance}`
-      const amount = opts.input.amount
-      const id = opts.input.id
-      const url = "http://localhost:8080/api/rpc"
-      const headers = {
-        Cookie: cookie
-      }
-      let get_card_data_response = await axios.request({
-        method: "POST",
-        url,
-        headers,
-        data: {
-          id: 1,
-          method: get_card_method,
-        params: {
-          id: card_id
+      try {
+        const get_card_method = "get_card"
+        const cookie = `${opts.input.cookie}`
+        const card_id = opts.input.card_id
+        const acc_id = opts.input.acc_id
+        const username = `${opts.input.username}`
+        const balance = `${opts.input.balance}`
+        const amount = opts.input.amount
+        const id = opts.input.id
+        const url = "http://localhost:8080/api/rpc"
+        const headers = {
+          Cookie: cookie
         }
-        }
-      });
+        let get_card_data_response = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id: 1,
+            method: get_card_method,
+            params: {
+              id: card_id
+            }
+          }
+        });
 
-      const card = get_card_data_response.data
-      if (card) {
-        const current_balance = +card.result.data.cbalance
-        const new_balance = current_balance + amount
-        const acc_balance = +balance
-        if (acc_balance < 1) return {message: "Insufficient balance"}
-        const new_acc_balance = acc_balance - amount
-        if (new_acc_balance < 1) return {message: "Insufficient balance"}
-        let update_account_data_response = await axios.request({
-          method: "POST",
-          url,
-          headers,
-          data: {
-            id: 1,
-            method: "update_account",
-            params: {
-              id: acc_id,
-              data: {
-                balance: `${new_acc_balance}`
+        const card = get_card_data_response.data
+        if (card) {
+          const current_balance = +card.result.data.cbalance
+          const new_balance = current_balance + amount
+          const acc_balance = +balance
+          if (acc_balance < 1) return { message: "Insufficient balance" }
+          const new_acc_balance = acc_balance - amount
+          if (new_acc_balance < 1) return { message: "Insufficient balance" }
+          let update_account_data_response = await axios.request({
+            method: "POST",
+            url,
+            headers,
+            data: {
+              id: 1,
+              method: "update_account",
+              params: {
+                id: acc_id,
+                data: {
+                  balance: `${new_acc_balance}`
+                }
               }
             }
-          }
-        })
-        let update_card_data_response = await axios.request({
-          method: "POST",
-          url,
-          headers,
-          data: {
-            id: 1,
-            method: "update_card",
-            params: {
-              id: card_id,
-              data: {
-                cbalance: `${new_balance}`
+          })
+          let update_card_data_response = await axios.request({
+            method: "POST",
+            url,
+            headers,
+            data: {
+              id: 1,
+              method: "update_card",
+              params: {
+                id: card_id,
+                data: {
+                  cbalance: `${new_balance}`
+                }
               }
             }
-          }
-        })
-        return {
-          update_card_data_response: update_card_data_response.data,
+          })
+          return {
+            update_card_data_response: update_card_data_response.data,
+          };
         };
-      };
+      } catch (error) {
+        return { message: error }
+
+      }
     }),
   deposit: procedure
     .input(
@@ -141,38 +151,39 @@ export const accountRouter = router({
       }),
     )
     .mutation(async (opts) => {
-      const get_card_method = "get_card"
-      const cookie = `${opts.input.cookie}`
-      const card_id = opts.input.card_id
-      const acc_id = opts.input.acc_id
-      const username = `${opts.input.username}`
-      const balance = `${opts.input.balance}`
-      const amount = opts.input.amount
-      const id = opts.input.id
-      const url = "http://localhost:8080/api/rpc"
-      const headers = {
-        Cookie: cookie
-      }
-
-      let get_card_data_response = await axios.request({
-        method: "POST",
-        url,
-        headers,
-        data: {
-          id: 1,
-          method: get_card_method,
-        params: {
-          id: card_id
+      try {
+        const get_card_method = "get_card"
+        const cookie = `${opts.input.cookie}`
+        const card_id = opts.input.card_id
+        const acc_id = opts.input.acc_id
+        const username = `${opts.input.username}`
+        const balance = `${opts.input.balance}`
+        const amount = opts.input.amount
+        const id = opts.input.id
+        const url = "http://localhost:8080/api/rpc"
+        const headers = {
+          Cookie: cookie
         }
-        }
-      });
 
-      const card = get_card_data_response.data
-      if (card) {
+        let get_card_data_response = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id: 1,
+            method: get_card_method,
+            params: {
+              id: card_id
+            }
+          }
+        });
+
+        const card = get_card_data_response.data
+        if (card) {
           const current_balance = +card.result.data.cbalance
-          if (current_balance < 1) return {message: "Insufficient balance"}
+          if (current_balance < 1) return { message: "Insufficient balance" }
           const new_balance = current_balance - amount
-          if (new_balance < 1) return {message: "Insufficient balance"}
+          if (new_balance < 1) return { message: "Insufficient balance" }
           const acc_balance = +balance
           const new_acc_balance = acc_balance + amount
 
@@ -210,14 +221,18 @@ export const accountRouter = router({
           return {
             update_card_data_response: update_card_data_response.data,
           };
-      }
-      if (!card)
+        }
+        if (!card)
+          return {
+            message: "Card was not loaded"
+          };
         return {
-          message: "Card was not loaded"
+          get_card_data_response: get_card_data_response.data,
         };
-      return {
-        get_card_data_response: get_card_data_response.data,
-      };
+      } catch (error) {
+        return { message: error }
+
+      }
     }),
   list: procedure
     .input(
@@ -228,14 +243,14 @@ export const accountRouter = router({
       }),
     )
     .query(async (opts) => {
-      const method = `${opts.input.method}`
-      const cookie = `${opts.input.cookie}`
-      const id = opts.input.id
-      const url = "http://localhost:8080/api/rpc"
-      const headers = {
-        Cookie: cookie
-      }
       try {
+        const method = `${opts.input.method}`
+        const cookie = `${opts.input.cookie}`
+        const id = opts.input.id
+        const url = "http://localhost:8080/api/rpc"
+        const headers = {
+          Cookie: cookie
+        }
 
         let data = await axios.request({
           method: "POST",
@@ -253,10 +268,8 @@ export const accountRouter = router({
       } catch (error) {
         return {
           error: error,
-          message: "Internal Server Error",
-          solution: "Login to Server or Check your internet connection"
+          message: "Internal Server Error check connection",
         }
-
       }
     }),
 });

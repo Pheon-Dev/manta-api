@@ -21,39 +21,46 @@ export const cardRouter = router({
       }),
     )
     .mutation(async (opts) => {
-      const method = `${opts.input.method}`
-      const cookie = `${opts.input.cookie}`
-      const id = opts.input.id
-      const url = "http://localhost:8080/api/rpc"
-      const headers = {
-        Cookie: cookie
-      }
-      let response = await axios.request({
-        method: "POST",
-        url,
-        headers,
-        data: {
-          id,
-          method,
-          params: {
-            data: {
-              cowner: `${opts.input.cowner}`,
-              cname: `${opts.input.cname}`,
-              cbalance: `${opts.input.cbalance}`,
-              ctype: `${opts.input.ctype}`,
-              caccount: `${opts.input.caccount}`,
-              cnumber: `${opts.input.cnumber}`,
-              cvv: `${opts.input.cvv}`,
-              cvalid: `${opts.input.cvalid}`,
-              cdescription: `${opts.input.cdescription}`,
+      try {
+        const method = `${opts.input.method}`
+        const cookie = `${opts.input.cookie}`
+        const id = opts.input.id
+        const url = "http://localhost:8080/api/rpc"
+        const headers = {
+          Cookie: cookie
+        }
+        let response = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id,
+            method,
+            params: {
+              data: {
+                cowner: `${opts.input.cowner}`,
+                cname: `${opts.input.cname}`,
+                cbalance: `${opts.input.cbalance}`,
+                ctype: `${opts.input.ctype}`,
+                caccount: `${opts.input.caccount}`,
+                cnumber: `${opts.input.cnumber}`,
+                cvv: `${opts.input.cvv}`,
+                cvalid: `${opts.input.cvalid}`,
+                cdescription: `${opts.input.cdescription}`,
+              }
             }
           }
-        }
-      });
+        });
 
-      return {
-        response: response.data,
-      };
+        return {
+          response: response.data,
+        };
+      } catch (error) {
+        return {
+          error: error,
+          message: "Internal Server Error check connection",
+        }
+      }
     }),
   get: procedure
     .input(
@@ -65,15 +72,15 @@ export const cardRouter = router({
       }),
     )
     .query(async (opts) => {
-      const method = `${opts.input.method}`
-      const cookie = `${opts.input.cookie}`
-      const cid = `${opts.input.cid}`
-      const id = opts.input.id
-      const url = "http://localhost:8080/api/rpc"
-      const headers = {
-        Cookie: cookie
-      }
       try {
+        const method = `${opts.input.method}`
+        const cookie = `${opts.input.cookie}`
+        const cid = `${opts.input.cid}`
+        const id = opts.input.id
+        const url = "http://localhost:8080/api/rpc"
+        const headers = {
+          Cookie: cookie
+        }
 
         let data = await axios.request({
           method: "POST",
@@ -94,10 +101,8 @@ export const cardRouter = router({
       } catch (error) {
         return {
           error: error,
-          message: "Internal Server Error",
-          solution: "Login to Server or Check your internet connection"
+          message: "Internal Server Error check connection",
         }
-
       }
     }),
   list: procedure
@@ -109,6 +114,7 @@ export const cardRouter = router({
       }),
     )
     .query(async (opts) => {
+    try {
       const method = `${opts.input.method}`
       const cookie = `${opts.input.cookie}`
       const id = opts.input.id
@@ -116,7 +122,6 @@ export const cardRouter = router({
       const headers = {
         Cookie: cookie
       }
-      try {
 
         let data = await axios.request({
           method: "POST",
@@ -134,10 +139,8 @@ export const cardRouter = router({
       } catch (error) {
         return {
           error: error,
-          message: "Internal Server Error",
-          solution: "Login to Server or Check your internet connection"
+          message: "Internal Server Error check connection",
         }
-
       }
     }),
 });

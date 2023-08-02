@@ -16,34 +16,41 @@ export const paymentRouter = router({
       }),
     )
     .mutation(async (opts) => {
-      const method = `${opts.input.method}`
-      const cookie = `${opts.input.cookie}`
-      const id = opts.input.id
-      const url = "http://localhost:8080/api/rpc"
-      const headers = {
-        Cookie: cookie
-      }
-      let payments = await axios.request({
-        method: "POST",
-        url,
-        headers,
-        data: {
-          id,
-          method,
-          params: {
-            data: {
-              amount: `${opts.input.amount}`,
-              sender: `${opts.input.sender}`,
-              receiver: `${opts.input.receiver}`,
-              description: `${opts.input.description}`,
+      try {
+        const method = `${opts.input.method}`
+        const cookie = `${opts.input.cookie}`
+        const id = opts.input.id
+        const url = "http://localhost:8080/api/rpc"
+        const headers = {
+          Cookie: cookie
+        }
+        let payments = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id,
+            method,
+            params: {
+              data: {
+                amount: `${opts.input.amount}`,
+                sender: `${opts.input.sender}`,
+                receiver: `${opts.input.receiver}`,
+                description: `${opts.input.description}`,
+              }
             }
           }
-        }
-      });
+        });
 
-      return {
-        payments: payments.data,
-      };
+        return {
+          payments: payments.data,
+        };
+      } catch (error) {
+        return {
+          error: error,
+          message: "Internal Server Error check connection",
+        }
+      }
     }),
   list: procedure
     .input(
@@ -54,26 +61,33 @@ export const paymentRouter = router({
       }),
     )
     .query(async (opts) => {
-      const method = `${opts.input.method}`
-      const cookie = `${opts.input.cookie}`
-      const id = opts.input.id
-      const url = "http://localhost:8080/api/rpc"
-      const headers = {
-        Cookie: cookie
-      }
-      let payments = await axios.request({
-        method: "POST",
-        url,
-        headers,
-        data: {
-          id,
-          method,
+      try {
+        const method = `${opts.input.method}`
+        const cookie = `${opts.input.cookie}`
+        const id = opts.input.id
+        const url = "http://localhost:8080/api/rpc"
+        const headers = {
+          Cookie: cookie
         }
-      });
+        let payments = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id,
+            method,
+          }
+        });
 
-      return {
-        payments: payments.data,
-      };
+        return {
+          payments: payments.data,
+        };
+      } catch (error) {
+        return {
+          error: error,
+          message: "Internal Server Error check connection",
+        }
+      }
     }),
 });
 
