@@ -34,6 +34,7 @@ const Wallet = () => {
     name: name,
     username: res?.username,
     aid: res?.aid,
+    id: res?.id,
     balance: res?.balance,
     email: res?.email
   }
@@ -112,7 +113,7 @@ const Wallet = () => {
               label: (
                 <Group>
                   <Modal opened={opened_withdraw} onClose={close_withdraw} title="Withdraw Money" centered>
-                    <Withdraw username={user.username} />
+                    <Withdraw username={user.username} id={user.id} balance={user.balance}/>
                   </Modal>
                   <Center onClick={open_withdraw}>
                     <IconCash size={16} />
@@ -126,7 +127,7 @@ const Wallet = () => {
               label: (
                 <Group>
                   <Modal opened={opened_deposit} onClose={close_deposit} title="Deposit Money" centered>
-                    <Deposit username={user.username}/>
+                    <Deposit username={user.username} id={user.id} balance={user.balance}/>
                   </Modal>
                   <Center onClick={open_deposit}>
                     <IconBuildingBank size={16} />
@@ -154,7 +155,7 @@ const Wallet = () => {
               label: (
                 <Group>
                   <Modal opened={opened_new_contact} onClose={close_new_contact} title="Add a new card" centered>
-                    <NewContact />
+                    <NewContact username={user.username} />
                   </Modal>
                   <Center onClick={open_new_contact}>
                   <IconUser size={16} />

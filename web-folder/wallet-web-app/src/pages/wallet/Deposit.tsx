@@ -1,14 +1,16 @@
 import { notifications } from '@mantine/notifications';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Button, Group, TextInput, NumberInput, Box, Textarea } from '@mantine/core';
 import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
-import { IconCheck, IconX, IconCreditCard } from '@tabler/icons-react';
+import { IconCheck, IconX, IconCreditCard, IconInfoCircle } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import { trpc } from '../../utils/trpc';
-import { NativeSelect } from '@mantine/core';
+import { Select } from '@mantine/core';
 
 type Props = {
   username: string
+  id: number
+  balance: string
 }
 
 interface Card {
@@ -24,16 +26,21 @@ interface Card {
   id: number,
 }
 
-const Deposit = ({ username }: Props) => {
+const Deposit = ({ username, id, balance }: Props) => {
   const { status, data } = useSession();
   const name = data?.user?.name;
   const account = trpc.card.list.useQuery({ method: "list_cards", id: 1, cookie: `${data?.user?.image}` });
-  const cards = account?.data?.data?.result?.data && account?.data?.data?.result?.data?.map((card: Card) => `${card.id}: ${card.cname} [${card.cnumber.slice(0, 4)} **** ****]`) || []
+  const cards = account?.data?.data?.result?.data && account?.data?.data?.result?.data?.map((card: Card) => {
+    return {
+        value: card.id,
+        label: `[KES ${card.cbalance}]: ${card.cname} (${card.caccount})`,
+        // group: card.caccount,
+      }
+  }) || []
 
-  const card_idefault = cards[0] && cards[0].split(":")[0] || ""
   const form = useForm({
     initialValues: {
-      cname: `${cards[0]}`,
+      cname: 0,
       amount: 1,
     },
 
@@ -46,8 +53,11 @@ const Deposit = ({ username }: Props) => {
   const method = "get_card"
   const cookie = `${data?.user?.image}`
 
+  const utils = trpc.useContext();
   const deposit_money = trpc.account.deposit.useMutation({
     onSuccess: async () => {
+      await utils.account.invalidate();
+      await utils.card.invalidate();
       return notifications.update({
         id: "deposit",
         title: "Deposit Money",
@@ -58,12 +68,22 @@ const Deposit = ({ username }: Props) => {
       });
     }
   });
+  useEffect(() => {
+      let sub = true
+      if (sub) {
+          notifications.update({
+              id: "deposit",
+              title: "Deposit Money",
+              color: "blue",
+              icon: <IconInfoCircle />,
+              autoClose: 5000,
+              message: `${deposit_money?.data?.message}`,
+            })
+        }
+        return () => {sub = false}
 
-  // console.log(form.values.cname.split(":")[0])
-  const card_id = form.values.cname.split(":")[0] && form.values.cname.split(":")[0] || card_idefault
-  // console.log(cards[0])
-  // const card = trpc.card.get.useQuery({ method: "get_card", id: 1, cookie: `${data?.user?.image}`, cid: `${card_id}` });
-  // console.log(card?.data?.data?.result?.data?.cnumber)
+    }, [deposit_money?.data?.message])
+
 
   const handleSubmit = useCallback(() => {
     notifications.show({
@@ -75,7 +95,9 @@ const Deposit = ({ username }: Props) => {
     try {
       if (
         form.values.amount !== 0 &&
-        card_id !== "" &&
+        form.values.cname !== 0 &&
+        balance !== "ll" &&
+        id !== 0 &&
         username
       ) {
         deposit_money.mutate({
@@ -84,18 +106,38 @@ const Deposit = ({ username }: Props) => {
           id: 1,
           amount: form.values.amount,
           username: `${username}`,
-          card_id: `${card_id}`,
+          acc_id: id,
+          card_id: form.values.cname,
+          balance: `${balance}`,
         })
         if (deposit_money.isError) {
-          notifications.update({
+          return notifications.update({
             id: "deposit",
             title: "Deposit Money",
             color: "red",
             icon: <IconX />,
-            message: `Failed to create, please try again`,
+            message: `Failed to deposit, please try again after checking your connection`,
           })
         }
+        if (deposit_money.isSuccess) {
+          return notifications.update({
+            id: "deposit",
+            title: "Deposit Money",
+            color: "green",
+            icon: <IconCheck />,
+            autoClose: 5000,
+            message: `KES ${form.values.amount} deposited successfully`,
+          });
+
+        }
       }
+      return notifications.update({
+        id: "deposit",
+        title: "Deposit Money",
+        color: "red",
+        icon: <IconX />,
+        message: `Something went wrong, please try again`,
+      })
 
     } catch (error) {
       notifications.update({
@@ -106,23 +148,23 @@ const Deposit = ({ username }: Props) => {
         message: `Error: ${error}`,
       })
     }
-  }, [deposit_money, username, form.values.amount, card_id]);
+  }, [deposit_money, username, form.values.amount, balance, id, form.values.cname]);
 
   return (
-    <Box component="form" maw={400} mx="auto" onSubmit={form.onSubmit(() => { })}>
+    <Box component="form" style={{height: "100%"}} onSubmit={form.onSubmit(() => { })}>
+      <Select
+        label="Pick a card"
+        placeholder="Pick a card"
+        data={cards}
+        icon={<IconCreditCard size="1rem" />}
+        {...form.getInputProps('cname')}
+      />
       <NumberInput
         label="Enter amount"
         placeholder="Enter amount"
         withAsterisk
         mt="md"
         {...form.getInputProps('amount')}
-      />
-      <NativeSelect
-        label="Pick a card"
-        placeholder="Pick a card"
-        data={cards}
-        icon={<IconCreditCard size="1rem" />}
-        {...form.getInputProps('cname')}
       />
 
       <Group position="right" mt="md">

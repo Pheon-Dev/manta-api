@@ -1,30 +1,51 @@
 import { notifications } from '@mantine/notifications';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Button, Group, TextInput, NumberInput, Box, Textarea } from '@mantine/core';
 import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
-import { IconCheck, IconX, IconCreditCard } from '@tabler/icons-react';
+import { IconCheck, IconX, IconCreditCard, IconInfoCircle } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import { trpc } from '../../utils/trpc';
-import { NativeSelect } from '@mantine/core';
+import { Select } from '@mantine/core';
+
 
 type Props = {
   username: string
+  id: number
+  balance: string
 }
-const Withdraw = ({ username }: Props) => {
+
+interface Card {
+  cowner: string,
+  cname: string,
+  cbalance: string,
+  ctype: string,
+  caccount: string,
+  cnumber: string,
+  cvv: string,
+  cvalid: string,
+  cdescription: string,
+  id: number,
+}
+
+const Withdraw = ({ username, id, balance }: Props) => {
   const { status, data } = useSession();
-  const name = data?.user?.name;
   const account = trpc.card.list.useQuery({ method: "list_cards", id: 1, cookie: `${data?.user?.image}` });
+  const cards = account?.data?.data?.result?.data && account?.data?.data?.result?.data?.map((card: Card) => {
+    return {
+        value: card.id,
+        label: `[KES ${card.cbalance}]: ${card.cname} (${card.caccount})`,
+        // group: card.caccount,
+      }
+  }) || []
 
   const form = useForm({
     initialValues: {
-      username: `${username}`,
-      cnumber: '',
-      amount: 0,
+      cname: 0,
+      amount: 1,
     },
 
     validate: {
-      cnumber: hasLength({ min: 12, max: 12 }, 'Enter 12 Digit Card Number'),
-      username: isNotEmpty('Card Owner should match the logged in user'),
+      cname: isNotEmpty('Select one of the cards'),
       amount: isInRange({ min: 1, max: 100000 }, 'Maximum amount is 100000, minimum amount is 1'),
     },
   });
@@ -32,18 +53,37 @@ const Withdraw = ({ username }: Props) => {
   const method = "get_card"
   const cookie = `${data?.user?.image}`
 
+  const utils = trpc.useContext();
   const withdraw_money = trpc.account.withdraw.useMutation({
     onSuccess: async () => {
-      return notifications.update({
-        id: "withdraw",
-        title: "Withdraw Money",
-        color: "green",
-        icon: <IconCheck />,
-        autoClose: 5000,
-        message: `New ${form.values.amount} withdrawn successfully`,
-      });
+      await utils.account.invalidate();
+      await utils.card.invalidate();
+        return notifications.update({
+          id: "withdraw",
+          title: "Withdraw Money",
+          color: "green",
+          icon: <IconCheck />,
+          autoClose: 5000,
+          message: `New ${form.values.amount} withdrawed successfully`,
+        });
     }
   });
+
+  useEffect(() => {
+      let sub = true
+      if (sub) {
+          notifications.update({
+              id: "withdraw",
+              title: "Withdraw Money",
+              color: "blue",
+              icon: <IconInfoCircle />,
+              autoClose: 5000,
+              message: `${withdraw_money?.data?.message}`,
+            })
+        }
+        return () => {sub = false}
+
+    }, [withdraw_money?.data?.message])
 
   const handleSubmit = useCallback(() => {
     notifications.show({
@@ -54,17 +94,21 @@ const Withdraw = ({ username }: Props) => {
     })
     try {
       if (
-        form.values.cnumber !== "" &&
         form.values.amount !== 0 &&
-        form.values.username !== ""
+        form.values.cname !== 0 &&
+        balance !== "" &&
+        id !== 0 &&
+        username
       ) {
         withdraw_money.mutate({
           cookie: cookie,
           method: method,
           id: 1,
           amount: form.values.amount,
-          username: `${form.values.username}`,
-          card_id: `${form.values.cnumber}`,
+          username: `${username}`,
+          acc_id: id,
+          card_id: form.values.cname,
+          balance: `${balance}`,
         })
         if (withdraw_money.isError) {
           notifications.update({
@@ -72,10 +116,17 @@ const Withdraw = ({ username }: Props) => {
             title: "Withdraw Money",
             color: "red",
             icon: <IconX />,
-            message: `Failed to create, please try again`,
+            message: `Failed to withdraw, please try again after checking your connection`,
           })
         }
       }
+      notifications.update({
+        id: "withdraw",
+        title: "Withdraw Money",
+        color: "red",
+        icon: <IconX />,
+        message: `Something went wrong, please try again`,
+      })
 
     } catch (error) {
       notifications.update({
@@ -86,30 +137,23 @@ const Withdraw = ({ username }: Props) => {
         message: `Error: ${error}`,
       })
     }
-  }, [withdraw_money, form.values.username, form.values.amount, form.values.cnumber]);
+  }, [withdraw_money, username, form.values.amount, balance, id, form.values.cname]);
 
   return (
-    <Box component="form" maw={400} mx="auto" onSubmit={form.onSubmit(() => { })}>
+    <Box component="form" mx="auto" onSubmit={form.onSubmit(() => { })}>
+      <Select
+        label="Pick a card"
+        placeholder="Pick a card"
+        data={cards}
+        icon={<IconCreditCard size="1rem" />}
+        {...form.getInputProps('cname')}
+      />
       <NumberInput
         label="Enter amount"
         placeholder="Enter amount"
         withAsterisk
         mt="md"
         {...form.getInputProps('amount')}
-      />
-      <TextInput
-        label="Enter Card Owner"
-        placeholder="username"
-        withAsterisk
-        mt="md"
-        {...form.getInputProps('username')}
-      />
-      <NativeSelect
-        label="Pick a hashtag"
-        placeholder="Pick a hashtag"
-        data={['React', 'Angular', 'Svelte', 'Vue']}
-        icon={<IconCreditCard size="1rem" />}
-        {...form.getInputProps('cnumber')}
       />
 
       <Group position="right" mt="md">
