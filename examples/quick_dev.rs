@@ -67,7 +67,7 @@ async fn main() -> Result<()> {
 		}),
 	);
 
-	// req_create_user.await?.print().await?;
+	req_create_user.await?.print().await?;
 	// req_update_user.await?.print().await?;
 	// req_delete_user.await?.print().await?;
 	// req_list_users.await?.print().await?;
@@ -188,6 +188,7 @@ async fn main() -> Result<()> {
 			"method": "create_card",
 			"params": {
 				"data": {
+					"cowner": "janedoe",
 					"cbalance": "10200",
 					"cnumber": "4862-6345-6367-2456",
 					"cvalid": "03/24",

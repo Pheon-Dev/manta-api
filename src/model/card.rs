@@ -13,6 +13,7 @@ use time::OffsetDateTime;
 pub struct Card {
 	pub id: i64,
 
+	pub cowner: String,
 	pub cname: String,
 	pub cbalance: String,
 	pub cnumber: String,
@@ -33,6 +34,7 @@ pub struct Card {
 
 #[derive(Deserialize, Fields)]
 pub struct CardForCreate {
+	pub cowner: String,
 	pub cname: String,
 	pub cbalance: String,
 	pub cnumber: String,
@@ -45,6 +47,7 @@ pub struct CardForCreate {
 
 #[derive(Deserialize, Fields)]
 pub struct CardForUpdate {
+	pub cowner: Option<String>,
 	pub cname: Option<String>,
 	pub cbalance: Option<String>,
 	pub cnumber: Option<String>,

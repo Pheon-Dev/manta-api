@@ -127,35 +127,40 @@ pub async fn seed_cards(
 	cvalids: &[&str],
 	cvvs: &[&str],
 	cnames: &[&str],
+	cowners: &[&str],
 ) -> model::Result<Vec<Card>> {
 	let mut cards = Vec::new();
 
-	for cname in cnames {
-		for cbalance in cbalances {
-			for ctype in ctypes {
-				for cnumber in cnumbers {
-					for cvalid in cvalids {
-						for cvv in cvvs {
-							for caccount in caccounts {
-								for cdescription in cdescriptions {
-									let id = CardBmc::create(
-										ctx,
-										mm,
-										CardForCreate {
-											cname: cname.to_string(),
-											cbalance: cbalance.to_string(),
-											ctype: ctype.to_string(),
-											cnumber: cnumber.to_string(),
-											caccount: caccount.to_string(),
-											cvv: cvv.to_string(),
-											cvalid: cvalid.to_string(),
-											cdescription: cdescription.to_string(),
-										},
-									)
-									.await?;
-									let card = CardBmc::get(ctx, mm, id).await?;
+	for cowner in cowners {
+		for cname in cnames {
+			for cbalance in cbalances {
+				for ctype in ctypes {
+					for cnumber in cnumbers {
+						for cvalid in cvalids {
+							for cvv in cvvs {
+								for caccount in caccounts {
+									for cdescription in cdescriptions {
+										let id = CardBmc::create(
+											ctx,
+											mm,
+											CardForCreate {
+												cname: cname.to_string(),
+												cowner: cowner.to_string(),
+												cbalance: cbalance.to_string(),
+												ctype: ctype.to_string(),
+												cnumber: cnumber.to_string(),
+												caccount: caccount.to_string(),
+												cvv: cvv.to_string(),
+												cvalid: cvalid.to_string(),
+												cdescription: cdescription
+													.to_string(),
+											},
+										)
+										.await?;
+										let card = CardBmc::get(ctx, mm, id).await?;
 
-									cards.push(card);
+										cards.push(card);
+									}
 								}
 							}
 						}
