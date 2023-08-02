@@ -12,7 +12,7 @@ export const chatRouter = router({
           "Authorization": `Bearer ${OPENAI_API_KEY}`,
           "Content-Type": "application/json",
         }
-        let payments = await axios.request({
+        let response = await axios.request({
           method: "POST",
           url,
           data: {
@@ -32,7 +32,7 @@ export const chatRouter = router({
         });
 
         return {
-          payments: payments.data,
+          response: response.data,
         };
       } catch (error) {
         return {

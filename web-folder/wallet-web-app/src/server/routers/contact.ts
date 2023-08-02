@@ -20,7 +20,7 @@ export const contactRouter = router({
       const headers = {
         Cookie: cookie
       }
-      let payments = await axios.request({
+      let response = await axios.request({
         method: "POST",
         url,
         headers,
@@ -31,7 +31,7 @@ export const contactRouter = router({
       });
 
       return {
-        payments: payments.data,
+        response: response.data,
       };
       } catch (error) {
         return {
@@ -63,7 +63,7 @@ export const contactRouter = router({
         Cookie: cookie
       }
       
-      let payments = await axios.request({
+      let response = await axios.request({
         method: "POST",
         url,
         headers,
@@ -83,7 +83,7 @@ export const contactRouter = router({
       });
 
       return {
-        payments: payments.data,
+        response: response.data,
       };
       } catch (error) {
         return {
