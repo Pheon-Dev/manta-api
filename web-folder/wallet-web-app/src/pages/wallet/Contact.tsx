@@ -163,7 +163,7 @@ const Contact = ({ username }: Props) => {
         {...form.getInputProps('association')}
       />
 
-      <Group position="right" mt="md">
+      <Group position="left" mt="md">
         <Button type="submit" onClick={() => handleSubmit()}>Submit</Button>
       </Group>
     </Box>

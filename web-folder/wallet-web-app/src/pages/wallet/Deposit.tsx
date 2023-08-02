@@ -153,19 +153,22 @@ const Deposit = ({ username, id, balance }: Props) => {
 
   return (
     <Box component="form" style={{ height: "100%" }} onSubmit={form.onSubmit(() => { })}>
-      <Select
-        label="Pick a card"
-        placeholder="Pick a card"
-        data={cards}
-        icon={<IconCreditCard size="1rem" />}
-        {...form.getInputProps('cname')}
-      />
       <NumberInput
         label="Enter amount"
         placeholder="Enter amount"
         withAsterisk
         mt="md"
         {...form.getInputProps('amount')}
+      />
+      <Select
+        label="Pick a card"
+        placeholder="Pick a card"
+        data={cards}
+        searchable
+        maxDropdownHeight={400}
+        nothingFound="No matching results found"
+        icon={<IconCreditCard size="1rem" />}
+        {...form.getInputProps('cname')}
       />
 
       <Group position="right" mt="md">

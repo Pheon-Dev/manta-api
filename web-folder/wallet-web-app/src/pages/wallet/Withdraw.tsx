@@ -100,6 +100,15 @@ const Withdraw = ({ username, id, balance }: Props) => {
         id !== 0 &&
         username
       ) {
+        if (form.values.amount > +balance || +balance < 1) {
+          return notifications.update({
+            id: "withdraw",
+            color: "red",
+            icon: <IconX />,
+            title: "Withdraw Money",
+            message: `Insufficient balance`,
+          })
+        }
         withdraw_money.mutate({
           cookie: cookie,
           method: method,
@@ -141,19 +150,22 @@ const Withdraw = ({ username, id, balance }: Props) => {
 
   return (
     <Box component="form" mx="auto" onSubmit={form.onSubmit(() => { })}>
-      <Select
-        label="Pick a card"
-        placeholder="Pick a card"
-        data={cards}
-        icon={<IconCreditCard size="1rem" />}
-        {...form.getInputProps('cname')}
-      />
       <NumberInput
         label="Enter amount"
         placeholder="Enter amount"
         withAsterisk
         mt="md"
         {...form.getInputProps('amount')}
+      />
+      <Select
+        label="Pick a card"
+        placeholder="Pick a card"
+        searchable
+        maxDropdownHeight={400}
+        nothingFound="No matching results found"
+        data={cards}
+        icon={<IconCreditCard size="1rem" />}
+        {...form.getInputProps('cname')}
       />
 
       <Group position="right" mt="md">

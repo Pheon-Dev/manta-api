@@ -189,7 +189,7 @@ const NewCard = ({ username }: Props) => {
         {...form.getInputProps('cdescription')}
       />
 
-      <Group position="right" mt="md">
+      <Group position="left" mt="md">
         <Button type="submit" onClick={() => handleSubmit()}>Submit</Button>
       </Group>
     </Box>
