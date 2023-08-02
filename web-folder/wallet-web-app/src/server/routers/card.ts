@@ -9,6 +9,7 @@ export const cardRouter = router({
         cookie: z.string(),
         method: z.string(),
         id: z.number(),
+        cowner: z.string(),
         cname: z.string(),
         cbalance: z.string(),
         ctype: z.string(),
@@ -36,6 +37,7 @@ export const cardRouter = router({
           method,
           params: {
             data: {
+              cowner: `${opts.input.cowner}`,
               cname: `${opts.input.cname}`,
               cbalance: `${opts.input.cbalance}`,
               ctype: `${opts.input.ctype}`,
