@@ -1,7 +1,7 @@
 import { useEffect  } from 'react';
 import { trpc } from '../utils/trpc';
 import { useSession, signOut } from 'next-auth/react';
-import { IconGauge, IconFingerprint, IconActivity, IconChevronRight, IconHome, IconCreditCard, IconMessageChatbot, IconApps } from '@tabler/icons-react';
+import { IconGauge, IconFingerprint, IconActivity, IconChevronRight, IconHome, IconCreditCard, IconMessageChatbot, IconApps, IconUsers } from '@tabler/icons-react';
 import { Box, NavLink } from '@mantine/core';
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -30,11 +30,11 @@ const nav_data = [
     view: '/chat'
   },
   {
-    icon: IconApps,
-    label: 'Mini Apps',
-    description: 'Available Mini Apps',
+    icon: IconUsers,
+    label: 'Contacts',
+    description: 'Connected Contacts',
     rightSection: <IconChevronRight size={16} stroke={1.5} />,
-    view: '/apps'
+    view: '/contacts'
   },
   {
     icon: IconCreditCard,
@@ -42,6 +42,13 @@ const nav_data = [
     description: 'Connected Cards',
     rightSection: <IconChevronRight size={16} stroke={1.5} />,
     view: '/cards'
+  },
+  {
+    icon: IconApps,
+    label: 'Mini Apps',
+    description: 'Available Mini Apps',
+    rightSection: <IconChevronRight size={16} stroke={1.5} />,
+    view: '/apps'
   },
 ];
 
