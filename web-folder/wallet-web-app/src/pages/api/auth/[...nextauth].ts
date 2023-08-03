@@ -41,6 +41,7 @@ const authOptions: NextAuthOptions = {
           const user = {
             name: name,
             image: cookie,
+            email: email,
           }
 
           const id_value = uuidv4().slice(0, 8);
