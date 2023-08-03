@@ -36,21 +36,23 @@ const Dashboard = () => {
     }, [cookie_str])
   }
 
+  const Payments = () => {
+
   const method = "list_payments";
   const uid = 1
-  const rpc = trpc.payment.list.useQuery({
+  const payments = trpc.payment.list.useQuery({
     cookie: cookie,
     method: method,
     id: uid,
   });
 
-  const rows = rpc?.data?.payments?.result?.data?.map((element: Payment) => element.cid === cid && (
-    <tr key={element.id}>
-      <td>{`KES ${element.amount}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
-      <td>{element.receiver}</td>
-      <td>{element.description}</td>
-      <td>{element.ctime.toString().split('T')[1].slice(0, 5)}</td>
-      <td>{element.ctime.toString().split('T')[0]}</td>
+  const rows = payments?.data?.payments?.result?.data?.map((payment: Payment) => payment.cid === cid && (
+    <tr key={payment.id}>
+      <td>{`KES ${payment.amount}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
+      <td>{payment.receiver}</td>
+      <td>{payment.description}</td>
+      <td>{payment.ctime.toString().split('T')[1].slice(0, 5)}</td>
+      <td>{payment.ctime.toString().split('T')[0]}</td>
     </tr>
   ));
 
@@ -94,5 +96,11 @@ const Dashboard = () => {
       </Center>
     </>
   );
+  }
+  return (
+  <>
+      <Payments />
+  </>
+  )
 }
 export default Dashboard;
