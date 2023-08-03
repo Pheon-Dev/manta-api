@@ -19,11 +19,11 @@ interface MantaState {
   email: string,
   username: string,
   name: string,
-  id: string,
+  id: number,
   balance: number,
   cookie: string,
   setCookie: (cookie: string) => void,
-  setID: (id: string) => void,
+  setID: (id: number) => void,
   setEmail: (email: string) => void,
   setName: (name: string) => void,
   setUsername: (username: string) => void,
@@ -39,7 +39,7 @@ export const useMantaStore = create<MantaState>((set) => ({
   email: "jane@doe.com",
   username: "janedoe",
   name: "Jane Doe",
-  id: "105ef042",
+  id: 1000,
   cookie: "",
   setCookie: (cookie) => set({ cookie }),
   setID: (id) => set({ id }),
@@ -122,7 +122,7 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                           </Center>
                           <IconLogout
                             color="red"
-                            size={24}
+                            size={18}
                             style={{ cursor: "pointer" }}
                             onClick={() => {
                               notifications.show({

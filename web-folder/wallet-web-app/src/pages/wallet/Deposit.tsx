@@ -6,6 +6,7 @@ import { IconCheck, IconX, IconCreditCard, IconInfoCircle } from '@tabler/icons-
 import { useSession } from 'next-auth/react';
 import { trpc } from '../../utils/trpc';
 import { Select } from '@mantine/core';
+import { useMantaStore } from '../_app';
 
 type Props = {
   username: string
@@ -24,19 +25,20 @@ interface Card {
   cvalid: string,
   cdescription: string,
   id: number,
+  cid: number,
 }
 
 const Deposit = ({ username, id, balance }: Props) => {
   const { status, data } = useSession();
+  const cid = useMantaStore((state) => state.id)
   const name = data?.user?.name;
   const account = trpc.card.list.useQuery({ method: "list_cards", id: 1, cookie: `${data?.user?.image}` });
   const cards = account?.data?.data?.result?.data && account?.data?.data?.result?.data?.map((card: Card) => {
     return {
       value: card.id,
       label: `[KES ${card.cbalance.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}]: ${card.cname} (${card.caccount})`,
-      // group: card.caccount,
-
-    }
+      hidden: card.cid !== cid,
+}
   }) || []
 
   const form = useForm({
@@ -87,12 +89,6 @@ const Deposit = ({ username, id, balance }: Props) => {
 
 
   const handleSubmit = useCallback(() => {
-    notifications.show({
-      id: "deposit",
-      title: "Loading Deposit Money",
-      message: "Please wait...",
-      loading: true,
-    })
     try {
       if (
         form.values.amount !== 0 &&
@@ -101,6 +97,12 @@ const Deposit = ({ username, id, balance }: Props) => {
         id !== 0 &&
         username
       ) {
+      notifications.show({
+        id: "deposit",
+        title: "Loading Deposit Money",
+        message: "Please wait...",
+        loading: true,
+      })
         deposit_money.mutate({
           cookie: cookie,
           method: method,

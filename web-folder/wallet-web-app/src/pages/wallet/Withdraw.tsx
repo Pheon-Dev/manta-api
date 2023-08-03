@@ -6,7 +6,7 @@ import { IconCheck, IconX, IconCreditCard, IconInfoCircle } from '@tabler/icons-
 import { useSession } from 'next-auth/react';
 import { trpc } from '../../utils/trpc';
 import { Select } from '@mantine/core';
-
+import { useMantaStore } from '../_app';
 
 type Props = {
   username: string
@@ -25,16 +25,18 @@ interface Card {
   cvalid: string,
   cdescription: string,
   id: number,
+  cid: number,
 }
 
 const Withdraw = ({ username, id, balance }: Props) => {
+  const cid = useMantaStore((state) => state.id)
   const { status, data } = useSession();
   const account = trpc.card.list.useQuery({ method: "list_cards", id: 1, cookie: `${data?.user?.image}` });
   const cards = account?.data?.data?.result?.data && account?.data?.data?.result?.data?.map((card: Card) => {
     return {
       value: card.id,
       label: `[KES ${card.cbalance.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}]: ${card.cname} (${card.caccount})`,
-      // group: card.caccount,
+      hidden: card.cid !== cid,
     }
   }) || []
 

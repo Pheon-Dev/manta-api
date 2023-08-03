@@ -24,7 +24,7 @@ interface Payment {
 }
 
 const Dashboard = () => {
-  const id = useMantaStore((state) => state.id)
+  const cid = useMantaStore((state) => state.id)
   const cookie = useMantaStore((state) => state.cookie)
   const { status, data } = useSession();
 
@@ -44,16 +44,13 @@ const Dashboard = () => {
     id: uid,
   });
 
-  const send = useMantaStore((state) => state.send)
-
-  const rows = rpc?.data?.payments?.result?.data?.map((element: Payment) => (
+  const rows = rpc?.data?.payments?.result?.data?.map((element: Payment) => element.cid === cid && (
     <tr key={element.id}>
       <td>{`KES ${element.amount}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</td>
       <td>{element.receiver}</td>
       <td>{element.description}</td>
       <td>{element.ctime.toString().split('T')[1].slice(0, 5)}</td>
       <td>{element.ctime.toString().split('T')[0]}</td>
-      <td>{id}</td>
     </tr>
   ));
 
@@ -90,7 +87,6 @@ const Dashboard = () => {
               <th>DESCRIPTION</th>
               <th>TIME</th>
               <th>DATE</th>
-              <th>SENDER ID</th>
             </tr>
           </thead>
           <tbody>{rows}</tbody>

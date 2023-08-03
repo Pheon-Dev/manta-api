@@ -22,13 +22,29 @@ import NewCard from './Card';
 import Deposit from './Deposit';
 import Withdraw from './Withdraw';
 import { trpc } from '../../utils/trpc';
+import { useMantaStore } from '../_app';
+import { useEffect } from 'react';
 
+interface Account {
+email: string,
+balance: string,
+id: number,
+username: string,
+aid: string,
+}
 const Wallet = () => {
   const { status, data } = useSession();
+  const id = useMantaStore((state) => state.id)
+  const setID = useMantaStore((state) => state.setID)
   const name = data?.user?.name;
   const account = trpc.account.list.useQuery({ method: "list_accounts", id: 1, cookie: `${data?.user?.image}` });
-  const contacts = trpc.contact.list.useQuery({ method: "list_contacts", id: 1, cookie: `${data?.user?.image}` });
-  const res = account?.data?.data?.result?.data[0]
+  const res = account?.data?.data?.result?.data.find((account: Account) => account.email === data?.user?.email);
+
+  useEffect(() => {
+    let sub = true
+    if (sub) {setID(res?.cid)}
+    return () => {sub = false}
+  }, [res?.cid])
 
   const user = {
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvc_M0Jo569OkceaKbg_bobTRQGfzXwYEWYgVi8DTwiw&s",
@@ -215,6 +231,7 @@ const Wallet = () => {
           </Group>
         </Card>
       </Center>
+      <pre>{JSON.stringify(account.data, undefined, 2)}</pre>
     </>
   );
 }

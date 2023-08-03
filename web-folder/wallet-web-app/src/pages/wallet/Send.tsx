@@ -6,6 +6,7 @@ import { trpc } from '../../utils/trpc';
 import { useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { IconCheck, IconX } from '@tabler/icons-react';
+import { useMantaStore } from '../_app';
 
 interface Contact {
   username: string,
@@ -13,6 +14,7 @@ interface Contact {
   association: string,
   email: string,
   name: string,
+  cid: number,
 }
 
 type Props = {
@@ -22,12 +24,13 @@ type Props = {
 }
 const Send = ({ username, id, balance }: Props) => {
   const { status, data } = useSession();
+  const cid = useMantaStore((state) => state.id)
   const contacts_data = trpc.contact.list.useQuery({ method: "list_contacts", id: 1, cookie: `${data?.user?.image}` });
   const contacts = contacts_data?.data?.response?.result?.data && contacts_data?.data?.response?.result?.data?.map((contact: Contact) => {
     return {
-      value: contact.ref_id,
+      value: contact.username,
       label: `[ID ${contact.ref_id.toUpperCase()}] - ${contact.name}`,
-      // group: contact.ccontacts_data,
+      hidden: contact.cid !== cid,
     }
   }) || []
 
