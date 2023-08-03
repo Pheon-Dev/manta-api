@@ -26,15 +26,15 @@ import { useMantaStore } from '../_app';
 import { useEffect } from 'react';
 
 interface Account {
-email: string,
-balance: string,
-id: number,
-username: string,
-aid: string,
+  email: string,
+  balance: string,
+  id: number,
+  username: string,
+  aid: string,
 }
 const Wallet = () => {
   const { status, data } = useSession();
-  const id = useMantaStore((state) => state.id)
+  // const id = useMantaStore((state) => state.id)
   const setID = useMantaStore((state) => state.setID)
   const name = data?.user?.name;
   const account = trpc.account.list.useQuery({ method: "list_accounts", id: 1, cookie: `${data?.user?.image}` });
@@ -42,8 +42,8 @@ const Wallet = () => {
 
   useEffect(() => {
     let sub = true
-    if (sub) {setID(res?.cid)}
-    return () => {sub = false}
+    if (sub) { setID(res?.cid) }
+    return () => { sub = false }
   }, [res?.cid])
 
   const user = {
@@ -116,7 +116,7 @@ const Wallet = () => {
               label: (
                 <Group>
                   <Drawer opened={opened_send} onClose={close_send} title="Send Money" overlayProps={{ opacity: 0.5, blur: 1 }}>
-                    <Send username={user.username} id={user.id} balance={user.balance}/>
+                    <Send username={user.username} id={user.id} balance={user.balance} />
                   </Drawer>
                   <Center onClick={open_send}>
                     <IconSend size={16} />
@@ -130,7 +130,7 @@ const Wallet = () => {
               label: (
                 <Group>
                   <Drawer opened={opened_withdraw} onClose={close_withdraw} title="Withdraw Money" overlayProps={{ opacity: 0.5, blur: 1 }}>
-                    <Withdraw username={user.username} id={user.id} balance={user.balance}/>
+                    <Withdraw username={user.username} id={user.id} balance={user.balance} />
                   </Drawer>
                   <Center onClick={open_withdraw}>
                     <IconCash size={16} />
@@ -144,7 +144,7 @@ const Wallet = () => {
               label: (
                 <Group>
                   <Drawer opened={opened_deposit} onClose={close_deposit} title="Deposit Money" overlayProps={{ opacity: 0.5, blur: 1 }} >
-                    <Deposit username={user.username} id={user.id} balance={user.balance}/>
+                    <Deposit username={user.username} id={user.id} balance={user.balance} />
                   </Drawer>
                   <Center onClick={open_deposit}>
                     <IconBuildingBank size={16} />
@@ -186,7 +186,7 @@ const Wallet = () => {
               value: 'card',
               label: (
                 <Group>
-                  <Drawer opened={opened_new_card} onClose={close_new_card} title="Add a new card"  overlayProps={{ opacity: 0.5, blur: 1 }} position="right">
+                  <Drawer opened={opened_new_card} onClose={close_new_card} title="Add a new card" overlayProps={{ opacity: 0.5, blur: 1 }} position="right">
                     <NewCard username={user.username} />
                   </Drawer>
                   <Center onClick={open_new_card}>
@@ -200,13 +200,13 @@ const Wallet = () => {
               value: 'contact',
               label: (
                 <Group>
-                  <Drawer opened={opened_new_contact} onClose={close_new_contact} title="Add a new contact"  overlayProps={{ opacity: 0.5, blur: 1 }} position="right">
+                  <Drawer opened={opened_new_contact} onClose={close_new_contact} title="Add a new contact" overlayProps={{ opacity: 0.5, blur: 1 }} position="right">
                     <NewContact username={user.username} />
                   </Drawer>
                   <Center onClick={open_new_contact}>
-                  <IconUser size={16} />
-                  <Box ml={10}>New Contact</Box>
-                </Center>
+                    <IconUser size={16} />
+                    <Box ml={10}>New Contact</Box>
+                  </Center>
                 </Group>
               ),
             },
