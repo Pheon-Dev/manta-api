@@ -106,7 +106,7 @@ const Wallet = () => {
             </Box>
           </>
         }
-        labelProps={{ component: 'a', href: 'https://mantine.dev', variant: 'link', color: 'blue' }}
+        labelProps={{ component: 'a', href: '#', variant: 'link', color: 'blue' }}
       />
       <Center maw={600} mx="auto">
         <SegmentedControl
@@ -177,7 +177,7 @@ const Wallet = () => {
             </Box>
           </>
         }
-        labelProps={{ component: 'a', href: 'https://mantine.dev', variant: 'link', color: 'blue' }}
+        labelProps={{ component: 'a', href: '#', variant: 'link', color: 'blue' }}
       />
       <Center maw={600} mx="auto">
         <SegmentedControl
@@ -200,7 +200,7 @@ const Wallet = () => {
               value: 'contact',
               label: (
                 <Group>
-                  <Drawer opened={opened_new_contact} onClose={close_new_contact} title="Add a new card"  overlayProps={{ opacity: 0.5, blur: 1 }} position="right">
+                  <Drawer opened={opened_new_contact} onClose={close_new_contact} title="Add a new contact"  overlayProps={{ opacity: 0.5, blur: 1 }} position="right">
                     <NewContact username={user.username} />
                   </Drawer>
                   <Center onClick={open_new_contact}>
