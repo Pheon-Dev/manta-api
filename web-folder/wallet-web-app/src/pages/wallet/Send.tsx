@@ -15,6 +15,7 @@ interface Contact {
   email: string,
   name: string,
   cid: number,
+  id: number,
 }
 
 type Props = {
@@ -28,7 +29,7 @@ const Send = ({ username, id, balance }: Props) => {
   const contacts_data = trpc.contact.list.useQuery({ method: "list_contacts", id: 1, cookie: `${data?.user?.image}` });
   const contacts = contacts_data?.data?.response?.result?.data && contacts_data?.data?.response?.result?.data?.map((contact: Contact) => {
     return {
-      value: contact.username,
+      value: `${contact.id} ${contact.username}`,
       label: `[ID ${contact.ref_id.toUpperCase()}] - ${contact.name}`,
       hidden: contact.cid !== cid,
     }
@@ -92,7 +93,6 @@ const Send = ({ username, id, balance }: Props) => {
             message: `Insufficient balance`,
           })
         }
-        console.log(form.values)
         send_money.mutate({
           cookie: cookie,
           method: method,
@@ -132,7 +132,7 @@ const Send = ({ username, id, balance }: Props) => {
         data={contacts}
         searchable
         maxDropdownHeight={400}
-        nothingFound="No matching results found"
+        nothingFound="No results found"
         withAsterisk
         mt="md"
         {...form.getInputProps('receiver')}

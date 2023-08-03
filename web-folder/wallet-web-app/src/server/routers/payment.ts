@@ -20,7 +20,10 @@ export const paymentRouter = router({
       try {
         const method = `${opts.input.method}`
         const cookie = `${opts.input.cookie}`
+        const receiver_name = `${opts.input.receiver.split(" ")[1]}`
+        const receiver_id = `${opts.input.receiver.split(" ")[0]}`
         const id = opts.input.id
+        console.log(+receiver_id, receiver_name)
         const url = "http://localhost:8080/api/rpc"
         const headers = {
           Cookie: cookie
@@ -36,7 +39,7 @@ export const paymentRouter = router({
               data: {
                 amount: `${opts.input.amount}`,
                 sender: `${opts.input.sender}`,
-                receiver: `${opts.input.receiver}`,
+                receiver: `${receiver_name}`,
                 description: `${opts.input.description}`,
               }
             }
@@ -61,8 +64,40 @@ export const paymentRouter = router({
             }
           }
         })
+        let get_receiver_account_data_response = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id: id,
+            method: "get_account",
+            params: {
+              id: +receiver_id
+            }
+          }
+        })
+        const receiver_balance = get_receiver_account_data_response.data.result.data.balance
+      const rec_balance = +receiver_balance
+      const new_rec_balance = rec_balance + +opts.input.amount
+        let update_receiver_account_data_response = await axios.request({
+          method: "POST",
+          url,
+          headers,
+          data: {
+            id: 1,
+            method: "update_account",
+            params: {
+              id: +receiver_id,
+              data: {
+                balance: `${new_rec_balance}`
+              }
+            }
+          }
+        })
         return {
           payments: payments.data,
+          user_account: update_account_data_response.data.result.data,
+          receiver_account: update_receiver_account_data_response.data.result.data,
         };
       } catch (error) {
         return {
