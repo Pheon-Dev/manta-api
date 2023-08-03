@@ -100,7 +100,7 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                           mr="xl"
                         />
                       </MediaQuery>
-                      <ActionIcon variant="gradient" gradient={{ from: 'indigo', to: 'cyan', deg: 45 }} size="md"><IconBrandCodecov size={24} /></ActionIcon>
+                      <ActionIcon variant="light" size="xl"><IconBrandCodecov size={24} /></ActionIcon>
                       <Text
                         variant="gradient"
                         gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
@@ -118,20 +118,21 @@ const App = (props: AppProps & { colorScheme: ColorScheme }) => {
                             <NewUser />
                           </Modal>
                           <Center onClick={open_new_user}>
-                            <IconPlus color="indigo" size={16} />
+                            <ActionIcon variant="light" size="xl"><IconPlus size={24} /></ActionIcon>
                           </Center>
-                          <IconLogout
-                            color="red"
-                            size={18}
-                            style={{ cursor: "pointer" }}
-                            onClick={() => {
-                              notifications.show({
-                                color: "red",
-                                title: 'Authentication',
-                                message: 'Logging out ... Thanks for using Manta Wallet',
-                              })
-                              signOut();
-                            }} />
+                          <ActionIcon variant="light" size="xl">
+                            <IconLogout
+                              color="red"
+                              size={20}
+                              style={{ cursor: "pointer" }}
+                              onClick={() => {
+                                notifications.show({
+                                  color: "red",
+                                  title: 'Authentication',
+                                  message: 'Logging out ... Thanks for using Manta Wallet',
+                                })
+                                signOut();
+                              }} /></ActionIcon>
                         </>
                       )}
                     </Group>
