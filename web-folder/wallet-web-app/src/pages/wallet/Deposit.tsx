@@ -168,7 +168,7 @@ const Deposit = ({ username, id, balance }: Props) => {
         data={cards}
         searchable
         maxDropdownHeight={400}
-        nothingFound="No matching results found"
+        nothingFound="No results found"
         icon={<IconCreditCard size="1rem" />}
         {...form.getInputProps('cname')}
       />

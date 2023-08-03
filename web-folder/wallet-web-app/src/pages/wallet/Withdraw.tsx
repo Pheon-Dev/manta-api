@@ -164,7 +164,7 @@ const Withdraw = ({ username, id, balance }: Props) => {
         placeholder="Pick a card"
         searchable
         maxDropdownHeight={400}
-        nothingFound="No matching results found"
+        nothingFound="No results found"
         data={cards}
         icon={<IconCreditCard size="1rem" />}
         {...form.getInputProps('cname')}
