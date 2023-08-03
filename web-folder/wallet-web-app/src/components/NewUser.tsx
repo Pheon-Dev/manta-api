@@ -70,10 +70,10 @@ const NewUser = () => {
       if (nums < 1 && form.values.password_confirm.length > 0)
         form.setFieldError("password_clear", "Please Include Numbers");
 
-      if (form.values.password_clear.length < 8 && form.values.password_confirm.length > 0) {
+      if (form.values.password_clear.length < 9 && form.values.password_confirm.length > 0) {
         form.setFieldError(
           "password_clear",
-          "password_clear length should be greater than 7"
+          "password_clear length should be greater than 8"
         );
       }
     }
