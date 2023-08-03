@@ -183,7 +183,7 @@ async fn main_response_mapper(
 	error_response.unwrap_or(res)
 }
 
-const WEB_FOLDER: &str = "web-folder/wallet";
+const WEB_FOLDER: &str = "web-folder";
 
 fn routes_static() -> MethodRouter {
 	async fn handle_404() -> (StatusCode, &'static str) {
