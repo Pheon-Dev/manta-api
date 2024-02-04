@@ -45,7 +45,7 @@ cargo run
 cargo run --example quick_dev
 ```
 
-or unit tests
+For unit tests
 
 ```sh
 # threads=1 for now, since recreate DB and could cause issue when concurrent.
